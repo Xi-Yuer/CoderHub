@@ -1,0 +1,827 @@
+// goctl rpc protoc coderhub.proto --go_out=../ --go-grpc_out=../ --zrpc_out=../ -m
+
+syntax = "proto3";
+
+package coderhub;
+option go_package = "./coderhub";
+
+
+// 以下定义了各个请求和响应的消息类型
+message AuthorizeRequest {string username = 1; string password = 2;}
+message AuthorizeResponse {string token = 1;}
+
+message CheckUserExistsRequest {string username = 1;}
+message CheckUserExistsResponse {bool exists = 1;}
+
+message CreateUserRequest {string username = 1; string password_hash = 2;}
+message CreateUserResponse {int64 user_id = 1;}
+
+message GetUserInfoRequest {int64 user_id = 1;}
+message GetUserInfoByUsernameRequest {string username = 1;}
+
+message BatchGetUserByIDRequest {repeated int64 user_ids = 1;}
+message BatchGetUserByIDResponse {repeated UserInfo user_infos = 1;}
+
+message UserInfo {
+  int64 user_id = 1;
+  string user_name = 2;
+  string avatar = 3;
+  string email = 4;
+  string password = 5;
+  int32 gender = 6;
+  int32 age = 7;
+  string phone = 8;
+  string nick_name = 9;
+  bool is_admin = 10;
+  bool status = 11;
+  int64 created_at = 12;
+  int64 updated_at = 13;
+}
+
+message UpdateUserInfoRequest {
+  int64 user_id = 1;
+  string email = 2;
+  string nickname = 3;
+  int32 age = 4;
+  int32 gender = 5;
+  string phone = 6;
+}
+
+message UpdateUserInfoResponse {bool success = 1;}
+
+message UploadAvatarRequest {
+  int64 user_id = 1;
+  int64 image_id = 2;
+}
+message UploadAvatarResponse {
+  int64 image_id = 1;      // 图片ID
+  string url = 4;          // 完整的访问URL
+  string thumbnail_url = 5; // 缩略图URL
+  string created_at = 13;   // 创建时间
+}
+
+message GenerateTokenRequest {int64 user_id = 1;}
+message GenerateTokenResponse {string token = 1;}
+
+message ChangePasswordRequest {int64 user_id = 1; string old_password = 2; string new_password = 3;}
+message ChangePasswordResponse {bool success = 1;}
+
+// 重置密码请求，通过邮箱发送重置密码链接
+message ResetPasswordRequest {string email = 1;}
+message ResetPasswordResponse {bool success = 1;}
+
+// 通过链接重置密码
+message ResetPasswordByLinkRequest {
+  string email = 1;
+  string password = 2;
+  string confirm_password = 3;
+  string token = 4;
+}
+message ResetPasswordByLinkResponse {bool success = 1;}
+
+message DeleteUserRequest {int64 user_id = 1;}
+message DeleteUserResponse {bool success = 1;}
+
+service UserService {
+  //  授权
+  rpc Authorize (AuthorizeRequest) returns (AuthorizeResponse);
+
+  // 检查用户是否存在
+  rpc CheckUserExists (CheckUserExistsRequest) returns (CheckUserExistsResponse);
+
+  // 创建用户
+  rpc CreateUser (CreateUserRequest) returns (CreateUserResponse);
+
+  // 获取用户信息
+  rpc GetUserInfo (GetUserInfoRequest) returns (UserInfo);
+  rpc GetUserInfoByUsername (GetUserInfoByUsernameRequest) returns (UserInfo);
+
+  // 批量获取用户信息
+  rpc BatchGetUserByID (BatchGetUserByIDRequest) returns (BatchGetUserByIDResponse);
+
+  // 更新用户信息
+  rpc UpdateUserInfo (UpdateUserInfoRequest) returns (UpdateUserInfoResponse);
+
+  // 上传用户头像
+  rpc UploadAvatar (UploadAvatarRequest) returns (UploadAvatarResponse);
+
+  // 修改密码
+  rpc ChangePassword (ChangePasswordRequest) returns (ChangePasswordResponse);
+
+  // 重置密码, 通过邮箱发送重置密码链接
+  rpc ResetPassword (ResetPasswordRequest) returns (ResetPasswordResponse);
+
+  // 通过链接重置密码
+  rpc ResetPasswordByLink (ResetPasswordByLinkRequest) returns (ResetPasswordByLinkResponse);
+
+  // 删除用户
+  rpc DeleteUser (DeleteUserRequest) returns (DeleteUserResponse);
+}
+
+// 创建关注请求
+message CreateUserFollowReq {
+  int64 follower_id = 1;  // 关注者ID
+  int64 followed_id = 2;  // 被关注者ID
+}
+
+message CreateUserFollowResp {
+  bool success = 1;
+}
+
+// 取消关注请求
+message DeleteUserFollowReq {
+  int64 follower_id = 1;
+  int64 followed_id = 2;
+}
+
+message DeleteUserFollowResp {
+  bool success = 1;
+}
+
+// 获取关注列表请求
+message GetUserFollowsReq {
+  int64 follower_id = 1;
+  int32 page = 2;
+  int32 page_size = 3;
+}
+
+message GetUserFollowsResp {
+  repeated UserInfo user_follows = 1;
+  int64 total = 2;
+}
+
+// 获取粉丝列表请求
+message GetUserFansReq {
+  int64 followed_id = 1;
+  int32 page = 2;
+  int32 page_size = 3;
+}
+
+message GetUserFansResp {
+  repeated UserInfo user_fans = 1;
+  int64 total = 2;
+}
+
+// 检查关注状态请求
+message IsUserFollowedReq {
+  int64 follower_id = 1;
+  int64 followed_id = 2;
+}
+
+message IsUserFollowedResp {
+  bool is_followed = 1;
+}
+
+// 获取互关列表请求
+message GetMutualFollowsReq {
+  int64 user_id = 1;
+  int32 page = 2;
+  int32 page_size = 3;
+}
+
+message GetMutualFollowsResp {
+  repeated UserFollowInfo mutual_follows = 1;
+  int64 total = 2;
+}
+
+message UserFollowInfo {
+  int64 id = 1;
+  string username = 2;
+  string avatar = 3;
+}
+
+service UserFollowService {
+  // 创建用户关注关系
+  rpc CreateUserFollow(CreateUserFollowReq) returns (CreateUserFollowResp);
+  // 删除用户关注关系
+  rpc DeleteUserFollow(DeleteUserFollowReq) returns (DeleteUserFollowResp);
+  // 获取用户关注列表
+  rpc GetUserFollows(GetUserFollowsReq) returns (GetUserFollowsResp);
+  // 获取用户粉丝列表
+  rpc GetUserFans(GetUserFansReq) returns (GetUserFansResp);
+  // 检查是否关注
+  rpc IsUserFollowed(IsUserFollowedReq) returns (IsUserFollowedResp);
+  // 获取互相关注列表
+  rpc GetMutualFollows(GetMutualFollowsReq) returns (GetMutualFollowsResp);
+}
+
+// 新增学术导航
+message AddAcademicNavigatorRequest {
+  int64 user_id = 1;               // 用户 ID
+  string content = 2;               // 内容
+  string education = 3;            // 学历
+  string major = 4;                 // 专业
+  string school = 5;                // 学校
+  string work_exp = 6;              // 工作经验
+}
+
+// 获取学术导航
+message GetAcademicNavigatorRequest {
+  int64 user_id = 1;               // 用户 ID
+  string education = 2;            // 学历
+  string major = 3;                 // 专业
+  string school = 4;                // 学校
+  string work_exp = 5;              // 工作经验
+  string content = 6;                // 内容
+  int64 page = 7;                   // 页码
+  int64 page_size = 8;              // 每页大小
+}
+
+// 删除学术导航
+message DeleteAcademicNavigatorRequest {
+  int64 id = 1;                     // 学术导航 ID
+  int64 user_id = 2;               // 用户 ID
+}
+
+
+message Response {
+  bool success = 1;                 // 是否成功
+}
+
+message AcademicNavigator {
+  int64 id = 1;                     // 学术导航 ID
+  int64 user_id = 2;               // 用户 ID
+  string content = 3;               // 内容
+  string education = 4;            // 学历
+  string major = 5;                 // 专业
+  string school = 6;                // 学校
+  string work_exp = 7;              // 工作经验
+  int64 like_count = 8;              // 点赞数
+  int64 created_at = 9;            // 创建时间
+  int64 updated_at = 10;            // 更新时间
+}
+
+message GetAcademicNavigatorResponse {
+  repeated AcademicNavigator academic_navigator = 1; // 学术导航
+  int64 total = 2; // 总数
+}
+
+// 点赞学术导航
+message LikeAcademicNavigatorRequest {
+  int64 id = 1;                     // 学术导航 ID
+  int64 user_id = 2;               // 用户 ID
+}
+
+// 取消点赞学术导航
+message CancelLikeAcademicNavigatorRequest {
+  int64 id = 1;                     // 学术导航 ID
+  int64 user_id = 2;               // 用户 ID
+}
+
+service AcademicNavigatorService {
+  // 新增学术导航
+  rpc AddAcademicNavigator(AddAcademicNavigatorRequest) returns (Response) {}
+  // 获取学术导航
+  rpc GetAcademicNavigator(GetAcademicNavigatorRequest) returns (GetAcademicNavigatorResponse) {}
+  // 删除学术导航
+  rpc DeleteAcademicNavigator(DeleteAcademicNavigatorRequest) returns (Response) {}
+  // 点赞学术导航
+  rpc LikeAcademicNavigator(LikeAcademicNavigatorRequest) returns (Response) {}
+  // 取消点赞学术导航
+  rpc CancelLikeAcademicNavigator(CancelLikeAcademicNavigatorRequest) returns (Response) {}
+}
+
+// 定义图片消息
+message Image {
+  int64 image_id = 1;           // 图片ID
+  string url = 2;                // 图片URL
+  string thumbnail_url = 3;      // 缩略图URL
+  int32 width = 4;              // 图片宽度
+  int32 height = 5;             // 图片高度
+}
+
+// 文章消息定义
+message Article {
+  int64 id = 1;                     // 主键 ID
+  string type = 2;                  // 内容类型：长文或短文
+  string title = 3;                 // 标题
+  string content = 4;               // 内容
+  string summary = 5;               // 摘要
+  repeated Image images = 6;        // 文章图片列表
+  Image cover_image = 7;            // 封面图片
+  int64 author_id = 8;             // 作者 ID
+  repeated string tags = 9;         // 标签列表
+  int64 view_count = 10;           // 阅读次数
+  int64 like_count = 11;           // 点赞次数
+  int64 comment_count = 12;        // 评论数
+  string status = 13;              // 文章状态
+  int64 created_at = 14;           // 创建时间
+  int64 updated_at = 15;           // 更新时间
+  int64 deleted_at = 16;           // 删除时间
+}
+
+// 请求文章详情
+message GetArticleRequest {
+  int64 id = 1;                     // 文章 ID
+}
+
+// 响应文章详情
+message GetArticleResponse {
+  Article article = 1;               // 文章详情
+}
+
+// 创建文章请求
+message CreateArticleRequest {
+  string type = 1;                  // 内容类型
+  string title = 2;                 // 标题
+  string content = 3;               // 内容
+  string summary = 4;               // 摘要
+  repeated int64 image_ids = 5;    // 图片ID列表
+  int64 cover_image_id = 6;        // 封面图片ID
+  int64 author_id = 7;             // 作者 ID
+  repeated string tags = 8;         // 标签列表
+  string status = 9;               // 文章状态
+}
+
+// 创建文章响应
+message CreateArticleResponse {
+  int64 id = 1;                     // 新创建的文章 ID
+}
+
+// 更新文章请求
+message UpdateArticleRequest {
+  int64 id = 1;                     // 文章 ID
+  string title = 2;                 // 标题
+  string content = 3;               // 内容
+  string summary = 4;               // 摘要
+  repeated int64 image_ids = 5;    // 图片ID列表
+  int64 cover_image_id = 6;        // 封面图片ID
+  repeated string tags = 7;         // 标签列表
+  string status = 8;               // 文章状态
+}
+
+// 更新文章响应
+message UpdateArticleResponse {
+  bool success = 1;                  // 是否更新成功
+}
+
+// 更新点赞数请求
+message UpdateLikeCountRequest {
+  int64 id = 1;                     // 文章 ID
+  int64 user_id = 2;                // 用户 ID
+}
+
+// 更新点赞数响应
+message UpdateLikeCountResponse {
+  bool success = 1;                  // 是否更新成功
+}
+
+// 删除文章请求
+message DeleteArticleRequest {
+  int64 id = 1;                     // 文章 ID
+  int64 user_id = 2;              // 用户 ID
+}
+
+// 删除文章响应
+message DeleteArticleResponse {
+  bool success = 1;                  // 是否删除成功
+}
+
+// RPC 服务定义
+service ArticleService {
+  rpc GetArticle(GetArticleRequest) returns (GetArticleResponse);     // 获取文章详情
+  rpc CreateArticle(CreateArticleRequest) returns (CreateArticleResponse); // 创建文章
+  rpc UpdateArticle(UpdateArticleRequest) returns (UpdateArticleResponse); // 更新文章
+  rpc UpdateLikeCount(UpdateLikeCountRequest) returns (UpdateLikeCountResponse); // 更新点赞数
+  rpc DeleteArticle(DeleteArticleRequest) returns (DeleteArticleResponse); // 删除文章
+}
+
+
+// 更新评论点赞数请求
+message UpdateCommentLikeCountRequest {
+  int64 comment_id = 1;            // 评论ID
+  int64 user_id = 2;                // 用户 ID
+}
+
+message UpdateCommentLikeCountResponse {
+  bool success = 1;                // 更新是否成功
+}
+
+// 评论实体
+message Comment {
+  int64 id = 1;                    // 评论ID
+  int64 entity_id = 2;            // 实体ID
+  string content = 3;              // 评论内容
+  int64 parent_id = 4;             // 父评论ID，用于嵌套评论
+  int64 root_id = 5;              // 根评论ID（可选）
+  UserInfo user_info = 6;          // 评论者信息
+  UserInfo reply_to_user_info = 7;  // 被回复的用户信息（可选）
+  int64 created_at = 8;            // 创建时间
+  int64 updated_at = 9;            // 更新时间
+  repeated Comment replies = 10;     // 子评论列表
+  int64 replies_count = 11;          // 子评论数量
+  int32 like_count = 12;            // 点赞数
+  repeated ImageInfo images = 13;  // 评论包含的图片列表
+}
+
+// 创建评论请求
+message CreateCommentRequest {
+  int64 entity_id = 1;            // 实体ID
+  string content = 2;              // 评论内容
+  int64 parent_id = 3;             // 父评论ID（可选）
+  int64 root_id = 4;              // 根评论ID（可选）
+  int64 user_id = 5;               // 评论者ID
+  int64 reply_to_uid = 6;         // 被回复的用户ID（可选）
+  repeated int64 image_ids = 7;      // 图片ID列表
+}
+
+message CreateCommentResponse {
+  Comment comment = 1;             // 创建的评论
+}
+
+// 获取评论列表请求
+message GetCommentsRequest {
+  int64 entity_id = 1;            // 实体ID
+  int32 page = 2;                  // 页码
+  int32 page_size = 3;             // 每页数量
+}
+
+message GetCommentsResponse {
+  repeated Comment comments = 1;    // 评论列表
+  int32 total = 2;                 // 总评论数
+}
+
+// 获取某条评论的子评论列表请求
+message GetCommentRepliesRequest {
+  int64 comment_id = 1;            // 评论ID
+  int32 page = 2;                  // 页码
+  int32 page_size = 3;             // 每页数量
+}
+
+message GetCommentRepliesResponse {
+  repeated Comment replies = 1;    // 子评论列表
+  int32 total = 2;                 // 总评论数
+}
+
+// 获取单个评论请求
+message GetCommentRequest {
+  int64 comment_id = 1;            // 评论ID
+}
+
+message GetCommentResponse {
+  Comment comment = 1;             // 评论详情
+}
+
+// 删除评论请求
+message DeleteCommentRequest {
+  int64 comment_id = 1;            // 评论ID
+  int64 user_id = 2;               // 评论者ID
+}
+
+message DeleteCommentResponse {
+  bool success = 1;                // 删除是否成功
+}
+
+// 评论服务定义
+service CommentService {
+  // 创建评论
+  rpc CreateComment(CreateCommentRequest) returns (CreateCommentResponse) {}
+  // 获取评论列表
+  rpc GetComments(GetCommentsRequest) returns (GetCommentsResponse) {}
+  // 获取某条评论的子评论列表
+  rpc GetCommentReplies(GetCommentRepliesRequest) returns (GetCommentRepliesResponse) {}
+  // 更新评论点赞数
+  rpc UpdateCommentLikeCount(UpdateCommentLikeCountRequest) returns (UpdateCommentLikeCountResponse) {}
+  // 获取单个评论详情
+  rpc GetComment(GetCommentRequest) returns (GetCommentResponse) {}
+  // 删除评论
+  rpc DeleteComment(DeleteCommentRequest) returns (DeleteCommentResponse) {}
+}
+
+// 图片关系实体
+message ImageRelation {
+  int64 id = 1;                // 关系ID
+  int64 image_id = 2;         // 图片ID
+  int64 entity_id = 3;         // 关联实体ID
+  string entity_type = 4;      // 关联实体类型(comment/article等)
+  string url = 5;             // 图片URL
+  string thumbnail_url = 6;   // 图片缩略图UR
+  string bucket_name = 7;     // MinIO bucket名称
+  string object_name = 8;     // MinIO中的对象名称
+  string content_type = 9;   // 文件MIME类型
+  int64 size = 10;             // 文件大小(bytes)
+  int32 width = 11;            // 图片宽度(px)
+  int32 height = 12;           // 图片高度(px)
+  string upload_ip = 13;      // 上传者IP
+  int64 user_id = 14;         // 上传者ID
+  int32 sort = 15;              // 排序号
+  int64 created_at = 16;      // 创建时间
+}
+
+// 创建关系请求
+message CreateRelationRequest {
+  int64 image_id = 1;         // 图片ID
+  int64 entity_id = 2;         // 关联实体ID
+  string entity_type = 3;      // 关联实体类型
+  int32 sort = 4;              // 排序号
+}
+
+message CreateRelationResponse {
+  ImageRelation relation = 1;  // 创建的关系
+}
+
+// 批量创建关系请求
+message BatchCreateRelationRequest {
+  repeated CreateRelationRequest relations = 1;  // 关系列表
+}
+
+message BatchCreateRelationResponse {
+  repeated ImageRelation relations = 1;          // 创建的关系列表
+}
+
+// 批量删除关系请求
+message BatchDeleteRelationRequest {
+  repeated int64 ids = 1;  // 关系ID列表
+}
+
+message BatchDeleteRelationResponse {
+  bool success = 1;  // 是否成功
+}
+
+// 批量获取图片关联，根据实体ID列表、实体类型列表获取请求
+message BatchGetImagesByEntityRequest {
+  repeated int64 entity_ids = 1;  // 实体ID列表
+  string entity_type = 2;         // 实体类型
+}
+
+message BatchGetImagesByEntityResponse {
+  repeated ImageRelation relations = 1;  // 图片关联列表
+}
+
+// 根据实体ID、实体类型删除图片关系请求
+message DeleteByEntityIDRequest {
+  int64 entity_id = 1;         // 关联实体ID
+  string entity_type = 2;      // 关联实体类型
+}
+
+message DeleteByEntityIDResponse {
+  bool success = 1;  // 是否成功
+}
+
+// 获取实体关联的图片列表请求
+message GetImagesByEntityRequest {
+  int64 entity_id = 1;         // 关联实体ID
+  string entity_type = 2;      // 关联实体类型
+}
+
+message GetImagesByEntityResponse {
+  repeated ImageInfo images = 1;  // 图片列表
+}
+
+// 获取图片关联的实体列表请求
+message GetEntitiesByImageRequest {
+  int64 image_id = 1;         // 图片ID
+  string entity_type = 2;      // 关联实体类型（可选）
+}
+
+message GetEntitiesByImageResponse {
+  repeated EntityInfo entities = 1;  // 实体列表
+}
+
+// 图片信息
+message ImageInfo {
+  int64 image_id = 1;         // 图片ID
+  string bucket_name = 2;     // MinIO bucket名称
+  string object_name = 3;     // MinIO中的对象名称
+  string url = 4;             // 完整的访问URL
+  string thumbnail_url = 5;   // 缩略图URL
+  string content_type = 6;   // 文件MIME类型
+  int64 size = 7;             // 文件大小(bytes)
+  int32 width = 8;            // 图片宽度(px)
+  int32 height = 9;           // 图片高度(px)
+  string upload_ip = 10;      // 上传者IP
+  int64 user_id = 11;         // 上传者ID
+  int64 created_at = 12;      // 创建时间
+}
+
+// 实体信息
+message EntityInfo {
+  string entity_type = 1;    // 实体类型
+  int64 entity_id = 2;       // 实体ID
+  int64 created_at = 3;     // 关联创建时间
+}
+
+// 图片关系服务
+service ImageRelationService {
+  // 创建图片关系
+  rpc CreateRelation(CreateRelationRequest) returns (CreateRelationResponse) {}
+  // 批量创建图片关系
+  rpc BatchCreateRelation(BatchCreateRelationRequest) returns (BatchCreateRelationResponse) {}
+  // 批量删除图片关系
+  rpc BatchDeleteRelation(BatchDeleteRelationRequest) returns (BatchDeleteRelationResponse) {}
+  // 批量获取图片关联，根据实体ID列表、实体类型列表获取
+  rpc BatchGetImagesByEntity(BatchGetImagesByEntityRequest) returns (BatchGetImagesByEntityResponse) {}
+  // 根据实体ID、实体类型删除图片关系
+  rpc DeleteByEntityID(DeleteByEntityIDRequest) returns (DeleteByEntityIDResponse) {}
+  // 获取实体关联的图片列表
+  rpc GetImagesByEntity(GetImagesByEntityRequest) returns (GetImagesByEntityResponse) {}
+  // 获取图片关联的实体列表
+  rpc GetEntitiesByImage(GetEntitiesByImageRequest) returns (GetEntitiesByImageResponse) {}
+}
+
+
+// 上传请求
+message UploadRequest {
+  bytes file = 1;           // 图片文件数据
+  string filename = 2;      // 文件名
+  int64 user_id = 3;       // 用户ID
+  string content_type = 4;  // 文件类型
+}
+
+// 删除请求
+message DeleteRequest {
+  int64 image_id = 1;     // 图片ID
+  int64 user_id = 2;       // 用户ID（用于权限验证）
+}
+
+// 删除响应
+message DeleteResponse {
+  bool success = 1;        // 是否成功
+}
+
+// 批量获取图片请求
+message BatchGetRequest {
+  repeated int64 image_ids = 1; // 图片ID列表
+}
+
+// 批量获取图片响应
+message BatchGetResponse {
+  repeated UploadImageInfo images = 1; // 图片列表
+}
+
+// 获取图片请求
+message GetRequest {
+  int64 image_id = 1;     // 图片ID
+}
+
+// 获取用户图片列表请求
+message ListByUserRequest {
+  int64 user_id = 1;       // 用户ID
+  int32 page = 2;          // 页码
+  int32 page_size = 3;     // 每页数量
+}
+
+// 获取用户图片列表响应
+message ListByUserResponse {
+  repeated UploadImageInfo images = 1;  // 图片列表
+  int64 total = 2;               // 总数量
+}
+
+// 图片信息
+message UploadImageInfo {
+  int64 image_id = 1;      // 图片ID
+  string bucket_name = 2;   // MinIO bucket名称
+  string object_name = 3;   // MinIO中的对象名称
+  string url = 4;          // 完整的访问URL
+  string thumbnail_url = 5; // 缩略图URL
+  string content_type = 6;  // 文件MIME类型
+  int64 size = 7;          // 文件大小(bytes)
+  int32 width = 8;         // 图片宽度(px)
+  int32 height = 9;        // 图片高度(px)
+  string upload_ip = 10;    // 上传者IP
+  int64 user_id = 11;      // 上传者ID
+  string status = 12;      // 状态
+  int64 created_at = 13;   // 创建时间
+}
+
+// 图片服务
+service ImageService {
+  // 上传图片
+  rpc Upload(UploadRequest) returns (ImageInfo);
+  // 删除图片
+  rpc Delete(DeleteRequest) returns (DeleteResponse);
+  // 获取图片信息
+  rpc Get(GetRequest) returns (ImageInfo);
+  // 批量获取图片信息
+  rpc BatchGet(BatchGetRequest) returns (BatchGetResponse);
+  // 获取用户图片列表
+  rpc ListByUser(ListByUserRequest) returns (ListByUserResponse);
+}
+
+// 创建题库请求
+message CreateQuestionBankRequest {
+  string name = 1;           // 题库名称
+  string description = 2;     // 题库描述
+  string difficulty = 3;      // 题库难度
+  repeated string tags = 4;            // 题库标签
+  int64 create_user = 5;      // 创建人
+  Image cover_image = 6;
+}
+
+// 创建题库响应
+message CreateQuestionBankResponse {
+  bool success = 1;  // 是否成功
+}
+
+// 删除题库请求
+message DeleteQuestionBankRequest {
+  int64 id = 1;
+  int64 create_user = 2;
+}
+
+// 删除题库响应
+message DeleteQuestionBankResponse {
+  bool success = 1;  // 是否成功
+}
+
+// 创建题目请求
+message CreateQuestionRequest  {
+  string title = 1;
+  int64 bank_id = 2;          // 题库ID
+  string content = 3;         // 题目内容
+  int64 create_user = 4;      // 创建人
+  string difficulty = 5;     // 题目难度
+}
+
+// 创建题目响应
+message CreateQuestionResponse {
+  bool success = 1;  // 是否成功
+}
+
+// 删除题目请求
+message DeleteQuestionRequest {
+  int64 id = 1;
+  int64 create_user = 2;
+}
+
+// 删除题目响应
+message DeleteQuestionResponse {
+  bool success = 1;  // 是否成功
+}
+
+// 获取题库请求
+message GetQuestionBankListRequest {
+  int32 page = 1;
+  int32 page_size = 2;
+}
+
+// 题库响应
+message QuestionBank {
+  int64 id = 1;
+  string description = 2;     // 题库描述
+  string difficulty = 3;      // 题库难度
+  repeated string tags = 4;            // 题库标签
+  int64 create_user = 5;      // 创建人
+  string name = 6;           // 题库名称
+  ImageInfo cover_image = 7;
+  int64 create_time = 8;
+  int64 update_time = 9;
+}
+
+// 获取题库列表响应
+message GetQuestionBankListResponse {
+  repeated QuestionBank banks = 1;
+  int64 total = 2;
+}
+
+// 获取题目请求
+message GetQuestionRequest {
+  int64 question_id = 1;          // 题目ID
+}
+
+// 题目响应
+message GetQuestionResponse {
+  int64 id = 1;           // 题目ID
+  int64 bank_id = 2;
+  string title = 3;
+  string content = 4;
+  UserInfo create_user = 5;
+  string difficulty = 6;
+  int64 create_time = 7;
+  int64 update_time = 8;
+}
+
+// 获取题库下的所有题目目录
+message GetQuestionTreeRequest {
+  int64 bank_id = 1;
+  int32 page = 2;
+  int32 page_size = 3;
+}
+
+// 题目目录节点
+message GetQuestionTreeResponse {
+  repeated QuestionTreeNode nodes = 1;
+  int64 total = 2;
+}
+message QuestionTreeNode {
+  int64 id = 1;
+  string title = 2;
+}
+
+service QuestionService {
+  // 创建题库
+  rpc CreateQuestionBank(CreateQuestionBankRequest) returns (CreateQuestionBankResponse) {}
+  // 删除题库
+  rpc DeleteQuestionBank(DeleteQuestionBankRequest) returns (DeleteQuestionBankResponse) {}
+  // 创建题目
+  rpc CreateQuestion(CreateQuestionRequest) returns (CreateQuestionResponse) {}
+  // 删除题目
+  rpc DeleteQuestion(DeleteQuestionRequest) returns (DeleteQuestionResponse) {}
+  // 获取题库列表
+  rpc GetQuestionBankList(GetQuestionBankListRequest) returns (GetQuestionBankListResponse) {}
+  // 获取题库下的所有题目目录
+  rpc GetQuestionTree(GetQuestionTreeRequest) returns (GetQuestionTreeResponse) {}
+  // 获取题目详情
+  rpc GetQuestion(GetQuestionRequest) returns (GetQuestionResponse) {}
+}
+

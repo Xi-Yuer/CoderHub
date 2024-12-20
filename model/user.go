@@ -18,6 +18,12 @@ type User struct {
 	Password string `gorm:"not null;type:varchar(255)" json:"password" validate:"required,min=6,max=32"`
 	// 用户昵称，可为空
 	NickName sql.NullString `gorm:"type:varchar(32)" json:"nick_name" validate:"required,min=3,max=32"`
+	// 用户手机号，唯一且可为空
+	Phone sql.NullString `gorm:"unique;type:varchar(20)" json:"phone" validate:"required,len=11"`
+	// 用户年龄，默认为零
+	Age int32 `gorm:"default:0;not null" json:"age"`
+	// 用户性别，0表示未知，1表示男，2表示女
+	Gender int32 `gorm:"default:0;not null" json:"gender"`
 	// 电子邮箱，唯一且可为空
 	Email sql.NullString `gorm:"unique;type:varchar(100)" json:"email" validate:"required,email"`
 	// 用户头像URL

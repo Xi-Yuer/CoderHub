@@ -1,6 +1,0 @@
-Name: academicnavigator.rpc
-ListenOn: 0.0.0.0:8888
-Etcd:
-  Hosts:
-    - etcd:2379
-  Key: academicnavigator.rpc

@@ -99,17 +99,6 @@ services:
     container_name: nginx
     ports:
       - "80:80"
-    depends_on:
-      user-service:
-        condition: service_healthy
-      user-api:
-        condition: service_healthy
-      articles-api:
-        condition: service_healthy
-      comment-api:
-        condition: service_healthy
-      user-follow-api:
-        condition: service_healthy
     networks:
       - coderhub-network
     volumes:
@@ -139,130 +128,20 @@ services:
     networks:
       - coderhub-network
   #  Api 服务
-  user-api:
+  coderhub-api:
     build:
       context: ..
-      dockerfile: ./api/User/Dockerfile
-    container_name: user-api
+      dockerfile: ./api/coderhub/Dockerfile
+    container_name: coderhub-api
     depends_on:
       - etcd
       - mysql
       - redis
-      - user-service
+      - coderhub-service
     networks:
       - coderhub-network
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8888/api/user/health"] # 修改为实际的健康检查端点
-      interval: 10s
-      retries: 10
-      start_period: 30s
-      timeout: 10s
-    restart: always
-
-  articles-api:
-    build:
-      context: ..
-      dockerfile: ./api/TechSphere/Articles/Dockerfile
-    container_name: articles-api
-    depends_on:
-      - etcd
-      - mysql
-      - redis
-      - articles-service
-    networks:
-      - coderhub-network
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8888/api/articles/health"] # 修改为实际的健康检查端点
-      interval: 10s
-      retries: 10
-      start_period: 30s
-      timeout: 10s
-    restart: always
-
-  comment-api:
-    build:
-      context: ..
-      dockerfile: ./api/TechSphere/Comment/Dockerfile
-    container_name: comment-api
-    depends_on:
-      - etcd
-      - mysql
-      - redis
-      - comment-service
-    networks:
-      - coderhub-network
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8888/api/comments/health"] # 修改为实际的健康检查端点
-      interval: 10s
-      retries: 10
-      start_period: 30s
-      timeout: 10s
-    restart: always
-
-  image-api:
-    build:
-      context: ..
-      dockerfile: ./api/Image/Dockerfile
-    container_name: image-api
-    depends_on:
-      - etcd
-      - mysql
-      - redis
-      - image-service
-    networks:
-      - coderhub-network
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8888/api/image/health"] # 修改为实际的健康检查端点
-      interval: 10s
-      retries: 10
-      start_period: 30s
-      timeout: 10s
-    restart: always
-
-  user-follow-api:
-    build:
-      context: ..
-      dockerfile: ./api/UserFollow/Dockerfile
-    container_name: user-follow-api
-    depends_on:
-      - etcd
-      - mysql
-      - redis
-      - user-follow-service
-    networks:
-      - coderhub-network
-    healthcheck:
-      test: [
-          "CMD",
-          "curl",
-          "-f",
-          "http://localhost:8888/api/user_follow/health",
-        ] # 修改为实际的健康检查端点
-      interval: 10s
-      retries: 10
-      start_period: 30s
-      timeout: 10s
-    restart: always
-
-  academic-navigator-api:
-    build:
-      context: ..
-      dockerfile: ./api/TechSphere/AcademicNavigator/Dockerfile
-    container_name: academic-navigator-api
-    depends_on:
-      - etcd
-      - mysql
-      - redis
-      - academic-navigator-service
-    networks:
-      - coderhub-network
-    healthcheck:
-      test: [
-        "CMD",
-        "curl",
-        "-f",
-        "http://localhost:8888/api/academic_navigator/health",
-      ] # 修改为实际的健康检查端点
+      test: ["CMD", "curl", "-f", "http://localhost:8888/api/follow/health"] # 修改为实际的健康检查端点
       interval: 10s
       retries: 10
       start_period: 30s
@@ -270,11 +149,11 @@ services:
     restart: always
 
   # RPC 服务
-  user-service:
+  coderhub-service:
     build:
       context: ..
-      dockerfile: ./rpc/User/Dockerfile
-    container_name: user-service
+      dockerfile: ./rpc/coderhub/Dockerfile
+    container_name: coderhub-service
     depends_on:
       - mysql
       - redis
@@ -289,167 +168,6 @@ services:
       ETCD_PORT: 2379
       MYSQL_HOST: mysql
       MYSQL_PORT: 3306
-    healthcheck:
-      test: ["CMD", "nc", "-z", "localhost", "8888"] # 使用netcat检查端口是否开放
-      interval: 10s
-      retries: 10
-      start_period: 30s
-      timeout: 10s
-    restart: always
-
-  articles-service:
-    build:
-      context: ..
-      dockerfile: ./rpc/TechSphere/Articles/Dockerfile
-    container_name: articles-service
-    depends_on:
-      - mysql
-      - redis
-      - etcd
-      - elasticsearch
-      - user-service
-    healthcheck:
-      test: ["CMD", "nc", "-z", "localhost", "8888"] # 使用netcat检查端口是否开放
-      interval: 10s
-      retries: 10
-      start_period: 30s
-      timeout: 10s
-    restart: always
-    environment:
-      REDIS_HOST: redis
-      REDIS_PORT: 6379
-      ETCD_HOST: etcd
-      ETCD_PORT: 2379
-      MYSQL_HOST: mysql
-      MYSQL_PORT: 3306
-    networks:
-      - coderhub-network
-
-  image-service:
-    build:
-      context: ..
-      dockerfile: ./rpc/Image/Dockerfile
-    container_name: image-service
-    depends_on:
-      - mysql
-      - redis
-      - etcd
-      - user-service
-      - articles-service
-      - minio
-    networks:
-      - coderhub-network
-    healthcheck:
-      test: ["CMD", "nc", "-z", "localhost", "8888"] # 使用netcat检查端口是否开放
-      interval: 10s
-      retries: 10
-      start_period: 30s
-      timeout: 10s
-    restart: always
-    environment:
-      REDIS_HOST: redis
-      REDIS_PORT: 6379
-      ETCD_HOST: etcd
-      ETCD_PORT: 2379
-      MYSQL_HOST: mysql
-      MYSQL_PORT: 3306
-
-  image-relation-service:
-    build:
-      context: ..
-      dockerfile: ./rpc/ImageRelation/Dockerfile
-    container_name: image-relation-service
-    depends_on:
-      - mysql
-      - redis
-      - etcd
-      - image-service
-    networks:
-      - coderhub-network
-    healthcheck:
-      test: ["CMD", "nc", "-z", "localhost", "8888"] # 使用netcat检查端口是否开放
-      interval: 10s
-      retries: 10
-      start_period: 30s
-      timeout: 10s
-    restart: always
-    environment:
-      REDIS_HOST: redis
-      REDIS_PORT: 6379
-      ETCD_HOST: etcd
-      ETCD_PORT: 2379
-      MYSQL_HOST: mysql
-      MYSQL_PORT: 3306
-
-  comment-service:
-    build:
-      context: ..
-      dockerfile: ./rpc/TechSphere/Comment/Dockerfile
-    container_name: comment-service
-    depends_on:
-      - mysql
-      - redis
-      - etcd
-      - user-service
-      - articles-service
-      - image-service
-      - image-relation-service
-    networks:
-      - coderhub-network
-    healthcheck:
-      test: ["CMD", "nc", "-z", "localhost", "8888"] # 使用netcat检查端口是否开放
-      interval: 10s
-      retries: 10
-      start_period: 30s
-      timeout: 10s
-    restart: always
-    environment:
-      REDIS_HOST: redis
-      REDIS_PORT: 6379
-      ETCD_HOST: etcd
-      ETCD_PORT: 2379
-      MYSQL_HOST: mysql
-      MYSQL_PORT: 3306
-
-  user-follow-service:
-    build:
-      context: ..
-      dockerfile: ./rpc/UserFollow/Dockerfile
-    container_name: user-follow-service
-    depends_on:
-      - mysql
-      - redis
-      - etcd
-      - user-service
-    networks:
-      - coderhub-network
-    healthcheck:
-      test: [ "CMD", "nc", "-z", "localhost", "8888" ] # 使用netcat检查端口是否开放
-      interval: 10s
-      retries: 10
-      start_period: 30s
-      timeout: 10s
-    restart: always
-    environment:
-      REDIS_HOST: redis
-      REDIS_PORT: 6379
-      ETCD_HOST: etcd
-      ETCD_PORT: 2379
-      MYSQL_HOST: mysql
-      MYSQL_PORT: 3306
-
-  academic-navigator-service:
-    build:
-      context: ..
-      dockerfile: ./rpc/TechSphere/AcademicNavigator/Dockerfile
-    container_name: academic-navigator-service
-    depends_on:
-      - mysql
-      - redis
-      - etcd
-      - user-service
-    networks:
-      - coderhub-network
     healthcheck:
       test: ["CMD", "nc", "-z", "localhost", "8888"] # 使用netcat检查端口是否开放
       interval: 10s

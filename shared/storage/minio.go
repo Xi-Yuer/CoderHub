@@ -97,7 +97,7 @@ func (m *Minio) UploadFile(bucketName, objectName string, reader io.Reader, obje
 		return minio.UploadInfo{}, err
 	}
 	if !exists {
-		m.CreateBucket(bucketName)
+		_ = m.CreateBucket(bucketName)
 	}
 	return m.Client.PutObject(context.Background(), bucketName, objectName, reader, objectSize, minio.PutObjectOptions{ContentType: contentType})
 }
@@ -119,6 +119,8 @@ func (m *Minio) GetFileURL(bucketName, objectName string) (string, error) {
 
 // ImageInfo 图片信息结构体
 type ImageInfo struct {
+	BucketName   string `json:"bucket_name"`   // 桶名
+	ObjectName   string `json:"object_name"`   // 对象名
 	FileName     string `json:"file_name"`     // 文件名
 	Width        int    `json:"width"`         // 图片宽度
 	Height       int    `json:"height"`        // 图片高度
@@ -135,7 +137,9 @@ func (m *Minio) GetImageInfo(bucketName, objectName string) (*ImageInfo, error) 
 	if err != nil {
 		return nil, err
 	}
-	defer obj.Close()
+	defer func(obj *minio.Object) {
+		_ = obj.Close()
+	}(obj)
 
 	// 获取图片信息
 	stat, err := obj.Stat()
@@ -160,6 +164,8 @@ func (m *Minio) GetImageInfo(bucketName, objectName string) (*ImageInfo, error) 
 	thumbnailURL, _ := m.GetFileURL(bucketName, thumbnailName)
 
 	return &ImageInfo{
+		BucketName:   bucketName,
+		ObjectName:   objectName,
 		FileName:     filepath.Base(objectName),
 		Width:        img.Width,
 		Height:       img.Height,
@@ -221,7 +227,11 @@ func (m *Minio) UploadImageWithThumbnail(bucketName, objectName string, reader i
 	}
 
 	return ImageInfo{
+		BucketName:   bucketName,
+		ObjectName:   objectName,
 		FileName:     filepath.Base(objectName),
+		Width:        0,
+		Height:       0,
 		URL:          originalURL,
 		ThumbnailURL: thumbnailURL,
 		Size:         objectSize,
@@ -265,6 +275,8 @@ func (m *Minio) generateThumbnail(imageData []byte, width uint, contentType stri
 
 // FileInfo 文件信息结构体
 type FileInfo struct {
+	BucketName  string `json:"bucket_name"`  // 桶名
+	ObjectName  string `json:"object_name"`  // 对象名
 	FileName    string `json:"file_name"`    // 文件名
 	URL         string `json:"url"`          // 文件URL
 	Size        int64  `json:"size"`         // 文件大小
@@ -286,6 +298,8 @@ func (m *Minio) UploadFileWithInfo(bucketName, objectName string, reader io.Read
 	}
 
 	return FileInfo{
+		BucketName:  bucketName,
+		ObjectName:  objectName,
 		FileName:    filepath.Base(objectName),
 		URL:         fileURL,
 		Size:        objectSize,

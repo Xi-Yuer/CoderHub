@@ -87,9 +87,9 @@ func (r *commentRepository) ListByArticleID(ctx context.Context, articleID int64
 	fmt.Println("页码: ", page)
 	fmt.Println("每页大小: ", pageSize)
 	// 查询顶级评论
-	r.DB.WithContext(ctx).Where("article_id = ? AND root_id = 0", articleID).Order("created_at ASC").Limit(int(pageSize)).Offset(int((page - 1) * pageSize)).Find(&comments)
+	r.DB.WithContext(ctx).Where("entity_id = ? AND root_id = 0", articleID).Order("created_at ASC").Limit(int(pageSize)).Offset(int((page - 1) * pageSize)).Find(&comments)
 	// 查询评论总数
-	r.DB.WithContext(ctx).Model(&model.Comment{}).Where("article_id = ?", articleID).Count(&total)
+	r.DB.WithContext(ctx).Model(&model.Comment{}).Where("entity_id = ?", articleID).Count(&total)
 	// 构建树形结构并获取回复数量
 	for i := range comments {
 		if comments[i].RootID == 0 {
@@ -133,7 +133,7 @@ func (r *commentRepository) UpdateByID(ctx context.Context, id int64, comment *m
 // CountByArticleID 获取文章评论数
 func (r *commentRepository) CountByArticleID(ctx context.Context, articleID int64) (int64, error) {
 	var count int64
-	if err := r.DB.WithContext(ctx).Model(&model.Comment{}).Where("article_id = ?", articleID).Count(&count).Error; err != nil {
+	if err := r.DB.WithContext(ctx).Model(&model.Comment{}).Where("entity_id = ?", articleID).Count(&count).Error; err != nil {
 		return 0, err
 	}
 	return count, nil

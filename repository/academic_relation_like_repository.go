@@ -25,22 +25,22 @@ func NewAcademicRelationLikeRepositoryImpl(db *gorm.DB) *AcademicRelationLikeRep
 	}
 }
 
-// 创建学术关系点赞
+// AddAcademicRelationLike 创建学术关系点赞
 func (r *AcademicRelationLikeRepositoryImpl) AddAcademicRelationLike(ctx context.Context, academicRelationLike *model.AcademicRelationLike) error {
 	like := r.GetAcademicRelationLike(ctx, academicRelationLike)
-	if ! like {
+	if !like {
 		return r.DB.Create(academicRelationLike).Error
 	} else {
 		return r.DB.Where("id = ? AND user_id = ?", academicRelationLike.AcademicNavigatorID, academicRelationLike.UserID).Delete(&model.AcademicRelationLike{}).Error
 	}
 }
 
-// 删除学术关系点赞
+// DeleteAcademicRelationLike 删除学术关系点赞
 func (r *AcademicRelationLikeRepositoryImpl) DeleteAcademicRelationLike(ctx context.Context, academicRelationLike *model.AcademicRelationLike) error {
 	return r.DB.Delete(&model.AcademicRelationLike{}).Where("id = ? AND user_id = ?", academicRelationLike.AcademicNavigatorID, academicRelationLike.UserID).Error
 }
 
-// 是否点赞
+// GetAcademicRelationLike 是否点赞
 func (r *AcademicRelationLikeRepositoryImpl) GetAcademicRelationLike(ctx context.Context, academicRelationLike *model.AcademicRelationLike) bool {
 	var count int64
 	err := r.DB.Model(&model.AcademicRelationLike{}).Where("id = ? AND user_id = ?", academicRelationLike.AcademicNavigatorID, academicRelationLike.UserID).Count(&count).Error
@@ -50,14 +50,14 @@ func (r *AcademicRelationLikeRepositoryImpl) GetAcademicRelationLike(ctx context
 	return count > 0
 }
 
-// 获取学术关系点赞数量
+// GetAcademicRelationLikeCount 获取学术关系点赞数量
 func (r *AcademicRelationLikeRepositoryImpl) GetAcademicRelationLikeCount(ctx context.Context, academicRelationLike *model.AcademicRelationLike) (int64, error) {
 	var count int64
 	err := r.DB.Model(&model.AcademicRelationLike{}).Where("id = ?", academicRelationLike.AcademicNavigatorID).Count(&count).Error
 	return count, err
 }
 
-// 批量获取学术关系点赞数量
+// BatchGetAcademicRelationLikeCount 批量获取学术关系点赞数量
 func (r *AcademicRelationLikeRepositoryImpl) BatchGetAcademicRelationLikeCount(ctx context.Context, IDs []int64) (map[int64]int64, error) {
 	academicRelationLikes := make([]model.AcademicRelationLike, 0)
 	err := r.DB.Where("id IN (?)", IDs).Find(&academicRelationLikes).Error

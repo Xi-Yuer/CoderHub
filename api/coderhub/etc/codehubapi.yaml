@@ -1,0 +1,46 @@
+Name: coderhubAPI
+Host: 0.0.0.0
+Port: 8888
+Auth:
+  AccessSecret: secret_key
+  AccessExpire: 86400
+UserService:
+  Etcd:
+    Hosts:
+      - etcd:2379
+    Key: coderhub.rpc
+ImageAuthService:
+  Etcd:
+    Hosts:
+      - etcd:2379
+    Key: coderhub.rpc
+ArticlesService:
+  Etcd:
+    Hosts:
+      - etcd:2379
+    Key: coderhub.rpc
+AcademicService:
+  Etcd:
+    Hosts:
+      - etcd:2379
+    Key: coderhub.rpc
+UserFollowService:
+  Etcd:
+    Hosts:
+      - etcd:2379
+    Key: coderhub.rpc
+ImagesService:
+  Etcd:
+    Hosts:
+      - etcd:2379
+    Key: coderhub.rpc
+CommentService:
+  Etcd:
+    Hosts:
+      - etcd:2379
+    Key: coderhub.rpc
+QuestionBankService:
+  Etcd:
+    Hosts:
+      - etcd:2379
+    Key: coderhub.rpc

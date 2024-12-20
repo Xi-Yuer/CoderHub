@@ -10,7 +10,7 @@ type Validator struct {
 	errors []string
 }
 
-func New() *Validator {
+func NewValidator() *Validator {
 	return &Validator{errors: make([]string, 0)}
 }
 

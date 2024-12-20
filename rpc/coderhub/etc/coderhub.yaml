@@ -1,0 +1,15 @@
+Name: coderhub.rpc
+ListenOn: 0.0.0.0:8080
+Etcd:
+  Hosts:
+    - etcd:2379
+  Key: coderhub.rpc
+Minio:
+  Endpoint: minio:9000
+  AccessKey: minioadmin
+  SecretKey: minioadmin
+  Bucket: coderhub
+  Region: us-east-1
+  ThumbnailBucket: coderhub-thumbnail
+  ThumbnailWidth: 200
+  UseSSL: false

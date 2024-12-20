@@ -105,7 +105,10 @@ func (r *UserRepositoryImpl) FindOneByEmail(email string) (*model.User, error) {
 
 func (r *UserRepositoryImpl) BatchGetUserByID(ids []int64) ([]*model.User, error) {
 	var users []*model.User
-	return users, r.DB.Where("id IN (?)", ids).Find(&users).Error
+	fmt.Println("repository_ids", ids)
+	err := r.DB.Where("id IN (?)", ids).Find(&users).Error
+	fmt.Println("repository_users_length", len(users))
+	return users, err
 }
 
 func (r *UserRepositoryImpl) UpdateUser(user *model.User) error {
@@ -116,8 +119,9 @@ func (r *UserRepositoryImpl) UpdateUser(user *model.User) error {
 			return fmt.Errorf("获取用户失败: %w", err)
 		}
 
-		if err := tx.Save(user).Error; err != nil {
-			return fmt.Errorf("更新用户失败: %w", err)
+		updates := tx.Model(&model.User{}).Where("id = ?", user.ID).Updates(user)
+		if err := updates.Error; err != nil {
+			return err
 		}
 		// 清理所有相关缓存
 		keys := []string{

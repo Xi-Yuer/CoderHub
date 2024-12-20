@@ -53,9 +53,6 @@ func (r *imageRepository) GetByID(ctx context.Context, id int64) (*model.Image, 
 	var image model.Image
 	err := r.DB.WithContext(ctx).First(&image, "id = ?", id).Error
 	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, ErrImageNotFound
-		}
 		return nil, err
 	}
 	return &image, nil
