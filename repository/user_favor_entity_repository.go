@@ -12,6 +12,7 @@ type UserFavorEntityRepository interface {
 	Create(ctx context.Context, userFavorEntity *model.UserFavor) error
 	Delete(ctx context.Context, userFavorEntity *model.UserFavor) error
 	GetList(ctx context.Context, userFavorEntity *model.UserFavor, page, pageSize int) ([]*model.UserFavor, int64, error)
+	BatchGetUserFavorEntity(ctx context.Context, entityIDs []int64, userID int64) (map[int64]bool, error)
 }
 
 type UserFavorEntityRepositoryImpl struct {
@@ -54,4 +55,18 @@ func (r *UserFavorEntityRepositoryImpl) GetList(ctx context.Context, userFavorEn
 	fmt.Println("userFavorEntity.EntityType", userFavorEntity.EntityType)
 	err := r.DB.WithContext(ctx).Model(&model.UserFavor{}).Where("user_id = ? AND favor_fold_id = ? AND entity_type = ?", userFavorEntity.UserId, userFavorEntity.FavorFoldId, userFavorEntity.EntityType).Limit(pageSize).Offset((page - 1) * pageSize).Count(&total).Find(&userFavorEntities).Error
 	return userFavorEntities, total, err
+}
+
+// BatchGetUserFavorEntity 批量获取实体是否被用户收藏
+func (r *UserFavorEntityRepositoryImpl) BatchGetUserFavorEntity(ctx context.Context, entityIDs []int64, userID int64) (map[int64]bool, error) {
+	var userFavorEntities []*model.UserFavor
+	err := r.DB.WithContext(ctx).Model(&model.UserFavor{}).Where("user_id = ? AND entity_id IN ?", userID, entityIDs).Find(&userFavorEntities).Error
+	if err != nil {
+		return nil, err
+	}
+	userFavorEntityMap := make(map[int64]bool)
+	for _, userFavorEntity := range userFavorEntities {
+		userFavorEntityMap[userFavorEntity.EntityId] = true
+	}
+	return userFavorEntityMap, nil
 }

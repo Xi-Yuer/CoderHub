@@ -141,6 +141,7 @@ func (l *GetArticlesLogic) convertToArticleType(article *coderhub.GetArticleResp
 			ViewCount:    article.Article.ViewCount,
 			LikeCount:    article.Article.LikeCount,
 			IsLiked:      article.Article.IsLicked,
+			IsFavorited:  article.Article.IsFavorite,
 			CommentCount: article.Article.CommentCount,
 			Status:       article.Article.Status,
 			CreatedAt:    article.Article.CreatedAt,

@@ -17,6 +17,7 @@ type (
 	AcademicNavigator                  = coderhub.AcademicNavigator
 	AddAcademicNavigatorRequest        = coderhub.AddAcademicNavigatorRequest
 	Article                            = coderhub.Article
+	ArticleAdditionalInfo              = coderhub.ArticleAdditionalInfo
 	AuthorizeRequest                   = coderhub.AuthorizeRequest
 	AuthorizeResponse                  = coderhub.AuthorizeResponse
 	BatchCreateRelationRequest         = coderhub.BatchCreateRelationRequest
@@ -158,6 +159,7 @@ type (
 
 	ArticleService interface {
 		GetArticle(ctx context.Context, in *GetArticleRequest, opts ...grpc.CallOption) (*GetArticleResponse, error)
+		GetArticlesExtra(ctx context.Context, in *GetArticleRequest, opts ...grpc.CallOption) (*ArticleAdditionalInfo, error)
 		ListRecommendedArticles(ctx context.Context, in *ListRecommendedArticlesRequest, opts ...grpc.CallOption) (*ListRecommendedArticlesResponse, error)
 		ListArticles(ctx context.Context, in *GetArticlesRequest, opts ...grpc.CallOption) (*GetArticlesResponse, error)
 		CreateArticle(ctx context.Context, in *CreateArticleRequest, opts ...grpc.CallOption) (*CreateArticleResponse, error)
@@ -180,6 +182,11 @@ func NewArticleService(cli zrpc.Client) ArticleService {
 func (m *defaultArticleService) GetArticle(ctx context.Context, in *GetArticleRequest, opts ...grpc.CallOption) (*GetArticleResponse, error) {
 	client := coderhub.NewArticleServiceClient(m.cli.Conn())
 	return client.GetArticle(ctx, in, opts...)
+}
+
+func (m *defaultArticleService) GetArticlesExtra(ctx context.Context, in *GetArticleRequest, opts ...grpc.CallOption) (*ArticleAdditionalInfo, error) {
+	client := coderhub.NewArticleServiceClient(m.cli.Conn())
+	return client.GetArticlesExtra(ctx, in, opts...)
 }
 
 func (m *defaultArticleService) ListRecommendedArticles(ctx context.Context, in *ListRecommendedArticlesRequest, opts ...grpc.CallOption) (*ListRecommendedArticlesResponse, error) {

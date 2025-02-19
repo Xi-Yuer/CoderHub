@@ -112,6 +112,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Handler: articles_public.GetArticleHandler(serverCtx),
 			},
 			{
+				// 获取文章附加信息
+				Method:  http.MethodGet,
+				Path:    "/extra/:id",
+				Handler: articles_public.GetArticleExtraHandler(serverCtx),
+			},
+			{
 				// 获取文章列表
 				Method:  http.MethodGet,
 				Path:    "/list",

@@ -31,8 +31,7 @@ func (l *GetArticleLogic) GetArticle(req *types.GetArticleReq) (resp *types.GetA
 	if err := utils.NewValidator().ArticleID(utils.String2Int(req.Id)).Check(); err != nil {
 		return l.errorResp(err), nil
 	}
-
-	article, err := l.getArticle(utils.String2Int(req.Id), utils.String2Int(req.UserID))
+	article, err := l.getArticle(utils.String2Int(req.Id), utils.String2Int(req.RequestUserID))
 	if err != nil {
 		return l.errorResp(err), nil
 	}
@@ -105,6 +104,7 @@ func (l *GetArticleLogic) convertToArticleType(article *coderhub.GetArticleRespo
 			ViewCount:    article.Article.ViewCount,
 			LikeCount:    article.Article.LikeCount,
 			IsLiked:      article.Article.IsLicked,
+			IsFavorited:  article.Article.IsFavorite,
 			CommentCount: article.Article.CommentCount,
 			Status:       article.Article.Status,
 			CreatedAt:    article.Article.CreatedAt,

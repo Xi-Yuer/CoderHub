@@ -426,14 +426,15 @@ type (
 		ViewCount int64 `json:"viewCount" form:"viewCount"`          // 阅读次数
 		LikeCount int64 `json:"likeCount" form:"likeCount"`          // 点赞次数
 		IsLiked bool `json:"isLiked" form:"isLiked"`                 // 是否已点赞
+		IsFavorited bool `json:"isFavorited" form:"isFavorited"`
 		CommentCount int64 `json:"commentCount" form:"commentCount"` // 评论数
 		Status string `json:"status" form:"status"`                  // 文章状态
 		CreatedAt int64 `json:"createdAt" form:"createdAt"`          // 创建时间
 		UpdatedAt int64 `json:"updatedAt" form:"updatedAt"`          // 更新时间
 	}
 	GetArticleReq {
-		Id string `path:"id"`                   // 文章 ID
-		UserID string `form:"user_id,optional"` // 用户 ID
+		Id string `path:"id"` // 文章 ID
+		RequestUserID string `header:"request-user-id,optional"`
 	}
 	GetArticle {
 		Article *Article `json:"article"` // 文章详情
@@ -452,6 +453,18 @@ type (
 	GetArticleResp {
 		Response
 		Data *GetArticle `json:"data"` // 文章详情
+	}
+	ArticleExtra {
+		ID string `json:"id"`
+		ViewCount int64 `json:"view_count"`
+		LikeCount int64 `json:"like_count"`
+		CommentCount int64 `json:"comment_count"`
+		IsLiked bool `json:"is_liked"`
+		IsFavorited bool `json:"is_favorited"`
+	}
+	GetArticleExtraResp {
+		Response
+		Data *ArticleExtra `json:"data"`
 	}
 	CreateArticleReq {
 		Type string `json:"type,options=article|micro_post"`                    // 内容类型
@@ -635,10 +648,10 @@ type (
 	}
 		// 获取收藏夹列表
 	GetFavorFoldListReq {
-		UserId string `json:"user_id"`                         // 用户 ID
-		RequestUserId string `json:"request_user_id,optional"` // 请求用户 ID
-		Page int32 `json:"page"`                               // 页码
-		PageSize int32 `json:"page_size"`                      //requestUserId 每页数量
+		UserId string `form:"user_id"`                           // 用户 ID
+		RequestUserId string `header:"request-user-id,optional"` // 请求用户 ID
+		Page int32 `form:"page"`                                 // 页码
+		PageSize int32 `form:"page_size"`                        // 每页数量
 	}
 		// 收藏夹
 	FavorFold {
@@ -1024,6 +1037,12 @@ service CodeHubAPI {
 	)
 	@handler GetArticle
 	get /detail/:id (GetArticleReq) returns (GetArticleResp)
+
+	@doc(
+		summary: "获取文章附加信息"
+	)
+	@handler GetArticleExtra
+	get /extra/:id (GetArticleReq) returns (GetArticleExtraResp)
 
 	@doc(
 		summary: "获取文章列表"

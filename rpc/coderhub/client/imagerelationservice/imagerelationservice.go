@@ -17,6 +17,7 @@ type (
 	AcademicNavigator                  = coderhub.AcademicNavigator
 	AddAcademicNavigatorRequest        = coderhub.AddAcademicNavigatorRequest
 	Article                            = coderhub.Article
+	ArticleAdditionalInfo              = coderhub.ArticleAdditionalInfo
 	AuthorizeRequest                   = coderhub.AuthorizeRequest
 	AuthorizeResponse                  = coderhub.AuthorizeResponse
 	BatchCreateRelationRequest         = coderhub.BatchCreateRelationRequest

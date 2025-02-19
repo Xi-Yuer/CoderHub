@@ -1133,6 +1133,7 @@ var AcademicNavigatorService_ServiceDesc = grpc.ServiceDesc{
 
 const (
 	ArticleService_GetArticle_FullMethodName              = "/coderhub.ArticleService/GetArticle"
+	ArticleService_GetArticlesExtra_FullMethodName        = "/coderhub.ArticleService/GetArticlesExtra"
 	ArticleService_ListRecommendedArticles_FullMethodName = "/coderhub.ArticleService/ListRecommendedArticles"
 	ArticleService_ListArticles_FullMethodName            = "/coderhub.ArticleService/ListArticles"
 	ArticleService_CreateArticle_FullMethodName           = "/coderhub.ArticleService/CreateArticle"
@@ -1148,6 +1149,7 @@ const (
 // RPC 服务定义
 type ArticleServiceClient interface {
 	GetArticle(ctx context.Context, in *GetArticleRequest, opts ...grpc.CallOption) (*GetArticleResponse, error)
+	GetArticlesExtra(ctx context.Context, in *GetArticleRequest, opts ...grpc.CallOption) (*ArticleAdditionalInfo, error)
 	ListRecommendedArticles(ctx context.Context, in *ListRecommendedArticlesRequest, opts ...grpc.CallOption) (*ListRecommendedArticlesResponse, error)
 	ListArticles(ctx context.Context, in *GetArticlesRequest, opts ...grpc.CallOption) (*GetArticlesResponse, error)
 	CreateArticle(ctx context.Context, in *CreateArticleRequest, opts ...grpc.CallOption) (*CreateArticleResponse, error)
@@ -1168,6 +1170,16 @@ func (c *articleServiceClient) GetArticle(ctx context.Context, in *GetArticleReq
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetArticleResponse)
 	err := c.cc.Invoke(ctx, ArticleService_GetArticle_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *articleServiceClient) GetArticlesExtra(ctx context.Context, in *GetArticleRequest, opts ...grpc.CallOption) (*ArticleAdditionalInfo, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ArticleAdditionalInfo)
+	err := c.cc.Invoke(ctx, ArticleService_GetArticlesExtra_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1241,6 +1253,7 @@ func (c *articleServiceClient) DeleteArticle(ctx context.Context, in *DeleteArti
 // RPC 服务定义
 type ArticleServiceServer interface {
 	GetArticle(context.Context, *GetArticleRequest) (*GetArticleResponse, error)
+	GetArticlesExtra(context.Context, *GetArticleRequest) (*ArticleAdditionalInfo, error)
 	ListRecommendedArticles(context.Context, *ListRecommendedArticlesRequest) (*ListRecommendedArticlesResponse, error)
 	ListArticles(context.Context, *GetArticlesRequest) (*GetArticlesResponse, error)
 	CreateArticle(context.Context, *CreateArticleRequest) (*CreateArticleResponse, error)
@@ -1259,6 +1272,9 @@ type UnimplementedArticleServiceServer struct{}
 
 func (UnimplementedArticleServiceServer) GetArticle(context.Context, *GetArticleRequest) (*GetArticleResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetArticle not implemented")
+}
+func (UnimplementedArticleServiceServer) GetArticlesExtra(context.Context, *GetArticleRequest) (*ArticleAdditionalInfo, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetArticlesExtra not implemented")
 }
 func (UnimplementedArticleServiceServer) ListRecommendedArticles(context.Context, *ListRecommendedArticlesRequest) (*ListRecommendedArticlesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListRecommendedArticles not implemented")
@@ -1313,6 +1329,24 @@ func _ArticleService_GetArticle_Handler(srv interface{}, ctx context.Context, de
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ArticleServiceServer).GetArticle(ctx, req.(*GetArticleRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ArticleService_GetArticlesExtra_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetArticleRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ArticleServiceServer).GetArticlesExtra(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ArticleService_GetArticlesExtra_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ArticleServiceServer).GetArticlesExtra(ctx, req.(*GetArticleRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1435,6 +1469,10 @@ var ArticleService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetArticle",
 			Handler:    _ArticleService_GetArticle_Handler,
+		},
+		{
+			MethodName: "GetArticlesExtra",
+			Handler:    _ArticleService_GetArticlesExtra_Handler,
 		},
 		{
 			MethodName: "ListRecommendedArticles",

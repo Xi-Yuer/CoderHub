@@ -33,22 +33,32 @@ type AddAcademicNavigatorResp struct {
 }
 
 type Article struct {
-	Id           string   `json:"id" form:"id"`                     // 主键 ID
-	Type         string   `json:"type" form:"type"`                 // 内容类型：长文或短文
-	Title        string   `json:"title" form:"title"`               // 标题
-	Content      string   `json:"content" form:"content"`           // 内容
-	Summary      string   `json:"summary" form:"summary"`           // 摘要
-	ImageUrls    []string `json:"imageUrls" form:"imageUrls"`       // 图片 URL 列表
-	CoverImage   *string  `json:"coverImage" form:"coverImage"`     // 封面图片 URL
-	AuthorId     string   `json:"authorId" form:"authorId"`         // 作者 ID
-	Tags         []string `json:"tags" form:"tags"`                 // 标签列表
-	ViewCount    int64    `json:"viewCount" form:"viewCount"`       // 阅读次数
-	LikeCount    int64    `json:"likeCount" form:"likeCount"`       // 点赞次数
-	IsLiked      bool     `json:"isLiked" form:"isLiked"`           // 是否已点赞
+	Id           string   `json:"id" form:"id"`                 // 主键 ID
+	Type         string   `json:"type" form:"type"`             // 内容类型：长文或短文
+	Title        string   `json:"title" form:"title"`           // 标题
+	Content      string   `json:"content" form:"content"`       // 内容
+	Summary      string   `json:"summary" form:"summary"`       // 摘要
+	ImageUrls    []string `json:"imageUrls" form:"imageUrls"`   // 图片 URL 列表
+	CoverImage   *string  `json:"coverImage" form:"coverImage"` // 封面图片 URL
+	AuthorId     string   `json:"authorId" form:"authorId"`     // 作者 ID
+	Tags         []string `json:"tags" form:"tags"`             // 标签列表
+	ViewCount    int64    `json:"viewCount" form:"viewCount"`   // 阅读次数
+	LikeCount    int64    `json:"likeCount" form:"likeCount"`   // 点赞次数
+	IsLiked      bool     `json:"isLiked" form:"isLiked"`       // 是否已点赞
+	IsFavorited  bool     `json:"isFavorited" form:"isFavorited"`
 	CommentCount int64    `json:"commentCount" form:"commentCount"` // 评论数
 	Status       string   `json:"status" form:"status"`             // 文章状态
 	CreatedAt    int64    `json:"createdAt" form:"createdAt"`       // 创建时间
 	UpdatedAt    int64    `json:"updatedAt" form:"updatedAt"`       // 更新时间
+}
+
+type ArticleExtra struct {
+	ID           string `json:"id"`
+	ViewCount    int64  `json:"view_count"`
+	LikeCount    int64  `json:"like_count"`
+	CommentCount int64  `json:"comment_count"`
+	IsLiked      bool   `json:"is_liked"`
+	IsFavorited  bool   `json:"is_favorited"`
 }
 
 type CancelLikeAcademicNavigatorReq struct {
@@ -346,9 +356,14 @@ type GetArticle struct {
 	Author  *UserInfo `json:"author"`  // 作者信息
 }
 
+type GetArticleExtraResp struct {
+	Response
+	Data *ArticleExtra `json:"data"`
+}
+
 type GetArticleReq struct {
-	Id     string `path:"id"`               // 文章 ID
-	UserID string `form:"user_id,optional"` // 用户 ID
+	Id            string `path:"id"` // 文章 ID
+	RequestUserID string `header:"request-user-id,optional"`
 }
 
 type GetArticleResp struct {
@@ -421,10 +436,10 @@ type GetFansListResp struct {
 }
 
 type GetFavorFoldListReq struct {
-	UserId        string `json:"user_id"`                  // 用户 ID
-	RequestUserId string `json:"request_user_id,optional"` // 请求用户 ID
-	Page          int32  `json:"page"`                     // 页码
-	PageSize      int32  `json:"page_size"`                //requestUserId 每页数量
+	UserId        string `form:"user_id"`                    // 用户 ID
+	RequestUserId string `header:"request-user-id,optional"` // 请求用户 ID
+	Page          int32  `form:"page"`                       // 页码
+	PageSize      int32  `form:"page_size"`                  // 每页数量
 }
 
 type GetFavorFoldListResp struct {

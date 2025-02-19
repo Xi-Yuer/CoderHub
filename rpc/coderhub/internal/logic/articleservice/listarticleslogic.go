@@ -100,6 +100,9 @@ func (l *ListArticlesLogic) ListArticles(in *coderhub.GetArticlesRequest) (*code
 	// 获取文章是否被用户点赞
 	isUserLiked, err := l.svcCtx.ArticlesRelationLikeRepository.BatchArticlesHasBeenUserLiked(l.ctx, in.Ids, in.UserId)
 
+	// 获取文章是否被用户收藏
+	isUserFavorite, err := l.svcCtx.UserFavorEntityRepository.BatchGetUserFavorEntity(l.ctx, in.Ids, in.UserId)
+
 	// 构造响应
 	response := make([]*coderhub.GetArticleResponse, 0)
 	authorMap := make(map[int64]*coderhub.UserInfo)
@@ -179,6 +182,7 @@ func (l *ListArticlesLogic) ListArticles(in *coderhub.GetArticlesRequest) (*code
 				CreatedAt:    article.CreatedAt.Unix(),
 				UpdatedAt:    article.UpdatedAt.Unix(),
 				IsLicked:     isUserLiked[article.ID],
+				IsFavorite:   isUserFavorite[article.ID],
 			},
 			Author: authorMap[article.AuthorID],
 		})

@@ -295,18 +295,45 @@
             "type": "string"
           },
           {
-            "name": "user_id",
-            "description": " 用户 ID",
-            "in": "query",
+            "name": "request-user-id",
+            "in": "header",
             "required": false,
             "type": "string"
           }
         ],
         "tags": [
           "articles_public"
+        ]
+      }
+    },
+    "/api/articles/extra/{id}": {
+      "get": {
+        "summary": "获取文章附加信息",
+        "operationId": "GetArticleExtra",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/GetArticleExtraResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "request-user-id",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          }
         ],
-        "consumes": [
-          "multipart/form-data"
+        "tags": [
+          "articles_public"
         ]
       }
     },
@@ -1009,17 +1036,17 @@
         },
         "parameters": [
           {
+            "name": "request-user-id",
+            "description": " 请求用户 ID",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          },
+          {
             "name": "user_id",
             "description": " 用户 ID",
             "in": "query",
             "required": true,
-            "type": "string"
-          },
-          {
-            "name": "request_user_id",
-            "description": " 请求用户 ID",
-            "in": "query",
-            "required": false,
             "type": "string"
           },
           {
@@ -1032,7 +1059,7 @@
           },
           {
             "name": "page_size",
-            "description": "requestUserId 每页数量",
+            "description": " 每页数量",
             "in": "query",
             "required": true,
             "type": "integer",
@@ -1041,6 +1068,9 @@
         ],
         "tags": [
           "favorites_public"
+        ],
+        "consumes": [
+          "multipart/form-data"
         ]
       }
     },
@@ -2192,6 +2222,10 @@
           "format": "boolean",
           "description": " 是否已点赞"
         },
+        "isFavorited": {
+          "type": "boolean",
+          "format": "boolean"
+        },
         "commentCount": {
           "type": "integer",
           "format": "int64",
@@ -2226,10 +2260,48 @@
         "viewCount",
         "likeCount",
         "isLiked",
+        "isFavorited",
         "commentCount",
         "status",
         "createdAt",
         "updatedAt"
+      ]
+    },
+    "ArticleExtra": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "view_count": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "like_count": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "comment_count": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "is_liked": {
+          "type": "boolean",
+          "format": "boolean"
+        },
+        "is_favorited": {
+          "type": "boolean",
+          "format": "boolean"
+        }
+      },
+      "title": "ArticleExtra",
+      "required": [
+        "id",
+        "view_count",
+        "like_count",
+        "comment_count",
+        "is_liked",
+        "is_favorited"
       ]
     },
     "CancelLikeAcademicNavigatorReq": {
@@ -3388,14 +3460,29 @@
         "author"
       ]
     },
-    "GetArticleReq": {
+    "GetArticleExtraResp": {
       "type": "object",
       "properties": {
-        "user_id": {
+        "code": {
+          "type": "integer",
+          "format": "int32",
+          "description": " 状态码"
+        },
+        "message": {
           "type": "string",
-          "description": " 用户 ID"
+          "description": " 提示信息"
+        },
+        "data": {
+          "$ref": "#/definitions/ArticleExtra"
         }
       },
+      "title": "GetArticleExtraResp",
+      "required": [
+        "data"
+      ]
+    },
+    "GetArticleReq": {
+      "type": "object",
       "title": "GetArticleReq"
     },
     "GetArticleResp": {
@@ -3683,10 +3770,6 @@
           "type": "string",
           "description": " 用户 ID"
         },
-        "request_user_id": {
-          "type": "string",
-          "description": " 请求用户 ID"
-        },
         "page": {
           "type": "integer",
           "format": "int32",
@@ -3695,7 +3778,7 @@
         "page_size": {
           "type": "integer",
           "format": "int32",
-          "description": "requestUserId 每页数量"
+          "description": " 每页数量"
         }
       },
       "title": "GetFavorFoldListReq",

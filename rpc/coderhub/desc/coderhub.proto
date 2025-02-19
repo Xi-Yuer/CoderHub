@@ -312,6 +312,17 @@ message Article {
   int64 updated_at = 15;           // 更新时间
   int64 deleted_at = 16;           // 删除时间
   bool is_licked = 17;             // 当前用户是否已点赞
+  bool is_favorite = 18;           // 当前用户是否已收藏
+}
+
+// 文章附加信息
+message ArticleAdditionalInfo {
+  int64 id = 1;                     // 文章 ID
+  int64 view_count = 2;             // 阅读次数
+  int64 like_count = 3;             // 点赞次数
+  int64 comment_count = 4;          // 评论数
+  bool is_licked = 5;               // 当前用户是否已点赞
+  bool is_favorite = 6;             // 当前用户是否已收藏
 }
 
 // 请求文章详情
@@ -404,6 +415,7 @@ message DeleteArticleResponse {
 // RPC 服务定义
 service ArticleService {
   rpc GetArticle(GetArticleRequest) returns (GetArticleResponse);     // 获取文章详情
+  rpc GetArticlesExtra(GetArticleRequest) returns (ArticleAdditionalInfo); // 获取文章附加信息
   rpc ListRecommendedArticles(ListRecommendedArticlesRequest) returns (ListRecommendedArticlesResponse); // 获取推荐文章列表ids
   rpc ListArticles(GetArticlesRequest) returns (GetArticlesResponse); // 获取文章列表
   rpc CreateArticle(CreateArticleRequest) returns (CreateArticleResponse); // 创建文章

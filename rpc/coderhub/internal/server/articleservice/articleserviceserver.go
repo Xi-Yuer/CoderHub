@@ -28,6 +28,11 @@ func (s *ArticleServiceServer) GetArticle(ctx context.Context, in *coderhub.GetA
 	return l.GetArticle(in)
 }
 
+func (s *ArticleServiceServer) GetArticlesExtra(ctx context.Context, in *coderhub.GetArticleRequest) (*coderhub.ArticleAdditionalInfo, error) {
+	l := articleservicelogic.NewGetArticlesExtraLogic(ctx, s.svcCtx)
+	return l.GetArticlesExtra(in)
+}
+
 func (s *ArticleServiceServer) ListRecommendedArticles(ctx context.Context, in *coderhub.ListRecommendedArticlesRequest) (*coderhub.ListRecommendedArticlesResponse, error) {
 	l := articleservicelogic.NewListRecommendedArticlesLogic(ctx, s.svcCtx)
 	return l.ListRecommendedArticles(in)

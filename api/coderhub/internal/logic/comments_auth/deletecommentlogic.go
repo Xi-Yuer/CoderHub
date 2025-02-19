@@ -29,13 +29,17 @@ func NewDeleteCommentLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Del
 
 func (l *DeleteCommentLogic) DeleteComment(req *types.DeleteCommentReq) (resp *types.DeleteCommentResp, err error) {
 	// 权限校验
-	_, err = utils.GetUserID(l.ctx)
+	userID, err := utils.GetUserID(l.ctx)
+	if err != nil {
+		return nil, err
+	}
 	if err != nil {
 		return l.errorResp(err)
 	}
 
 	_, err = l.svcCtx.CommentService.DeleteComment(utils.SetUserMetaData(l.ctx), &commentservice.DeleteCommentRequest{
 		CommentId: utils.String2Int(req.CommentId),
+		UserId:    userID,
 	})
 	if err != nil {
 		return l.errorResp(err)
@@ -50,6 +54,7 @@ func (l *DeleteCommentLogic) successResp() (*types.DeleteCommentResp, error) {
 			Code:    conf.HttpCode.HttpStatusOK,
 			Message: conf.HttpMessage.MsgOK,
 		},
+		Data: true,
 	}, nil
 }
 
