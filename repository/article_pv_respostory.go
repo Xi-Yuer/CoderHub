@@ -129,9 +129,65 @@ func (r *ArticlePVRepositoryImpl) GetArticlePVByArticleID(articleID int64) (*mod
 }
 
 func (r *ArticlePVRepositoryImpl) GetArticlePVsByArticleIDs(articleIDs []int64) ([]*model.ArticlePV, error) {
-	var articlePVs []*model.ArticlePV
-	err := r.DB.Where("article_id IN (?)", articleIDs).Find(&articlePVs).Error
-	return articlePVs, err
+	// Step 1: 批量从 Redis 获取 PV 数据
+	keys := make([]string, len(articleIDs))
+	for i, articleID := range articleIDs {
+		keys[i] = fmt.Sprintf("%d", articleID)
+	}
+	// 批量获取
+	counts, err := r.Redis.HMGet("article:pv", keys...)
+	if err != nil {
+		return nil, err
+	}
+
+	// Step 2: 解析 Redis 数据并构建结果
+	result := make([]*model.ArticlePV, len(articleIDs))
+	var remainingIDs []int64
+	for i, articleID := range articleIDs {
+		// 检查 Redis 是否有该文章的 PV 数据
+		if count, ok := counts[i].(string); ok && count != "" {
+			countInt, err := strconv.ParseInt(count, 10, 64)
+			if err == nil {
+				result[i] = &model.ArticlePV{ArticleID: articleID, Count: countInt}
+			} else {
+				remainingIDs = append(remainingIDs, articleID)
+			}
+		} else {
+			remainingIDs = append(remainingIDs, articleID)
+		}
+	}
+
+	// Step 3: 对缺失的部分从数据库查询
+	if len(remainingIDs) > 0 {
+		var articlePVs []model.ArticlePV
+		err := r.DB.Where("article_id IN ?", remainingIDs).Find(&articlePVs).Error
+		if err != nil {
+			return nil, err
+		}
+
+		// 将查询结果填充到最终结果
+		for _, articlePV := range articlePVs {
+			for i, articleID := range articleIDs {
+				if articlePV.ArticleID == articleID {
+					result[i] = &articlePV
+					// 同时将数据库查询到的数据缓存到 Redis
+					err := r.Redis.HSet("article:pv", fmt.Sprintf("%d", articleID), articlePV.Count)
+					if err != nil {
+						return nil, err
+					}
+				}
+			}
+		}
+	}
+
+	// 填充默认值，若数据库中没有数据
+	for i, articleID := range articleIDs {
+		if result[i] == nil {
+			result[i] = &model.ArticlePV{ArticleID: articleID, Count: 0}
+		}
+	}
+
+	return result, nil
 }
 
 func (r *ArticlePVRepositoryImpl) SyncIncrementalPVToDB() error {

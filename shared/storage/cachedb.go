@@ -2,6 +2,7 @@ package storage
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"time"
 
@@ -23,6 +24,8 @@ type RedisDB interface {
 	Get(key string) (string, error)
 	GetWithContext(ctx context.Context, key string) (string, error)
 	Set(key string, value string) error
+	HSet(key string, field string, value interface{}) error
+	HMGet(key string, fields ...string) ([]interface{}, error)
 	SetWithTTL(key string, value string, expiration time.Duration) error
 	SetNX(key string, value string, expiration time.Duration) (bool, error)
 	Del(key ...string) error
@@ -90,7 +93,7 @@ func (r *RedisDBImpl) Get(key string) (string, error) {
 
 func (r *RedisDBImpl) GetWithContext(ctx context.Context, key string) (string, error) {
 	result, err := r.Client.Get(ctx, key).Result()
-	if err == redis.Nil {
+	if errors.Is(err, redis.Nil) {
 		return "", fmt.Errorf("key不存在: %s", key)
 	}
 	return result, err
@@ -98,6 +101,16 @@ func (r *RedisDBImpl) GetWithContext(ctx context.Context, key string) (string, e
 
 func (r *RedisDBImpl) Set(key string, value string) error {
 	return r.SetWithTTL(key, value, r.DefaultTTL)
+}
+
+func (r *RedisDBImpl) HSet(key string, field string, value interface{}) error {
+	ctx := context.Background()
+	return r.Client.HSet(ctx, key, field, value).Err()
+}
+
+func (r *RedisDBImpl) HMGet(key string, fields ...string) ([]interface{}, error) {
+	ctx := context.Background()
+	return r.Client.HMGet(ctx, key, fields...).Result()
 }
 
 func (r *RedisDBImpl) SetWithTTL(key string, value string, expiration time.Duration) error {

@@ -2,15 +2,14 @@ package articleservicelogic
 
 import (
 	"coderhub/model"
+	"coderhub/rpc/coderhub/coderhub"
 	imagerelationservicelogic "coderhub/rpc/coderhub/internal/logic/imagerelationservice"
+	"coderhub/rpc/coderhub/internal/svc"
 	"context"
 	"fmt"
-	"strings"
-
-	"coderhub/rpc/coderhub/coderhub"
-	"coderhub/rpc/coderhub/internal/svc"
-
 	"github.com/zeromicro/go-zero/core/logx"
+	"strings"
+	"sync"
 )
 
 type ListArticlesLogic struct {
@@ -33,78 +32,80 @@ func (l *ListArticlesLogic) ListArticles(in *coderhub.GetArticlesRequest) (*code
 		return nil, fmt.Errorf("文章 ID 列表不能为空")
 	}
 
-	// 获取文章列表
+	// 批量获取文章
 	articles, err := l.svcCtx.ArticleRepository.GetArticlesByIDs(in.Ids)
 	if err != nil {
 		l.Logger.Errorf("批量获取文章失败: %v", err)
 		return nil, fmt.Errorf("获取文章失败: %v", err)
 	}
-
 	if len(articles) == 0 {
 		return nil, fmt.Errorf("文章不存在")
 	}
 
+	// 使用 Goroutines 并行查询
+	var wg sync.WaitGroup
+	var contentImages, coverImages *coderhub.BatchGetImagesByEntityResponse
+	var likeCounts map[int64]int64
+	var articlePVs map[int64]int64
+	var commentCounts map[int64]int64
+	var authors []*model.User
+
+	wg.Add(3) // 添加 3 个 Goroutine
+
 	// 获取文章配图和封面图
-	batchGetImageService := imagerelationservicelogic.NewBatchGetImagesByEntityLogic(l.ctx, l.svcCtx)
-	contentImages, err := batchGetImageService.BatchGetImagesByEntity(&coderhub.BatchGetImagesByEntityRequest{
-		EntityIds:  in.Ids,
-		EntityType: model.ImageRelationArticleContent,
-	})
-	if err != nil {
-		l.Logger.Errorf("获取文章配图失败: %v", err)
-		return nil, fmt.Errorf("获取文章配图失败: %v", err)
-	}
-	coverImages, err := batchGetImageService.BatchGetImagesByEntity(&coderhub.BatchGetImagesByEntityRequest{
-		EntityIds:  in.Ids,
-		EntityType: model.ImageRelationArticleCover,
-	})
-	if err != nil {
-		l.Logger.Errorf("获取文章封面失败: %v", err)
-		return nil, fmt.Errorf("获取文章封面失败: %v", err)
-	}
+	go func() {
+		defer wg.Done()
+		batchGetImageService := imagerelationservicelogic.NewBatchGetImagesByEntityLogic(l.ctx, l.svcCtx)
+		contentImagesResp, err := batchGetImageService.BatchGetImagesByEntity(&coderhub.BatchGetImagesByEntityRequest{
+			EntityIds:  in.Ids,
+			EntityType: model.ImageRelationArticleContent,
+		})
+		if err != nil {
+			l.Logger.Errorf("获取文章配图失败: %v", err)
+		}
+		contentImages = contentImagesResp
+
+		coverImagesResp, err := batchGetImageService.BatchGetImagesByEntity(&coderhub.BatchGetImagesByEntityRequest{
+			EntityIds:  in.Ids,
+			EntityType: model.ImageRelationArticleCover,
+		})
+		if err != nil {
+			l.Logger.Errorf("获取文章封面失败: %v", err)
+		}
+		coverImages = coverImagesResp
+	}()
 
 	// 获取点赞数、浏览量和评论数
-	likeCounts, err := l.svcCtx.ArticlesRelationLikeRepository.BatchList(l.ctx, in.Ids)
-	if err != nil {
-		l.Logger.Errorf("批量获取文章点赞数失败: %v", err)
-		return nil, fmt.Errorf("获取点赞数失败: %v", err)
-	}
-
-	articlePVs, err := l.svcCtx.ArticlePVRepository.GetArticlePVsByArticleIDs(in.Ids)
-	if err != nil {
-		l.Logger.Errorf("批量获取文章浏览量失败: %v", err)
-		return nil, fmt.Errorf("获取浏览量失败: %v", err)
-	}
-	articlePVsMap := make(map[int64]int64, len(articlePVs))
-	for _, articlePV := range articlePVs {
-		articlePVsMap[articlePV.ArticleID] = articlePV.Count
-	}
-
-	commentCounts, err := l.svcCtx.CommentRepository.BatchCountByArticleIDs(l.ctx, in.Ids)
-	if err != nil {
-		l.Logger.Errorf("批量获取文章评论数失败: %v", err)
-		return nil, fmt.Errorf("获取评论数失败: %v", err)
-	}
+	go func() {
+		defer wg.Done()
+		likeCounts, _ = l.svcCtx.ArticlesRelationLikeRepository.BatchList(l.ctx, in.Ids)
+		articlePV, _ := l.svcCtx.ArticlePVRepository.GetArticlePVsByArticleIDs(in.Ids)
+		articlePVs = make(map[int64]int64)
+		for _, pv := range articlePV {
+			articlePVs[pv.ArticleID] = pv.Count
+		}
+		commentCounts, _ = l.svcCtx.CommentRepository.BatchCountByArticleIDs(l.ctx, in.Ids)
+	}()
 
 	// 获取作者信息
-	authorIDs := make([]int64, 0)
-	for _, article := range articles {
-		authorIDs = append(authorIDs, article.AuthorID)
-	}
-	authors, err := l.svcCtx.UserRepository.BatchGetUserByID(authorIDs)
-	if err != nil {
-		l.Logger.Errorf("获取作者信息失败: %v", err)
-		return nil, fmt.Errorf("获取作者信息失败: %v", err)
-	}
+	go func() {
+		defer wg.Done()
+		authorIDs := make([]int64, len(articles))
+		for i, article := range articles {
+			authorIDs[i] = article.AuthorID
+		}
+		authorsResp, err := l.svcCtx.UserRepository.BatchGetUserByID(authorIDs)
+		if err != nil {
+			l.Logger.Errorf("获取作者信息失败: %v", err)
+		}
+		authors = authorsResp
+	}()
 
-	// 获取文章是否被用户点赞
-	isUserLiked, err := l.svcCtx.ArticlesRelationLikeRepository.BatchArticlesHasBeenUserLiked(l.ctx, in.Ids, in.UserId)
+	// 等待所有 Goroutine 执行完
+	wg.Wait()
 
-	// 获取文章是否被用户收藏
-	isUserFavorite, err := l.svcCtx.UserFavorEntityRepository.BatchGetUserFavorEntity(l.ctx, in.Ids, in.UserId)
-
-	// 构造响应
-	response := make([]*coderhub.GetArticleResponse, 0)
+	// 处理数据
+	response := make([]*coderhub.GetArticleResponse, len(articles))
 	authorMap := make(map[int64]*coderhub.UserInfo)
 	for _, author := range authors {
 		authorMap[author.ID] = &coderhub.UserInfo{
@@ -123,8 +124,9 @@ func (l *ListArticlesLogic) ListArticles(in *coderhub.GetArticlesRequest) (*code
 		}
 	}
 
-	for _, article := range articles {
-		// 构造配图和封面图
+	// 构建响应数据
+	for i, article := range articles {
+		// 配图和封面图处理
 		var images []*coderhub.Image
 		for _, image := range contentImages.Relations {
 			if image.EntityId == article.ID {
@@ -148,17 +150,17 @@ func (l *ListArticlesLogic) ListArticles(in *coderhub.GetArticlesRequest) (*code
 			}
 		}
 
-		// 获取点赞、浏览和评论数据
-		viewCount := articlePVsMap[article.ID]
+		// 获取点赞、浏览量和评论数
+		viewCount := articlePVs[article.ID]
 		likeCount := likeCounts[article.ID]
 		commentCount := commentCounts[article.ID]
 
-		// 构造文章响应
+		// 构建文章响应
 		var tags []string
 		if article.Tags != "" {
 			tags = strings.Split(article.Tags, ",")
 		}
-		response = append(response, &coderhub.GetArticleResponse{
+		response[i] = &coderhub.GetArticleResponse{
 			Article: &coderhub.Article{
 				Id:    article.ID,
 				Type:  article.Type,
@@ -181,14 +183,10 @@ func (l *ListArticlesLogic) ListArticles(in *coderhub.GetArticlesRequest) (*code
 				Status:       article.Status,
 				CreatedAt:    article.CreatedAt.Unix(),
 				UpdatedAt:    article.UpdatedAt.Unix(),
-				IsLicked:     isUserLiked[article.ID],
-				IsFavorite:   isUserFavorite[article.ID],
 			},
 			Author: authorMap[article.AuthorID],
-		})
+		}
 	}
-	fmt.Println("获取到的文章结果: ", response)
-	return &coderhub.GetArticlesResponse{
-		Articles: response,
-	}, nil
+
+	return &coderhub.GetArticlesResponse{Articles: response}, nil
 }
