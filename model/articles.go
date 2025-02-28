@@ -11,8 +11,8 @@ type Articles struct {
 	ID           int64          `gorm:"<-:create;primaryKey" json:"id"`                               // 主键 ID
 	Type         string         `gorm:"type:enum('article','micro_post');not null" json:"type"`       // 内容类型：长文(article) 或 短文(micro_post)
 	Title        string         `gorm:"size:255" json:"title"`                                        // 长文标题，短文可为空
-	Content      string         `gorm:"type:longtext;not null" json:"content"`                        // 内容（长文或短文）
-	Summary      string         `gorm:"type:text" json:"summary"`                                     // 长文摘要，短文为空
+	Content      string         `gorm:"type:longtext;character set utf8mb4;not null" json:"content"`  // 内容（长文或短文）
+	Summary      string         `gorm:"type:text;character set utf8mb4" json:"summary"`               // 长文摘要，短文为空
 	AuthorID     int64          `gorm:"not null;index" json:"author_id"`                              // 作者 ID
 	Images       []Image        `gorm:"-" json:"images"`                                              // 文章图片列表
 	CoverImage   *Image         `gorm:"-" json:"cover_image,omitempty"`                               // 封面图片
