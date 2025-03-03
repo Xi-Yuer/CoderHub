@@ -18,6 +18,7 @@ type (
 	AddAcademicNavigatorRequest        = coderhub.AddAcademicNavigatorRequest
 	Article                            = coderhub.Article
 	ArticleAdditionalInfo              = coderhub.ArticleAdditionalInfo
+	ArticleTag                         = coderhub.ArticleTag
 	AuthorizeRequest                   = coderhub.AuthorizeRequest
 	AuthorizeResponse                  = coderhub.AuthorizeResponse
 	BatchCreateRelationRequest         = coderhub.BatchCreateRelationRequest
@@ -38,6 +39,8 @@ type (
 	Comment                            = coderhub.Comment
 	CreateArticleRequest               = coderhub.CreateArticleRequest
 	CreateArticleResponse              = coderhub.CreateArticleResponse
+	CreateArticleTagRequest            = coderhub.CreateArticleTagRequest
+	CreateArticleTagResponse           = coderhub.CreateArticleTagResponse
 	CreateCommentRequest               = coderhub.CreateCommentRequest
 	CreateCommentResponse              = coderhub.CreateCommentResponse
 	CreateEmotionRequest               = coderhub.CreateEmotionRequest
@@ -59,6 +62,8 @@ type (
 	DeleteAcademicNavigatorRequest     = coderhub.DeleteAcademicNavigatorRequest
 	DeleteArticleRequest               = coderhub.DeleteArticleRequest
 	DeleteArticleResponse              = coderhub.DeleteArticleResponse
+	DeleteArticleTagRequest            = coderhub.DeleteArticleTagRequest
+	DeleteArticleTagResponse           = coderhub.DeleteArticleTagResponse
 	DeleteByEntityIDRequest            = coderhub.DeleteByEntityIDRequest
 	DeleteByEntityIDResponse           = coderhub.DeleteByEntityIDResponse
 	DeleteCommentRequest               = coderhub.DeleteCommentRequest
@@ -90,6 +95,8 @@ type (
 	GetAcademicNavigatorResponse       = coderhub.GetAcademicNavigatorResponse
 	GetArticleRequest                  = coderhub.GetArticleRequest
 	GetArticleResponse                 = coderhub.GetArticleResponse
+	GetArticleTagListRequest           = coderhub.GetArticleTagListRequest
+	GetArticleTagListResponse          = coderhub.GetArticleTagListResponse
 	GetArticlesRequest                 = coderhub.GetArticlesRequest
 	GetArticlesResponse                = coderhub.GetArticlesResponse
 	GetCommentRepliesRequest           = coderhub.GetCommentRepliesRequest
@@ -117,6 +124,8 @@ type (
 	GetQuestionTreeRequest             = coderhub.GetQuestionTreeRequest
 	GetQuestionTreeResponse            = coderhub.GetQuestionTreeResponse
 	GetRequest                         = coderhub.GetRequest
+	GetSystemProviderTagListRequest    = coderhub.GetSystemProviderTagListRequest
+	GetSystemProviderTagListResponse   = coderhub.GetSystemProviderTagListResponse
 	GetUserFansReq                     = coderhub.GetUserFansReq
 	GetUserFansResp                    = coderhub.GetUserFansResp
 	GetUserFollowsReq                  = coderhub.GetUserFollowsReq
@@ -142,6 +151,8 @@ type (
 	Response                           = coderhub.Response
 	UpdateArticleRequest               = coderhub.UpdateArticleRequest
 	UpdateArticleResponse              = coderhub.UpdateArticleResponse
+	UpdateArticleTagUsageCountRequest  = coderhub.UpdateArticleTagUsageCountRequest
+	UpdateArticleTagUsageCountResponse = coderhub.UpdateArticleTagUsageCountResponse
 	UpdateCommentLikeCountRequest      = coderhub.UpdateCommentLikeCountRequest
 	UpdateCommentLikeCountResponse     = coderhub.UpdateCommentLikeCountResponse
 	UpdateFavorFoldRequest             = coderhub.UpdateFavorFoldRequest

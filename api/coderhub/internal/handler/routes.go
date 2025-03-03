@@ -21,6 +21,8 @@ import (
 	image_auth "coderhub/api/coderhub/internal/handler/image_auth"
 	questions_auth "coderhub/api/coderhub/internal/handler/questions_auth"
 	questions_public "coderhub/api/coderhub/internal/handler/questions_public"
+	tag_auth "coderhub/api/coderhub/internal/handler/tag_auth"
+	tag_public "coderhub/api/coderhub/internal/handler/tag_public"
 	user_auth "coderhub/api/coderhub/internal/handler/user_auth"
 	user_public "coderhub/api/coderhub/internal/handler/user_public"
 	"coderhub/api/coderhub/internal/svc"
@@ -389,6 +391,43 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			},
 		},
 		rest.WithPrefix("/api/questions"),
+	)
+
+	server.AddRoutes(
+		[]rest.Route{
+			{
+				// 删除分类标签
+				Method:  http.MethodDelete,
+				Path:    "/:id",
+				Handler: tag_auth.DeleteTagHandler(serverCtx),
+			},
+			{
+				// 创建分类标签
+				Method:  http.MethodPost,
+				Path:    "/create",
+				Handler: tag_auth.CreateTagHandler(serverCtx),
+			},
+		},
+		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
+		rest.WithPrefix("/api/tag"),
+	)
+
+	server.AddRoutes(
+		[]rest.Route{
+			{
+				// 获取全部分类标签（包含系统和用户自定义的标签）
+				Method:  http.MethodGet,
+				Path:    "/list",
+				Handler: tag_public.GetAllTagListHandler(serverCtx),
+			},
+			{
+				// 获取系统分类标签
+				Method:  http.MethodGet,
+				Path:    "/system/list",
+				Handler: tag_public.GetSystemTagListHandler(serverCtx),
+			},
+		},
+		rest.WithPrefix("/api/tag"),
 	)
 
 	server.AddRoutes(

@@ -2,7 +2,7 @@
 // goctl 1.7.3
 // Source: coderhub.proto
 
-package academicnavigatorservice
+package articletagservice
 
 import (
 	"context"
@@ -168,56 +168,46 @@ type (
 	UserFollowInfo                     = coderhub.UserFollowInfo
 	UserInfo                           = coderhub.UserInfo
 
-	AcademicNavigatorService interface {
-		// 新增学术导航
-		AddAcademicNavigator(ctx context.Context, in *AddAcademicNavigatorRequest, opts ...grpc.CallOption) (*Response, error)
-		// 获取学术导航
-		GetAcademicNavigator(ctx context.Context, in *GetAcademicNavigatorRequest, opts ...grpc.CallOption) (*GetAcademicNavigatorResponse, error)
-		// 删除学术导航
-		DeleteAcademicNavigator(ctx context.Context, in *DeleteAcademicNavigatorRequest, opts ...grpc.CallOption) (*Response, error)
-		// 点赞学术导航
-		LikeAcademicNavigator(ctx context.Context, in *LikeAcademicNavigatorRequest, opts ...grpc.CallOption) (*Response, error)
-		// 取消点赞学术导航
-		CancelLikeAcademicNavigator(ctx context.Context, in *CancelLikeAcademicNavigatorRequest, opts ...grpc.CallOption) (*Response, error)
+	ArticleTagService interface {
+		CreateArticleTag(ctx context.Context, in *CreateArticleTagRequest, opts ...grpc.CallOption) (*CreateArticleTagResponse, error)
+		DeleteArticleTag(ctx context.Context, in *DeleteArticleTagRequest, opts ...grpc.CallOption) (*DeleteArticleTagResponse, error)
+		GetArticleTagList(ctx context.Context, in *GetArticleTagListRequest, opts ...grpc.CallOption) (*GetArticleTagListResponse, error)
+		GetSystemProviderTagList(ctx context.Context, in *GetSystemProviderTagListRequest, opts ...grpc.CallOption) (*GetSystemProviderTagListResponse, error)
+		UpdateArticleTagUsageCount(ctx context.Context, in *UpdateArticleTagUsageCountRequest, opts ...grpc.CallOption) (*UpdateArticleTagUsageCountResponse, error)
 	}
 
-	defaultAcademicNavigatorService struct {
+	defaultArticleTagService struct {
 		cli zrpc.Client
 	}
 )
 
-func NewAcademicNavigatorService(cli zrpc.Client) AcademicNavigatorService {
-	return &defaultAcademicNavigatorService{
+func NewArticleTagService(cli zrpc.Client) ArticleTagService {
+	return &defaultArticleTagService{
 		cli: cli,
 	}
 }
 
-// 新增学术导航
-func (m *defaultAcademicNavigatorService) AddAcademicNavigator(ctx context.Context, in *AddAcademicNavigatorRequest, opts ...grpc.CallOption) (*Response, error) {
-	client := coderhub.NewAcademicNavigatorServiceClient(m.cli.Conn())
-	return client.AddAcademicNavigator(ctx, in, opts...)
+func (m *defaultArticleTagService) CreateArticleTag(ctx context.Context, in *CreateArticleTagRequest, opts ...grpc.CallOption) (*CreateArticleTagResponse, error) {
+	client := coderhub.NewArticleTagServiceClient(m.cli.Conn())
+	return client.CreateArticleTag(ctx, in, opts...)
 }
 
-// 获取学术导航
-func (m *defaultAcademicNavigatorService) GetAcademicNavigator(ctx context.Context, in *GetAcademicNavigatorRequest, opts ...grpc.CallOption) (*GetAcademicNavigatorResponse, error) {
-	client := coderhub.NewAcademicNavigatorServiceClient(m.cli.Conn())
-	return client.GetAcademicNavigator(ctx, in, opts...)
+func (m *defaultArticleTagService) DeleteArticleTag(ctx context.Context, in *DeleteArticleTagRequest, opts ...grpc.CallOption) (*DeleteArticleTagResponse, error) {
+	client := coderhub.NewArticleTagServiceClient(m.cli.Conn())
+	return client.DeleteArticleTag(ctx, in, opts...)
 }
 
-// 删除学术导航
-func (m *defaultAcademicNavigatorService) DeleteAcademicNavigator(ctx context.Context, in *DeleteAcademicNavigatorRequest, opts ...grpc.CallOption) (*Response, error) {
-	client := coderhub.NewAcademicNavigatorServiceClient(m.cli.Conn())
-	return client.DeleteAcademicNavigator(ctx, in, opts...)
+func (m *defaultArticleTagService) GetArticleTagList(ctx context.Context, in *GetArticleTagListRequest, opts ...grpc.CallOption) (*GetArticleTagListResponse, error) {
+	client := coderhub.NewArticleTagServiceClient(m.cli.Conn())
+	return client.GetArticleTagList(ctx, in, opts...)
 }
 
-// 点赞学术导航
-func (m *defaultAcademicNavigatorService) LikeAcademicNavigator(ctx context.Context, in *LikeAcademicNavigatorRequest, opts ...grpc.CallOption) (*Response, error) {
-	client := coderhub.NewAcademicNavigatorServiceClient(m.cli.Conn())
-	return client.LikeAcademicNavigator(ctx, in, opts...)
+func (m *defaultArticleTagService) GetSystemProviderTagList(ctx context.Context, in *GetSystemProviderTagListRequest, opts ...grpc.CallOption) (*GetSystemProviderTagListResponse, error) {
+	client := coderhub.NewArticleTagServiceClient(m.cli.Conn())
+	return client.GetSystemProviderTagList(ctx, in, opts...)
 }
 
-// 取消点赞学术导航
-func (m *defaultAcademicNavigatorService) CancelLikeAcademicNavigator(ctx context.Context, in *CancelLikeAcademicNavigatorRequest, opts ...grpc.CallOption) (*Response, error) {
-	client := coderhub.NewAcademicNavigatorServiceClient(m.cli.Conn())
-	return client.CancelLikeAcademicNavigator(ctx, in, opts...)
+func (m *defaultArticleTagService) UpdateArticleTagUsageCount(ctx context.Context, in *UpdateArticleTagUsageCountRequest, opts ...grpc.CallOption) (*UpdateArticleTagUsageCountResponse, error) {
+	client := coderhub.NewArticleTagServiceClient(m.cli.Conn())
+	return client.UpdateArticleTagUsageCount(ctx, in, opts...)
 }

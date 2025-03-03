@@ -84,6 +84,7 @@ func NewGorm() *gorm.DB {
 			&model.UserFavor{},
 			&model.UserFavorFolder{},
 			&model.Emoticon{},
+			&model.ArticleTag{},
 		); err != nil {
 			log.Fatalf("数据库迁移失败: %v", err)
 		}

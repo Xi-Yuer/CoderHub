@@ -59,3 +59,8 @@ EmotionService:
     Hosts:
       - etcd:2379
     Key: coderhub.rpc
+TagService:
+  Etcd:
+    Hosts:
+      - etcd:2379
+    Key: coderhub.rpc

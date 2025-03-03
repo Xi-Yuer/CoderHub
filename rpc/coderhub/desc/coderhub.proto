@@ -1051,3 +1051,70 @@ service EmotionService {
   rpc DeleteEmotion(DeleteEmotionRequest) returns (DeleteEmotionResponse) {}
   rpc GetEmotionList(GetEmotionListRequest) returns (GetEmotionListResponse) {}
 }
+
+
+message CreateArticleTagRequest {
+  string name = 1;
+  string description = 2;
+  bool is_system_provider = 3;
+  string icon = 4;
+}
+
+message CreateArticleTagResponse {
+  bool success = 1;
+}
+
+message DeleteArticleTagRequest {
+  int64 id = 1;
+}
+
+message DeleteArticleTagResponse {
+  bool success = 1;
+}
+
+message GetArticleTagListRequest {
+  int32 page = 1;
+  int32 page_size = 2;
+}
+
+message ArticleTag {
+  int64 id = 1;
+  string name = 2;
+  string description = 3;
+  bool is_system_provider = 4;
+  string icon = 5;
+  int64 usage_count = 6;
+  int64 created_at = 7;
+  int64 updated_at = 8;
+  int64 deleted_at = 9;
+}
+
+message GetArticleTagListResponse {
+  repeated ArticleTag article_tags = 1;
+  int64 total = 2;
+}
+
+message GetSystemProviderTagListRequest {
+
+}
+
+message GetSystemProviderTagListResponse {
+  repeated ArticleTag article_tags = 1;
+  int64 total = 2;
+}
+
+message UpdateArticleTagUsageCountRequest {
+  int64 id = 1;
+}
+
+message UpdateArticleTagUsageCountResponse {
+  bool success = 1;
+}
+
+service ArticleTagService {
+  rpc CreateArticleTag(CreateArticleTagRequest) returns (CreateArticleTagResponse) {}
+  rpc DeleteArticleTag(DeleteArticleTagRequest) returns (DeleteArticleTagResponse) {}
+  rpc GetArticleTagList(GetArticleTagListRequest) returns (GetArticleTagListResponse) {}
+  rpc GetSystemProviderTagList(GetSystemProviderTagListRequest) returns (GetSystemProviderTagListResponse) {}
+  rpc UpdateArticleTagUsageCount(UpdateArticleTagUsageCountRequest) returns (UpdateArticleTagUsageCountResponse) {}
+}

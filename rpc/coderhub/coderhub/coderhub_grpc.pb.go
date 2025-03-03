@@ -3356,3 +3356,257 @@ var EmotionService_ServiceDesc = grpc.ServiceDesc{
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "coderhub.proto",
 }
+
+const (
+	ArticleTagService_CreateArticleTag_FullMethodName           = "/coderhub.ArticleTagService/CreateArticleTag"
+	ArticleTagService_DeleteArticleTag_FullMethodName           = "/coderhub.ArticleTagService/DeleteArticleTag"
+	ArticleTagService_GetArticleTagList_FullMethodName          = "/coderhub.ArticleTagService/GetArticleTagList"
+	ArticleTagService_GetSystemProviderTagList_FullMethodName   = "/coderhub.ArticleTagService/GetSystemProviderTagList"
+	ArticleTagService_UpdateArticleTagUsageCount_FullMethodName = "/coderhub.ArticleTagService/UpdateArticleTagUsageCount"
+)
+
+// ArticleTagServiceClient is the client API for ArticleTagService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type ArticleTagServiceClient interface {
+	CreateArticleTag(ctx context.Context, in *CreateArticleTagRequest, opts ...grpc.CallOption) (*CreateArticleTagResponse, error)
+	DeleteArticleTag(ctx context.Context, in *DeleteArticleTagRequest, opts ...grpc.CallOption) (*DeleteArticleTagResponse, error)
+	GetArticleTagList(ctx context.Context, in *GetArticleTagListRequest, opts ...grpc.CallOption) (*GetArticleTagListResponse, error)
+	GetSystemProviderTagList(ctx context.Context, in *GetSystemProviderTagListRequest, opts ...grpc.CallOption) (*GetSystemProviderTagListResponse, error)
+	UpdateArticleTagUsageCount(ctx context.Context, in *UpdateArticleTagUsageCountRequest, opts ...grpc.CallOption) (*UpdateArticleTagUsageCountResponse, error)
+}
+
+type articleTagServiceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewArticleTagServiceClient(cc grpc.ClientConnInterface) ArticleTagServiceClient {
+	return &articleTagServiceClient{cc}
+}
+
+func (c *articleTagServiceClient) CreateArticleTag(ctx context.Context, in *CreateArticleTagRequest, opts ...grpc.CallOption) (*CreateArticleTagResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CreateArticleTagResponse)
+	err := c.cc.Invoke(ctx, ArticleTagService_CreateArticleTag_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *articleTagServiceClient) DeleteArticleTag(ctx context.Context, in *DeleteArticleTagRequest, opts ...grpc.CallOption) (*DeleteArticleTagResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeleteArticleTagResponse)
+	err := c.cc.Invoke(ctx, ArticleTagService_DeleteArticleTag_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *articleTagServiceClient) GetArticleTagList(ctx context.Context, in *GetArticleTagListRequest, opts ...grpc.CallOption) (*GetArticleTagListResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetArticleTagListResponse)
+	err := c.cc.Invoke(ctx, ArticleTagService_GetArticleTagList_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *articleTagServiceClient) GetSystemProviderTagList(ctx context.Context, in *GetSystemProviderTagListRequest, opts ...grpc.CallOption) (*GetSystemProviderTagListResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetSystemProviderTagListResponse)
+	err := c.cc.Invoke(ctx, ArticleTagService_GetSystemProviderTagList_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *articleTagServiceClient) UpdateArticleTagUsageCount(ctx context.Context, in *UpdateArticleTagUsageCountRequest, opts ...grpc.CallOption) (*UpdateArticleTagUsageCountResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdateArticleTagUsageCountResponse)
+	err := c.cc.Invoke(ctx, ArticleTagService_UpdateArticleTagUsageCount_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// ArticleTagServiceServer is the server API for ArticleTagService service.
+// All implementations must embed UnimplementedArticleTagServiceServer
+// for forward compatibility.
+type ArticleTagServiceServer interface {
+	CreateArticleTag(context.Context, *CreateArticleTagRequest) (*CreateArticleTagResponse, error)
+	DeleteArticleTag(context.Context, *DeleteArticleTagRequest) (*DeleteArticleTagResponse, error)
+	GetArticleTagList(context.Context, *GetArticleTagListRequest) (*GetArticleTagListResponse, error)
+	GetSystemProviderTagList(context.Context, *GetSystemProviderTagListRequest) (*GetSystemProviderTagListResponse, error)
+	UpdateArticleTagUsageCount(context.Context, *UpdateArticleTagUsageCountRequest) (*UpdateArticleTagUsageCountResponse, error)
+	mustEmbedUnimplementedArticleTagServiceServer()
+}
+
+// UnimplementedArticleTagServiceServer must be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedArticleTagServiceServer struct{}
+
+func (UnimplementedArticleTagServiceServer) CreateArticleTag(context.Context, *CreateArticleTagRequest) (*CreateArticleTagResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateArticleTag not implemented")
+}
+func (UnimplementedArticleTagServiceServer) DeleteArticleTag(context.Context, *DeleteArticleTagRequest) (*DeleteArticleTagResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteArticleTag not implemented")
+}
+func (UnimplementedArticleTagServiceServer) GetArticleTagList(context.Context, *GetArticleTagListRequest) (*GetArticleTagListResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetArticleTagList not implemented")
+}
+func (UnimplementedArticleTagServiceServer) GetSystemProviderTagList(context.Context, *GetSystemProviderTagListRequest) (*GetSystemProviderTagListResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetSystemProviderTagList not implemented")
+}
+func (UnimplementedArticleTagServiceServer) UpdateArticleTagUsageCount(context.Context, *UpdateArticleTagUsageCountRequest) (*UpdateArticleTagUsageCountResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateArticleTagUsageCount not implemented")
+}
+func (UnimplementedArticleTagServiceServer) mustEmbedUnimplementedArticleTagServiceServer() {}
+func (UnimplementedArticleTagServiceServer) testEmbeddedByValue()                           {}
+
+// UnsafeArticleTagServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to ArticleTagServiceServer will
+// result in compilation errors.
+type UnsafeArticleTagServiceServer interface {
+	mustEmbedUnimplementedArticleTagServiceServer()
+}
+
+func RegisterArticleTagServiceServer(s grpc.ServiceRegistrar, srv ArticleTagServiceServer) {
+	// If the following call pancis, it indicates UnimplementedArticleTagServiceServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&ArticleTagService_ServiceDesc, srv)
+}
+
+func _ArticleTagService_CreateArticleTag_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateArticleTagRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ArticleTagServiceServer).CreateArticleTag(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ArticleTagService_CreateArticleTag_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ArticleTagServiceServer).CreateArticleTag(ctx, req.(*CreateArticleTagRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ArticleTagService_DeleteArticleTag_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteArticleTagRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ArticleTagServiceServer).DeleteArticleTag(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ArticleTagService_DeleteArticleTag_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ArticleTagServiceServer).DeleteArticleTag(ctx, req.(*DeleteArticleTagRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ArticleTagService_GetArticleTagList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetArticleTagListRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ArticleTagServiceServer).GetArticleTagList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ArticleTagService_GetArticleTagList_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ArticleTagServiceServer).GetArticleTagList(ctx, req.(*GetArticleTagListRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ArticleTagService_GetSystemProviderTagList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetSystemProviderTagListRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ArticleTagServiceServer).GetSystemProviderTagList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ArticleTagService_GetSystemProviderTagList_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ArticleTagServiceServer).GetSystemProviderTagList(ctx, req.(*GetSystemProviderTagListRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ArticleTagService_UpdateArticleTagUsageCount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateArticleTagUsageCountRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ArticleTagServiceServer).UpdateArticleTagUsageCount(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ArticleTagService_UpdateArticleTagUsageCount_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ArticleTagServiceServer).UpdateArticleTagUsageCount(ctx, req.(*UpdateArticleTagUsageCountRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// ArticleTagService_ServiceDesc is the grpc.ServiceDesc for ArticleTagService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var ArticleTagService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "coderhub.ArticleTagService",
+	HandlerType: (*ArticleTagServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "CreateArticleTag",
+			Handler:    _ArticleTagService_CreateArticleTag_Handler,
+		},
+		{
+			MethodName: "DeleteArticleTag",
+			Handler:    _ArticleTagService_DeleteArticleTag_Handler,
+		},
+		{
+			MethodName: "GetArticleTagList",
+			Handler:    _ArticleTagService_GetArticleTagList_Handler,
+		},
+		{
+			MethodName: "GetSystemProviderTagList",
+			Handler:    _ArticleTagService_GetSystemProviderTagList_Handler,
+		},
+		{
+			MethodName: "UpdateArticleTagUsageCount",
+			Handler:    _ArticleTagService_UpdateArticleTagUsageCount_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "coderhub.proto",
+}

@@ -175,6 +175,18 @@ type CreateQuestionResp struct {
 	Data bool `json:"data"` // 题目详情
 }
 
+type CreateTagReq struct {
+	Name             string `json:"name"`               // 标签名称
+	Description      string `json:"description"`        // 标签描述
+	IsSystemProvider bool   `json:"is_system_provider"` // 是否为系统标签
+	Icon             string `json:"icon"`               // 标签图标
+}
+
+type CreateTagResp struct {
+	Response
+	Data bool `json:"data"`
+}
+
 type DeleteAcademicNavigatorReq struct {
 	Id string `path:"id"` // 学术导航 ID
 }
@@ -257,6 +269,15 @@ type DeleteRequest struct {
 type DeleteResponse struct {
 	Response
 	Data bool `json:"success"` // 删除是否成功
+}
+
+type DeleteTagReq struct {
+	Id string `path:"id"` // 标签 ID
+}
+
+type DeleteTagResp struct {
+	Response
+	Data bool `json:"data"`
 }
 
 type DeleteUserReq struct {
@@ -510,6 +531,16 @@ type GetResponse struct {
 	Data *ImageInfo `json:"data"` // 图片详情
 }
 
+type GetTagListReq struct {
+	Page     int32 `form:"page"`      // 页码
+	PageSize int32 `form:"page_size"` // 每页数量
+}
+
+type GetTagListResp struct {
+	Response
+	Data *TagList `json:"data"`
+}
+
 type GetUserInfoReq struct {
 	Id            string `path:"id"` // 用户ID
 	RequestUserID string `header:"request-user-id,optional"`
@@ -672,6 +703,22 @@ type SendResetPasswordLinkReq struct {
 type SendResetPasswordLinkResp struct {
 	Response
 	Data bool `json:"data"` // 是否发送成功
+}
+
+type Tag struct {
+	ID               string `json:"id"`                 // 标签 ID
+	Name             string `json:"name"`               // 标签名称
+	Description      string `json:"description"`        // 标签描述
+	IsSystemProvider bool   `json:"is_system_provider"` // 是否为系统标签
+	Icon             string `json:"icon"`               // 标签图标
+	UsageCount       int64  `json:"usage_count"`        // 标签使用次数
+	CreatedAt        int64  `json:"createdAt"`          // 创建时间
+	UpdatedAt        int64  `json:"updatedAt"`          // 更新时间
+}
+
+type TagList struct {
+	Total int64  `json:"total"`
+	List  []*Tag `json:"list"`
 }
 
 type UnfollowUserReq struct {

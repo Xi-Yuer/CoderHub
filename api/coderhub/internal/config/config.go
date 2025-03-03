@@ -22,4 +22,5 @@ type Config struct {
 	FavoriteService        zrpc.RpcClientConf
 	FavoriteContentService zrpc.RpcClientConf
 	EmotionService         zrpc.RpcClientConf
+	TagService             zrpc.RpcClientConf
 }

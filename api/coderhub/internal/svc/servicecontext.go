@@ -19,6 +19,7 @@ type ServiceContext struct {
 	FavoriteService        coderhub.FavorFoldServiceClient
 	FavoriteContentService coderhub.FavorServiceClient
 	EmotionService         coderhub.EmotionServiceClient
+	TagService             coderhub.ArticleTagServiceClient
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -35,5 +36,6 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		FavoriteService:        coderhub.NewFavorFoldServiceClient(zrpc.MustNewClient(c.FavoriteService).Conn()),
 		FavoriteContentService: coderhub.NewFavorServiceClient(zrpc.MustNewClient(c.FavoriteContentService).Conn()),
 		EmotionService:         coderhub.NewEmotionServiceClient(zrpc.MustNewClient(c.EmotionService).Conn()),
+		TagService:             coderhub.NewArticleTagServiceClient(zrpc.MustNewClient(c.TagService).Conn()),
 	}
 }
