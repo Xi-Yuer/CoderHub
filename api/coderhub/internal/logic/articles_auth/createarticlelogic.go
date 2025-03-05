@@ -98,6 +98,7 @@ func (l *CreateArticleLogic) prepareArticleData(req *types.CreateArticleReq, use
 		CoverImageId: utils.String2Int(req.CoverImageID),
 		AuthorId:     userId,
 		Tags:         req.Tags,
+		CategoryId:   utils.String2Int(req.CategoryID),
 		Status:       req.Status,
 	}
 }

@@ -14,7 +14,7 @@ type ArticleRepository interface {
 	CreateArticle(article *model.Articles) error
 	GetArticleByID(id int64) (*model.Articles, error)
 	GetArticlesByIDs(ids []int64) ([]*model.Articles, error)
-	ListRecommendedArticles(type_ string, page, pageSize int64) ([]int64, error)
+	ListRecommendedArticles(type_ string, categoryID int64, page, pageSize int64) ([]int64, error)
 	BatchGetArticle(ids []int64) ([]*model.ArticlePreviewWithAuthInfo, error)
 	UpdateArticle(article *model.Articles) error
 	DeleteArticle(id int64) error
@@ -74,11 +74,10 @@ func (r *ArticleRepositoryImpl) GetArticlesByIDs(ids []int64) ([]*model.Articles
 	return articles, nil
 }
 
-func (r *ArticleRepositoryImpl) ListRecommendedArticles(type_ string, page, pageSize int64) ([]int64, error) {
+func (r *ArticleRepositoryImpl) ListRecommendedArticles(type_ string, categoryID int64, page, pageSize int64) ([]int64, error) {
 	var ids []int64
-	if err := r.DB.Table("articles").
-		Select("id").
-		Where("type = ?", type_).
+	if err := r.DB.Debug().Table("articles").
+		Where("type = ? AND category_id = ?", type_, categoryID).
 		Order("created_at DESC").
 		Limit(int(pageSize)).
 		Offset(int((page-1)*pageSize)).

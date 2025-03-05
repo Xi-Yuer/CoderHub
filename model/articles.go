@@ -17,6 +17,7 @@ type Articles struct {
 	Images       []Image        `gorm:"-" json:"images"`                                              // 文章图片列表
 	CoverImage   *Image         `gorm:"-" json:"cover_image,omitempty"`                               // 封面图片
 	Tags         string         `gorm:"size:255" json:"tags"`                                         // 标签，逗号分隔（适用于长文）
+	CategoryID   int64          `gorm:"not null;index" json:"category_id"`                            // 分类 ID
 	CommentCount int64          `gorm:"default:0" json:"comment_count"`                               // 评论数
 	Status       string         `gorm:"type:enum('draft','published');default:'draft'" json:"status"` // 内容状态
 	Version      int64          `gorm:"default:0" json:"version"`                                     // 版本号

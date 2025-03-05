@@ -30,9 +30,10 @@ func NewGetArticlesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetAr
 func (l *GetArticlesLogic) GetArticles(req *types.GetArticlesReq) (resp *types.GetArticlesResp, err error) {
 	// 获取推荐文章列表ID
 	articles, err := l.svcCtx.ArticlesService.ListRecommendedArticles(l.ctx, &coderhub.ListRecommendedArticlesRequest{
-		Type:     req.Type,
-		Page:     int64(req.Page),
-		PageSize: int64(req.PageSize),
+		Type:       req.Type,
+		Page:       int64(req.Page),
+		PageSize:   int64(req.PageSize),
+		CategoryId: utils.String2Int(req.CategoryID),
 	})
 	if err != nil {
 		return l.errorResp(err)

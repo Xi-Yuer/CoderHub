@@ -13,54 +13,54 @@ services:
       - type: volume
         source: mysql-data
         target: /var/lib/mysql
-  elasticsearch:
-    image: elasticsearch:8.11.3
-    container_name: elasticsearch
-    environment:
-      - node.name=elasticsearch
-      - cluster.name=es-docker-cluster
-      - discovery.type=single-node
-      - bootstrap.memory_lock=true
-      - xpack.security.enabled=false
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-      - ELASTIC_PASSWORD=2214380963Wx!! # 设置明确的密码
-    depends_on:
-      - mysql
-    volumes:
-      - type: volume
-        source: es-data
-        target: /usr/share/elasticsearch/data
-    ports:
-      - "9200:9200"
-    networks:
-      - coderhub-network
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
-
-  logstash:
-    image: docker.elastic.co/logstash/logstash:8.11.3-arm64
-    platform: linux/arm64
-    container_name: logstash
-    depends_on:
-      - elasticsearch
-      - mysql
-    environment:
-      - XPACK_MONITORING_ENABLED=false
-      - "LS_JAVA_OPTS=-Xms512m -Xmx512m"
-    volumes:
-      - type: bind
-        source: ./logstash/config/logstash.yml
-        target: /usr/share/logstash/config/logstash.yml
-      - type: bind
-        source: ./logstash/pipeline
-        target: /usr/share/logstash/pipeline
-      - type: bind
-        source: ./logstash/lib/mysql-connector-java-8.0.28.jar
-        target: /usr/share/logstash/mysql-connector-java-8.0.28.jar
-    networks:
-      - coderhub-network
+  #  elasticsearch:
+  #    image: elasticsearch:8.11.3
+  #    container_name: elasticsearch
+  #    environment:
+  #      - node.name=elasticsearch
+  #      - cluster.name=es-docker-cluster
+  #      - discovery.type=single-node
+  #      - bootstrap.memory_lock=true
+  #      - xpack.security.enabled=false
+  #      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+  #      - ELASTIC_PASSWORD=2214380963Wx!! # 设置明确的密码
+  #    depends_on:
+  #      - mysql
+  #    volumes:
+  #      - type: volume
+  #        source: es-data
+  #        target: /usr/share/elasticsearch/data
+  #    ports:
+  #      - "9200:9200"
+  #    networks:
+  #      - coderhub-network
+  #    ulimits:
+  #      memlock:
+  #        soft: -1
+  #        hard: -1
+  #
+  #  logstash:
+  #    image: docker.elastic.co/logstash/logstash:8.11.3-arm64
+  #    platform: linux/arm64
+  #    container_name: logstash
+  #    depends_on:
+  #      - elasticsearch
+  #      - mysql
+  #    environment:
+  #      - XPACK_MONITORING_ENABLED=false
+  #      - "LS_JAVA_OPTS=-Xms256m -Xmx512m"
+  #    volumes:
+  #      - type: bind
+  #        source: ./logstash/config/logstash.yml
+  #        target: /usr/share/logstash/config/logstash.yml
+  #      - type: bind
+  #        source: ./logstash/pipeline
+  #        target: /usr/share/logstash/pipeline
+  #      - type: bind
+  #        source: ./logstash/lib/mysql-connector-java-8.0.28.jar
+  #        target: /usr/share/logstash/mysql-connector-java-8.0.28.jar
+  #    networks:
+  #      - coderhub-network
 
   redis:
     image: redis:latest
@@ -126,7 +126,7 @@ services:
       - ./minio/config:/root/.minio # 持久化 MinIO 配置
     command: server /data --console-address ":9001"
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      test: [ "CMD", "curl", "-f", "http://localhost:9000/minio/health/live" ]
       interval: 30s
       timeout: 20s
       retries: 3
@@ -163,7 +163,7 @@ services:
       - mysql
       - redis
       - etcd
-      - elasticsearch
+    #      - elasticsearch
     networks:
       - coderhub-network
     environment:

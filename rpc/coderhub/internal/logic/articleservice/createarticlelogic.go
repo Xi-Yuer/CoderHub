@@ -46,14 +46,15 @@ func (l *CreateArticleLogic) CreateArticle(in *coderhub.CreateArticleRequest) (*
 
 	// 创建文章模型
 	article := &model.Articles{
-		ID:       articleID,
-		Type:     in.Type,
-		Title:    in.Title,
-		Content:  in.Content,
-		Summary:  in.Summary,
-		AuthorID: in.AuthorId,
-		Tags:     tags,
-		Status:   in.Status,
+		ID:         articleID,
+		Type:       in.Type,
+		Title:      in.Title,
+		Content:    in.Content,
+		Summary:    in.Summary,
+		AuthorID:   in.AuthorId,
+		Tags:       tags,
+		Status:     in.Status,
+		CategoryID: in.CategoryId,
 	}
 
 	// 创建封面图片关联

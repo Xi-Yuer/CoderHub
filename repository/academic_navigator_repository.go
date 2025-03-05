@@ -4,7 +4,6 @@ import (
 	"coderhub/model"
 	"coderhub/shared/storage"
 
-	"github.com/elastic/go-elasticsearch/v8"
 	"gorm.io/gorm"
 )
 
@@ -20,14 +19,15 @@ type AcademicNavigatorRepositoryImpl struct {
 	Elasticsearch storage.ElasticsearchImpl
 }
 
-func NewAcademicNavigatorRepositoryImpl(db *gorm.DB, cfg *elasticsearch.Config) *AcademicNavigatorRepositoryImpl {
-	elastic, err := storage.NewElasticSearchClient(cfg)
-	if err != nil {
-		return nil
-	}
+// NewAcademicNavigatorRepositoryImpl func NewAcademicNavigatorRepositoryImpl(db *gorm.DB, cfg *elasticsearch.Config) *AcademicNavigatorRepositoryImpl {
+func NewAcademicNavigatorRepositoryImpl(db *gorm.DB) *AcademicNavigatorRepositoryImpl {
+	//elastic, err := storage.NewElasticSearchClient(cfg)
+	//if err != nil {
+	//	return nil
+	//}
 	return &AcademicNavigatorRepositoryImpl{
-		DB:            db,
-		Elasticsearch: elastic,
+		DB: db,
+		//Elasticsearch: elastic,
 	}
 }
 
@@ -39,22 +39,25 @@ func (r *AcademicNavigatorRepositoryImpl) GetAcademicNavigator(academicNavigator
 	var total int64
 	var academicNavigators []*model.AcademicNavigator
 	// 先从Elasticsearch中查询到符合条件的ID
-	ids, err := r.Elasticsearch.SearchByFields("academic_navigators", map[string]interface{}{
-		"user_id":   academicNavigator.UserId,
-		"content":   academicNavigator.Content,
-		"education": academicNavigator.Education,
-		"major":     academicNavigator.Major,
-		"school":    academicNavigator.School,
-	})
-	if err != nil {
-		return nil, 0, err
-	}
+	//ids, err := r.Elasticsearch.SearchByFields("academic_navigators", map[string]interface{}{
+	//	"user_id":   academicNavigator.UserId,
+	//	"content":   academicNavigator.Content,
+	//	"education": academicNavigator.Education,
+	//	"major":     academicNavigator.Major,
+	//	"school":    academicNavigator.School,
+	//})
+	//if err != nil {
+	//	return nil, 0, err
+	//}
 	// 再根据ID从数据库中查询到对应的数据
-	err = r.DB.Model(&model.AcademicNavigator{}).Where("id IN (?)", ids).Find(&academicNavigators).Limit(int(pageSize)).Offset(int((page - 1) * pageSize)).Count(&total).Error
-	if err != nil {
-		return nil, 0, err
-	}
-	return academicNavigators, total, nil
+	//err = r.DB.Model(&model.AcademicNavigator{}).Where("id IN (?)", ids).Find(&academicNavigators).Limit(int(pageSize)).Offset(int((page - 1) * pageSize)).Count(&total).Error
+	//if err != nil {
+	//	return nil, 0, err
+	//}
+	//return academicNavigators, total, nil
+
+	err := r.DB.Model(&model.AcademicNavigator{}).Where("user_id = ? AND content = ? AND education = ? AND major = ? AND school = ?", academicNavigator.UserId, academicNavigator.Content, academicNavigator.Education, academicNavigator.Major, academicNavigator.School).Find(&academicNavigators).Limit(int(pageSize)).Offset(int((page - 1) * pageSize)).Count(&total).Error
+	return academicNavigators, total, err
 }
 
 func (r *AcademicNavigatorRepositoryImpl) GetAcademicNavigatorByID(ID int64) (*model.AcademicNavigator, error) {

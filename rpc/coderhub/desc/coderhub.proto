@@ -313,6 +313,7 @@ message Article {
   int64 deleted_at = 16;           // 删除时间
   bool is_licked = 17;             // 当前用户是否已点赞
   bool is_favorite = 18;           // 当前用户是否已收藏
+  int64 category_id = 19;          // 文章分类 ID
 }
 
 // 文章附加信息
@@ -339,6 +340,7 @@ message ListRecommendedArticlesRequest {
   string type = 1; // 内容类型
   int64 page = 2;
   int64 page_size = 3;
+  int64 category_id = 4;
 }
 
 // 响应文章详情
@@ -366,6 +368,7 @@ message CreateArticleRequest {
   int64 author_id = 7;             // 作者 ID
   repeated string tags = 8;         // 标签列表
   string status = 9;               // 文章状态
+  int64 category_id = 10;          // 文章分类 ID
 }
 
 // 创建文章响应

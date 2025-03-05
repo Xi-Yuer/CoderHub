@@ -30,7 +30,7 @@ func NewElasticSearchClient(cfg *elasticsearch.Config) (*ElasticSearchClient, er
 	return &ElasticSearchClient{Client: client}, nil
 }
 
-// 根据传入的字段查询数据，只返回数据的ID
+// SearchByFields 根据传入的字段查询数据，只返回数据的ID
 func (c *ElasticSearchClient) SearchByFields(index string, fields map[string]interface{}) ([]int64, error) {
 	// 构建查询
 	query := map[string]interface{}{
@@ -43,7 +43,7 @@ func (c *ElasticSearchClient) SearchByFields(index string, fields map[string]int
 
 	for field, value := range fields {
 		// 过滤空值
-		if value == nil || 
+		if value == nil ||
 			(reflect.TypeOf(value).Kind() == reflect.String && value.(string) == "") ||
 			(reflect.TypeOf(value).Kind() == reflect.Int64 && value.(int64) == 0) ||
 			(reflect.TypeOf(value).Kind() == reflect.Int32 && value.(int32) == 0) ||

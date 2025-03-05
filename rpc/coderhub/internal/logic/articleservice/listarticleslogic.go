@@ -177,6 +177,7 @@ func (l *ListArticlesLogic) ListArticles(in *coderhub.GetArticlesRequest) (*code
 				CoverImage:   coverImage,
 				AuthorId:     article.AuthorID,
 				Tags:         tags,
+				CategoryId:   article.CategoryID,
 				ViewCount:    viewCount,
 				LikeCount:    likeCount,
 				CommentCount: commentCount,

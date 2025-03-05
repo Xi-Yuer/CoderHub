@@ -149,6 +149,7 @@ func (l *GetArticleLogic) GetArticle(in *coderhub.GetArticleRequest) (*coderhub.
 			CoverImage:   coverImage,
 			AuthorId:     article.AuthorID,
 			Tags:         tags,
+			CategoryId:   article.CategoryID,
 			ViewCount:    articlePV.Count,
 			LikeCount:    likeCount,
 			CommentCount: commentCount,

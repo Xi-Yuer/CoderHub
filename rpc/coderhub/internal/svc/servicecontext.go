@@ -6,7 +6,7 @@ import (
 	"coderhub/shared/messaging"
 	"coderhub/shared/storage"
 	"fmt"
-	"github.com/elastic/go-elasticsearch/v8"
+	//"github.com/elastic/go-elasticsearch/v8"
 )
 
 type ServiceContext struct {
@@ -43,11 +43,11 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		c.Minio.UseSSL,
 	)
 
-	cfg := elasticsearch.Config{
-		Addresses: []string{"http://elasticsearch:9200"},
-		Username:  "elastic",
-		Password:  "2214380963Wx!!",
-	}
+	//cfg := elasticsearch.Config{
+	//	Addresses: []string{"http://elasticsearch:9200"},
+	//	Username:  "elastic",
+	//	Password:  "2214380963Wx!!",
+	//}
 
 	err := minioClient.Connect()
 	if err != nil {
@@ -75,12 +75,13 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		CommentRelationLikeRepository:  repository.NewCommentRelationLikeRepository(sql, redisDB),
 		UserRepository:                 repository.NewUserRepositoryImpl(sql, redisDB),
 		UserFollowRepository:           repository.NewUserFollowRepositoryImpl(sql, redisDB),
-		AcademicNavigatorRepository:    repository.NewAcademicNavigatorRepositoryImpl(sql, &cfg),
-		QuestionBankRepository:         repository.NewQuestionRepositoryRepositoryImpl(sql, redisDB),
-		QuestionRepository:             repository.NewQuestionRepositoryImpl(sql, redisDB),
-		UserFavorFolderRepository:      repository.NewUserFavorFolderRepository(sql, redisDB),
-		UserFavorEntityRepository:      repository.NewUserFavorEntityRepository(sql, redisDB),
-		EmotionRepository:              repository.NewEmoticonRepository(sql),
-		ArticleTagRepository:           repository.NewArticleTagRepositoryImpl(sql),
+		//AcademicNavigatorRepository:    repository.NewAcademicNavigatorRepositoryImpl(sql, &cfg),
+		AcademicNavigatorRepository: repository.NewAcademicNavigatorRepositoryImpl(sql),
+		QuestionBankRepository:      repository.NewQuestionRepositoryRepositoryImpl(sql, redisDB),
+		QuestionRepository:          repository.NewQuestionRepositoryImpl(sql, redisDB),
+		UserFavorFolderRepository:   repository.NewUserFavorFolderRepository(sql, redisDB),
+		UserFavorEntityRepository:   repository.NewUserFavorEntityRepository(sql, redisDB),
+		EmotionRepository:           repository.NewEmoticonRepository(sql),
+		ArticleTagRepository:        repository.NewArticleTagRepositoryImpl(sql),
 	}
 }
