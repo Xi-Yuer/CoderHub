@@ -152,6 +152,7 @@ func (l *GetCommentRepliesLogic) GetCommentReplies(in *coderhub.GetCommentReplie
 			Content:         reply.Content,
 			ParentId:        reply.ParentID,
 			RootId:          reply.RootID,
+			EntityAuthorId:  reply.EntityAuthorID,
 			UserInfo:        userInfos[reply.UserID], // 直接获取映射中的用户信息
 			ReplyToUserInfo: userInfos[reply.ReplyToUID],
 			CreatedAt:       reply.CreatedAt.Unix(),

@@ -91,6 +91,7 @@ func (l *GetCommentLogic) GetComment(in *coderhub.GetCommentRequest) (*coderhub.
 			ParentId:        commentModel.ParentID,
 			RootId:          commentModel.RootID,
 			UserInfo:        user,
+			EntityAuthorId:  commentModel.EntityAuthorID,
 			ReplyToUserInfo: replyUserInfo,
 			CreatedAt:       commentModel.CreatedAt.Unix(),
 			UpdatedAt:       commentModel.UpdatedAt.Unix(),

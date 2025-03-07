@@ -335,6 +335,7 @@ type (
         Content string `json:"content"`                       // 评论内容
         RootId string `json:"root_id"`                        // 根评论ID
         ParentId string `json:"parent_id"`                    // 父评论ID
+        EntityAuthorId string `json:"entity_author_id"`       // 实体作者ID
         UserInfo *UserInfo `json:"user_info"`                 // 评论者信息
         CreatedAt int64 `json:"created_at"`                   // 创建时间
         UpdatedAt int64 `json:"updated_at"`                   // 更新时间
@@ -347,12 +348,13 @@ type (
 	}
         // 创建评论请求
 	CreateCommentReq {
-        EntityID string `json:"entity_id"`      // 文章ID
-        Content string `json:"content"`         // 评论内容
-        RootId string `json:"root_id"`          // 根评论ID
-        ParentId string `json:"parent_id"`      // 父评论ID（可选）
-        ReplyToUID string `json:"reply_to_uid"` // 回复的目标评论ID（可选）
-        ImageIds []string `json:"image_ids"`    // 图片ID列表
+        EntityID string `json:"entity_id"`              // 文章ID
+        Content string `json:"content"`                 // 评论内容
+        RootId string `json:"root_id"`                  // 根评论ID
+        ParentId string `json:"parent_id"`              // 父评论ID（可选）
+        EntityAuthorID string `json:"entity_author_id"` // 实体作者ID
+        ReplyToUID string `json:"reply_to_uid"`         // 回复的目标评论ID（可选）
+        ImageIds []string `json:"image_ids"`            // 图片ID列表
 	}
         // 创建评论响应
 	CreateCommentResp {
@@ -819,6 +821,13 @@ type (
     DeleteTagResp {
         Response
         Data bool `json:"data"`
+    }
+    ChatWithAIReq {
+        Content string `json:"content"` // 内容
+    }
+    ChatWithAIResp {
+        Response
+        Data string `json:"data"`
     }
 )
 
@@ -1305,5 +1314,18 @@ service CodeHubAPI {
     )
     @handler DeleteTag
     delete /:id (DeleteTagReq) returns (DeleteTagResp)
+}
+
+@server(
+    jwt: Auth
+    prefix: /api/ai
+    group: ai_auth
+)
+service CodeHubAPI {
+    @doc(
+        summary: "与AI对话"
+    )
+    @handler ChatWithAI
+    post /chat (ChatWithAIReq) returns (ChatWithAIResp)
 }
 

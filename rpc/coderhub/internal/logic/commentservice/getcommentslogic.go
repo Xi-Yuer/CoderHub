@@ -159,6 +159,7 @@ func (l *GetCommentsLogic) buildTree(in *coderhub.GetCommentsRequest, comments [
 			Content:         val.Content,
 			ParentId:        val.ParentID,
 			RootId:          val.RootID,
+			EntityAuthorId:  val.EntityAuthorID,
 			UserInfo:        userInfos[val.UserID],
 			ReplyToUserInfo: userInfos[val.ReplyToUID],
 			CreatedAt:       val.CreatedAt.Unix(),

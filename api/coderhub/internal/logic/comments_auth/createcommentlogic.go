@@ -34,13 +34,14 @@ func (l *CreateCommentLogic) CreateComment(req *types.CreateCommentReq) (resp *t
 		return nil, err
 	}
 	comment, err := l.svcCtx.CommentService.CreateComment(utils.SetUserMetaData(l.ctx), &coderhub.CreateCommentRequest{
-		EntityId:   utils.String2Int(req.EntityID),
-		Content:    req.Content,
-		ParentId:   utils.String2Int(req.ParentId),
-		RootId:     utils.String2Int(req.RootId),
-		UserId:     userID,
-		ReplyToUid: utils.String2Int(req.ReplyToUID),
-		ImageIds:   utils.StringArray2Int64Array(req.ImageIds),
+		EntityId:       utils.String2Int(req.EntityID),
+		Content:        req.Content,
+		ParentId:       utils.String2Int(req.ParentId),
+		RootId:         utils.String2Int(req.RootId),
+		UserId:         userID,
+		EntityAuthorId: utils.String2Int(req.EntityAuthorID),
+		ReplyToUid:     utils.String2Int(req.ReplyToUID),
+		ImageIds:       utils.StringArray2Int64Array(req.ImageIds),
 	})
 	if err != nil {
 		return l.errorResp(err)
@@ -101,6 +102,7 @@ func (l *CreateCommentLogic) successResp(comment *commentservice.CreateCommentRe
 			Content:         comment.Comment.Content,
 			RootId:          utils.Int2String(comment.Comment.RootId),
 			ParentId:        utils.Int2String(comment.Comment.ParentId),
+			EntityAuthorId:  utils.Int2String(comment.Comment.EntityAuthorId),
 			UserInfo:        userInfo,
 			CreatedAt:       comment.Comment.CreatedAt,
 			UpdatedAt:       comment.Comment.UpdatedAt,

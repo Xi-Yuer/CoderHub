@@ -71,12 +71,22 @@ type CancelLikeAcademicNavigatorResp struct {
 	Data bool `json:"data"` // 是否取消点赞成功
 }
 
+type ChatWithAIReq struct {
+	Content string `json:"content"` // 内容
+}
+
+type ChatWithAIResp struct {
+	Response
+	Data string `json:"data"`
+}
+
 type Comment struct {
 	Id              string      `json:"id"`                 // 评论ID
 	EntityID        string      `json:"entity_id"`          // 文章ID
 	Content         string      `json:"content"`            // 评论内容
 	RootId          string      `json:"root_id"`            // 根评论ID
 	ParentId        string      `json:"parent_id"`          // 父评论ID
+	EntityAuthorId  string      `json:"entity_author_id"`   // 实体作者ID
 	UserInfo        *UserInfo   `json:"user_info"`          // 评论者信息
 	CreatedAt       int64       `json:"created_at"`         // 创建时间
 	UpdatedAt       int64       `json:"updated_at"`         // 更新时间
@@ -106,12 +116,13 @@ type CreateArticleResp struct {
 }
 
 type CreateCommentReq struct {
-	EntityID   string   `json:"entity_id"`    // 文章ID
-	Content    string   `json:"content"`      // 评论内容
-	RootId     string   `json:"root_id"`      // 根评论ID
-	ParentId   string   `json:"parent_id"`    // 父评论ID（可选）
-	ReplyToUID string   `json:"reply_to_uid"` // 回复的目标评论ID（可选）
-	ImageIds   []string `json:"image_ids"`    // 图片ID列表
+	EntityID       string   `json:"entity_id"`        // 文章ID
+	Content        string   `json:"content"`          // 评论内容
+	RootId         string   `json:"root_id"`          // 根评论ID
+	ParentId       string   `json:"parent_id"`        // 父评论ID（可选）
+	EntityAuthorID string   `json:"entity_author_id"` // 实体作者ID
+	ReplyToUID     string   `json:"reply_to_uid"`     // 回复的目标评论ID（可选）
+	ImageIds       []string `json:"image_ids"`        // 图片ID列表
 }
 
 type CreateCommentResp struct {

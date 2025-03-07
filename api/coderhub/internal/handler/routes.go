@@ -8,6 +8,7 @@ import (
 
 	academic_auth "coderhub/api/coderhub/internal/handler/academic_auth"
 	academic_public "coderhub/api/coderhub/internal/handler/academic_public"
+	ai_auth "coderhub/api/coderhub/internal/handler/ai_auth"
 	articles_auth "coderhub/api/coderhub/internal/handler/articles_auth"
 	articles_public "coderhub/api/coderhub/internal/handler/articles_public"
 	coderhub "coderhub/api/coderhub/internal/handler/coderhub"
@@ -72,6 +73,19 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			},
 		},
 		rest.WithPrefix("/api/academic_navigator"),
+	)
+
+	server.AddRoutes(
+		[]rest.Route{
+			{
+				// 与AI对话
+				Method:  http.MethodPost,
+				Path:    "/chat",
+				Handler: ai_auth.ChatWithAIHandler(serverCtx),
+			},
+		},
+		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
+		rest.WithPrefix("/api/ai"),
 	)
 
 	server.AddRoutes(

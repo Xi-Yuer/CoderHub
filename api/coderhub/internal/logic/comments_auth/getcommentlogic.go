@@ -117,6 +117,7 @@ func (l *GetCommentLogic) successResp(comment *commentservice.GetCommentResponse
 			Content:         comment.Comment.Content,
 			RootId:          utils.Int2String(comment.Comment.RootId),
 			ParentId:        utils.Int2String(comment.Comment.ParentId),
+			EntityAuthorId:  utils.Int2String(comment.Comment.EntityAuthorId),
 			UserInfo:        userInfo,
 			CreatedAt:       comment.Comment.CreatedAt,
 			UpdatedAt:       comment.Comment.UpdatedAt,

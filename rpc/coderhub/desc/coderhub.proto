@@ -454,6 +454,7 @@ message Comment {
   int32 like_count = 12;            // 点赞数
   repeated ImageInfo images = 13;  // 评论包含的图片列表
   bool is_liked = 14;         // 当前用户是否已点赞
+  int64 entity_author_id = 15;     // 实体作者ID
 }
 
 // 创建评论请求
@@ -465,6 +466,7 @@ message CreateCommentRequest {
   int64 user_id = 5;               // 评论者ID
   int64 reply_to_uid = 6;         // 被回复的用户ID（可选）
   repeated int64 image_ids = 7;      // 图片ID列表
+  int64 entity_author_id = 8;      // 实体作者ID
 }
 
 message CreateCommentResponse {

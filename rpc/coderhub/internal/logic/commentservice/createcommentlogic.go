@@ -30,13 +30,14 @@ func NewCreateCommentLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Cre
 func (l *CreateCommentLogic) CreateComment(in *coderhub.CreateCommentRequest) (*coderhub.CreateCommentResponse, error) {
 	CommentID := utils.GenID()
 	commentModel := &model.Comment{
-		ID:         CommentID,
-		EntityID:   in.EntityId,
-		Content:    in.Content,
-		ParentID:   in.ParentId,
-		RootID:     in.RootId,
-		UserID:     in.UserId,
-		ReplyToUID: in.ReplyToUid,
+		ID:             CommentID,
+		EntityID:       in.EntityId,
+		Content:        in.Content,
+		ParentID:       in.ParentId,
+		RootID:         in.RootId,
+		UserID:         in.UserId,
+		ReplyToUID:     in.ReplyToUid,
+		EntityAuthorID: in.EntityAuthorId,
 	}
 	// 获取用户信息
 	userService := userservicelogic.NewGetUserInfoLogic(l.ctx, l.svcCtx)
@@ -75,18 +76,19 @@ func (l *CreateCommentLogic) CreateComment(in *coderhub.CreateCommentRequest) (*
 	}
 	return &coderhub.CreateCommentResponse{
 		Comment: &coderhub.Comment{
-			Id:           commentModel.ID,
-			EntityId:     commentModel.EntityID,
-			Content:      commentModel.Content,
-			ParentId:     commentModel.ParentID,
-			RootId:       commentModel.RootID,
-			UserInfo:     user,
-			CreatedAt:    commentModel.CreatedAt.Unix(),
-			UpdatedAt:    commentModel.UpdatedAt.Unix(),
-			Replies:      nil,
-			RepliesCount: 0,
-			LikeCount:    0,
-			Images:       nil,
+			Id:             commentModel.ID,
+			EntityId:       commentModel.EntityID,
+			Content:        commentModel.Content,
+			ParentId:       commentModel.ParentID,
+			RootId:         commentModel.RootID,
+			UserInfo:       user,
+			EntityAuthorId: commentModel.EntityAuthorID,
+			CreatedAt:      commentModel.CreatedAt.Unix(),
+			UpdatedAt:      commentModel.UpdatedAt.Unix(),
+			Replies:        nil,
+			RepliesCount:   0,
+			LikeCount:      0,
+			Images:         nil,
 		},
 	}, nil
 }

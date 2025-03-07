@@ -1,6 +1,7 @@
 Name: coderhubAPI
 Host: 0.0.0.0
 Port: 8888
+Timeout: 30000
 Auth:
   AccessSecret: secret_key
   AccessExpire: 86400
