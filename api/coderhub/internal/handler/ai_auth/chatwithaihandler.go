@@ -1,29 +1,25 @@
 package ai_auth
 
 import (
-	"net/http"
-
 	"coderhub/api/coderhub/internal/logic/ai_auth"
 	"coderhub/api/coderhub/internal/svc"
 	"coderhub/api/coderhub/internal/types"
 	"github.com/zeromicro/go-zero/rest/httpx"
+	"net/http"
 )
 
-// 与AI对话
+// ChatWithAIHandler 与AI对话 - 流式返回
 func ChatWithAIHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var req types.ChatWithAIReq
+		w.Header().Set(`Content-Type`, `text/event-stream;charset=utf-8`)
+		w.Header().Set("Connection", "keep-alive")
+		w.Header().Set("Transfer-Encoding", "chunked")
 		if err := httpx.Parse(r, &req); err != nil {
 			httpx.ErrorCtx(r.Context(), w, err)
 			return
 		}
-
 		l := ai_auth.NewChatWithAILogic(r.Context(), svcCtx)
-		resp, err := l.ChatWithAI(&req)
-		if err != nil {
-			httpx.ErrorCtx(r.Context(), w, err)
-		} else {
-			httpx.OkJsonCtx(r.Context(), w, resp)
-		}
+		l.ChatWithAI(w, &req)
 	}
 }
