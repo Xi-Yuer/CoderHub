@@ -18,7 +18,7 @@ type GetAcademicNavigatorLogic struct {
 	svcCtx *svc.ServiceContext
 }
 
-// 获取学术导航
+// NewGetAcademicNavigatorLogic 获取学术导航
 func NewGetAcademicNavigatorLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetAcademicNavigatorLogic {
 	return &GetAcademicNavigatorLogic{
 		Logger: logx.WithContext(ctx),

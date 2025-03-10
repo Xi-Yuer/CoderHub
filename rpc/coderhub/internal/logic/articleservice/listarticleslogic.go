@@ -48,6 +48,8 @@ func (l *ListArticlesLogic) ListArticles(in *coderhub.GetArticlesRequest) (*code
 	var likeCounts map[int64]int64
 	var articlePVs map[int64]int64
 	var commentCounts map[int64]int64
+	var userLiked map[int64]bool
+	var userFavored map[int64]bool
 	var authors []*model.User
 
 	wg.Add(3) // 添加 3 个 Goroutine
@@ -80,6 +82,8 @@ func (l *ListArticlesLogic) ListArticles(in *coderhub.GetArticlesRequest) (*code
 		defer wg.Done()
 		likeCounts, _ = l.svcCtx.ArticlesRelationLikeRepository.BatchList(l.ctx, in.Ids)
 		articlePV, _ := l.svcCtx.ArticlePVRepository.GetArticlePVsByArticleIDs(in.Ids)
+		userLiked, _ = l.svcCtx.ArticlesRelationLikeRepository.BatchArticlesHasBeenUserLiked(l.ctx, in.Ids, in.UserId)
+		userFavored, _ = l.svcCtx.UserFavorEntityRepository.BatchGetUserFavorEntity(l.ctx, in.Ids, in.UserId)
 		articlePVs = make(map[int64]int64)
 		for _, pv := range articlePV {
 			articlePVs[pv.ArticleID] = pv.Count
@@ -154,6 +158,8 @@ func (l *ListArticlesLogic) ListArticles(in *coderhub.GetArticlesRequest) (*code
 		viewCount := articlePVs[article.ID]
 		likeCount := likeCounts[article.ID]
 		commentCount := commentCounts[article.ID]
+		userLiked := userLiked[article.ID]
+		userFavored := userFavored[article.ID]
 
 		// 构建文章响应
 		var tags []string
@@ -180,6 +186,8 @@ func (l *ListArticlesLogic) ListArticles(in *coderhub.GetArticlesRequest) (*code
 				CategoryId:   article.CategoryID,
 				ViewCount:    viewCount,
 				LikeCount:    likeCount,
+				IsFavorite:   userFavored,
+				IsLicked:     userLiked,
 				CommentCount: commentCount,
 				Status:       article.Status,
 				CreatedAt:    article.CreatedAt.Unix(),
