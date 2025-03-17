@@ -29,9 +29,7 @@ func NewListQuestionsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Lis
 
 func (l *ListQuestionsLogic) ListQuestions(req *types.GetQuestionListReq) (resp *types.GetQuestionListResp, err error) {
 	tree, err := l.svcCtx.QuestionBankService.GetQuestionTree(l.ctx, &coderhub.GetQuestionTreeRequest{
-		BankId:   utils.String2Int(req.BankId),
-		Page:     req.Page,
-		PageSize: req.PageSize,
+		BankId: utils.String2Int(req.BankId),
 	})
 	if err != nil {
 		return l.errorResp(err)
@@ -40,8 +38,9 @@ func (l *ListQuestionsLogic) ListQuestions(req *types.GetQuestionListReq) (resp 
 	list := make([]*types.QuestionMenus, 0, len(tree.Nodes))
 	for _, node := range tree.Nodes {
 		list = append(list, &types.QuestionMenus{
-			Id:    utils.Int2String(node.Id),
-			Title: node.Title,
+			Id:        utils.Int2String(node.Id),
+			Title:     node.Title,
+			Difficult: node.Difficulty,
 		})
 	}
 

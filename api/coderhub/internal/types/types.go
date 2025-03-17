@@ -163,7 +163,18 @@ type CreateFavorResp struct {
 	Data bool `json:"data"` // 收藏夹详情
 }
 
+type CreateQuestionBankCategoryReq struct {
+	Name        string `json:"name"`
+	Description string `json:"description"`
+}
+
+type CreateQuestionBankCategoryResp struct {
+	Response
+	Data bool `json:"data"`
+}
+
 type CreateQuestionBankReq struct {
+	CategoryId  string   `json:"categoryId"`
 	Name        string   `json:"name"`
 	Description string   `json:"description"`
 	Difficulty  string   `json:"difficulty,options=default|easy|medium|hard"`
@@ -253,6 +264,15 @@ type DeleteFavorReq struct {
 }
 
 type DeleteFavorResp struct {
+	Response
+	Data bool `json:"data"`
+}
+
+type DeleteQuestionBankCategoryReq struct {
+	Id string `path:"id"`
+}
+
+type DeleteQuestionBankCategoryResp struct {
 	Response
 	Data bool `json:"data"`
 }
@@ -506,9 +526,18 @@ type GetFollowListResp struct {
 	Data FollowList `json:"data"` // 关注列表
 }
 
+type GetQuestionBankCategoryListReq struct {
+}
+
+type GetQuestionBankCategoryListResp struct {
+	Response
+	Data *QuestionBankCategoryList `json:"data"`
+}
+
 type GetQuestionBankListReq struct {
-	Page     int32 `json:"page"`
-	PageSize int32 `json:"page_size"`
+	CategoryID string `path:"categoryId"`
+	Page       int32  `form:"page"`
+	PageSize   int32  `form:"page_size"`
 }
 
 type GetQuestionBankListResp struct {
@@ -526,9 +555,7 @@ type GetQuestionBankResp struct {
 }
 
 type GetQuestionListReq struct {
-	BankId   string `json:"bankId"`    // 题库 ID
-	Page     int32  `json:"page"`      // 页码
-	PageSize int32  `json:"page_size"` // 每页数量
+	BankId string `path:"id"` // 题库 ID
 }
 
 type GetQuestionListResp struct {
@@ -668,6 +695,18 @@ type QuestionBank struct {
 	UpdatedAt   int64      `json:"updatedAt"`
 }
 
+type QuestionBankCategory struct {
+	ID          string `json:"id"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
+	CreatedAt   int64  `json:"createdAt"`
+	UpdatedAt   int64  `json:"updatedAt"`
+}
+
+type QuestionBankCategoryList struct {
+	List []*QuestionBankCategory `json:"list"`
+}
+
 type QuestionBankList struct {
 	Total int64           `json:"total"`
 	List  []*QuestionBank `json:"list"`
@@ -679,8 +718,9 @@ type QuestionList struct {
 }
 
 type QuestionMenus struct {
-	Id    string `json:"id"`
-	Title string `json:"title"`
+	Id        string `json:"id"`
+	Title     string `json:"title"`
+	Difficult string `json:"difficult"`
 }
 
 type RegisterReq struct {

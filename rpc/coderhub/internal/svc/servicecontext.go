@@ -31,6 +31,7 @@ type ServiceContext struct {
 	UserFavorEntityRepository      repository.UserFavorEntityRepository
 	EmotionRepository              repository.Repository
 	ArticleTagRepository           repository.ArticleTagRepository
+	QuestionBankCategoryRepository repository.QuestionBankCategoryRepository
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -76,12 +77,13 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		UserRepository:                 repository.NewUserRepositoryImpl(sql, redisDB),
 		UserFollowRepository:           repository.NewUserFollowRepositoryImpl(sql, redisDB),
 		//AcademicNavigatorRepository:    repository.NewAcademicNavigatorRepositoryImpl(sql, &cfg),
-		AcademicNavigatorRepository: repository.NewAcademicNavigatorRepositoryImpl(sql),
-		QuestionBankRepository:      repository.NewQuestionRepositoryRepositoryImpl(sql, redisDB),
-		QuestionRepository:          repository.NewQuestionRepositoryImpl(sql, redisDB),
-		UserFavorFolderRepository:   repository.NewUserFavorFolderRepository(sql, redisDB),
-		UserFavorEntityRepository:   repository.NewUserFavorEntityRepository(sql, redisDB),
-		EmotionRepository:           repository.NewEmoticonRepository(sql),
-		ArticleTagRepository:        repository.NewArticleTagRepositoryImpl(sql),
+		AcademicNavigatorRepository:    repository.NewAcademicNavigatorRepositoryImpl(sql),
+		QuestionBankRepository:         repository.NewQuestionRepositoryRepositoryImpl(sql, redisDB),
+		QuestionRepository:             repository.NewQuestionRepositoryImpl(sql, redisDB),
+		UserFavorFolderRepository:      repository.NewUserFavorFolderRepository(sql, redisDB),
+		UserFavorEntityRepository:      repository.NewUserFavorEntityRepository(sql, redisDB),
+		EmotionRepository:              repository.NewEmoticonRepository(sql),
+		ArticleTagRepository:           repository.NewArticleTagRepositoryImpl(sql),
+		QuestionBankCategoryRepository: repository.NewQuestionBankCategoryRepository(sql),
 	}
 }

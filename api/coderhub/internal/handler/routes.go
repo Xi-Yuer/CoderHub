@@ -20,6 +20,8 @@ import (
 	follow_auth "coderhub/api/coderhub/internal/handler/follow_auth"
 	follow_public "coderhub/api/coderhub/internal/handler/follow_public"
 	image_auth "coderhub/api/coderhub/internal/handler/image_auth"
+	question_bank_category_auth "coderhub/api/coderhub/internal/handler/question_bank_category_auth"
+	question_bank_category_public "coderhub/api/coderhub/internal/handler/question_bank_category_public"
 	questions_auth "coderhub/api/coderhub/internal/handler/questions_auth"
 	questions_public "coderhub/api/coderhub/internal/handler/questions_public"
 	tag_auth "coderhub/api/coderhub/internal/handler/tag_auth"
@@ -355,6 +357,37 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 	server.AddRoutes(
 		[]rest.Route{
 			{
+				// 删除题库分类
+				Method:  http.MethodDelete,
+				Path:    "/:id",
+				Handler: question_bank_category_auth.DeleteQuestionBankCategoryHandler(serverCtx),
+			},
+			{
+				// 创建题库分类
+				Method:  http.MethodPost,
+				Path:    "/create",
+				Handler: question_bank_category_auth.CreateQuestionBankCategoryHandler(serverCtx),
+			},
+		},
+		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
+		rest.WithPrefix("/api/question_bank_category"),
+	)
+
+	server.AddRoutes(
+		[]rest.Route{
+			{
+				// 获取题库分类列表
+				Method:  http.MethodGet,
+				Path:    "/list",
+				Handler: question_bank_category_public.ListQuestionBankCategoryHandler(serverCtx),
+			},
+		},
+		rest.WithPrefix("/api/question_bank_category"),
+	)
+
+	server.AddRoutes(
+		[]rest.Route{
+			{
 				// 删除题库
 				Method:  http.MethodDelete,
 				Path:    "/bank/:id",
@@ -388,7 +421,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			{
 				// 获取题库列表
 				Method:  http.MethodGet,
-				Path:    "/bank_list",
+				Path:    "/bank_list/:categoryId",
 				Handler: questions_public.ListQuestionBanksHandler(serverCtx),
 			},
 			{
@@ -400,7 +433,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			{
 				// 获取题目列表
 				Method:  http.MethodGet,
-				Path:    "/question_list",
+				Path:    "/question_list/:id",
 				Handler: questions_public.ListQuestionsHandler(serverCtx),
 			},
 		},

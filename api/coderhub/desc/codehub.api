@@ -516,6 +516,7 @@ type (
 	}
         // 创建题库请求
 	CreateQuestionBankReq {
+        CategoryId string `json:"categoryId"`
         Name string `json:"name"`
         Description string `json:"description"`
         Difficulty string `json:"difficulty,options=default|easy|medium|hard"`
@@ -568,8 +569,9 @@ type (
 	}
         // 获取题库列表
 	GetQuestionBankListReq {
-        Page int32 `json:"page"`
-		PageSize int32 `json:"page_size"`
+        CategoryID string `path:"categoryId"`
+        Page int32 `form:"page"`
+        PageSize int32 `form:"page_size"`
 	}
         // 题库列表
 	QuestionBankList {
@@ -597,7 +599,8 @@ type (
 	}
 	QuestionMenus {
         Id string `json:"id"`
-		Title string `json:"title"`
+        Title string `json:"title"`
+        Difficult string `json:"difficult"`
 	}
         // 题库详情
 	GetQuestionBankResp {
@@ -606,9 +609,7 @@ type (
 	}
         // 获取题目列表
 	GetQuestionListReq {
-        BankId string `json:"bankId"`     // 题库 ID
-        Page int32 `json:"page"`          // 页码
-        PageSize int32 `json:"page_size"` // 每页数量
+        BankId string `path:"id"` // 题库 ID
 	}
         // 题目列表
 	QuestionList {
@@ -828,6 +829,37 @@ type (
     ChatWithAIResp {
         Response
         Data string `json:"data"`
+    }
+    CreateQuestionBankCategoryReq {
+        Name string `json:"name"`
+        Description string `json:"description"`
+    }
+    CreateQuestionBankCategoryResp {
+        Response
+        Data bool `json:"data"`
+    }
+    QuestionBankCategory {
+        ID string `json:"id"`
+        Name string `json:"name"`
+        Description string `json:"description"`
+        CreatedAt int64 `json:"createdAt"`
+        UpdatedAt int64 `json:"updatedAt"`
+    }
+    QuestionBankCategoryList {
+        List []*QuestionBankCategory `json:"list"`
+    }
+    GetQuestionBankCategoryListReq{
+    }
+    GetQuestionBankCategoryListResp {
+        Response
+        Data *QuestionBankCategoryList `json:"data"`
+    }
+    DeleteQuestionBankCategoryReq {
+        Id string `path:"id"`
+    }
+    DeleteQuestionBankCategoryResp {
+        Response
+        Data bool `json:"data"`
     }
 )
 
@@ -1178,13 +1210,13 @@ service CodeHubAPI {
 		summary: "获取题库列表"
 	)
 	@handler ListQuestionBanks
-	get /bank_list (GetQuestionBankListReq) returns (GetQuestionBankListResp)
+    get /bank_list/:categoryId (GetQuestionBankListReq) returns (GetQuestionBankListResp)
 
     @doc(
 		summary: "获取题目列表"
 	)
 	@handler ListQuestions
-	get /question_list (GetQuestionListReq) returns (GetQuestionListResp)
+    get /question_list/:id (GetQuestionListReq) returns (GetQuestionListResp)
 
     @doc(
 		summary: "获取题目详情"
@@ -1327,5 +1359,36 @@ service CodeHubAPI {
     )
     @handler ChatWithAI
     post /chat (ChatWithAIReq) returns (ChatWithAIResp)
+}
+
+@server(
+    jwt: Auth
+    prefix: /api/question_bank_category
+    group: question_bank_category_auth
+)
+service CodeHubAPI {
+    @doc(
+        summary: "创建题库分类"
+    )
+    @handler CreateQuestionBankCategory
+    post /create (CreateQuestionBankCategoryReq) returns (CreateQuestionBankCategoryResp)
+
+    @doc(
+        summary: "删除题库分类"
+    )
+    @handler DeleteQuestionBankCategory
+    delete /:id (DeleteQuestionBankCategoryReq) returns (DeleteQuestionBankCategoryResp)
+}
+
+@server(
+    prefix: /api/question_bank_category
+    group: question_bank_category_public
+)
+service CodeHubAPI {
+    @doc(
+        summary: "获取题库分类列表"
+    )
+    @handler ListQuestionBankCategory
+    get /list (GetQuestionBankCategoryListReq) returns (GetQuestionBankCategoryListResp)
 }
 

@@ -65,3 +65,8 @@ TagService:
     Hosts:
       - etcd:2379
     Key: coderhub.rpc
+QuestionBankCategoryService:
+  Etcd:
+    Hosts:
+      - etcd:2379
+    Key: coderhub.rpc

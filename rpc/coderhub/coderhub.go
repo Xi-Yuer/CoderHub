@@ -15,6 +15,7 @@ import (
 	favorserviceServer "coderhub/rpc/coderhub/internal/server/favorservice"
 	imagerelationserviceServer "coderhub/rpc/coderhub/internal/server/imagerelationservice"
 	imageserviceServer "coderhub/rpc/coderhub/internal/server/imageservice"
+	questionbankcategoryserviceServe "coderhub/rpc/coderhub/internal/server/questionbankcategoryservice"
 	questionserviceServer "coderhub/rpc/coderhub/internal/server/questionservice"
 	userfollowserviceServer "coderhub/rpc/coderhub/internal/server/userfollowservice"
 	userserviceServer "coderhub/rpc/coderhub/internal/server/userservice"
@@ -49,6 +50,7 @@ func main() {
 		coderhub.RegisterFavorServiceServer(grpcServer, favorserviceServer.NewFavorServiceServer(ctx))
 		coderhub.RegisterEmotionServiceServer(grpcServer, emotionserviceServer.NewEmotionServiceServer(ctx))
 		coderhub.RegisterArticleTagServiceServer(grpcServer, articletagserviceServer.NewArticleTagServiceServer(ctx))
+		coderhub.RegisterQuestionBankCategoryServiceServer(grpcServer, questionbankcategoryserviceServe.NewQuestionBankCategoryServiceServer(ctx))
 
 		if c.Mode == service.DevMode || c.Mode == service.TestMode {
 			reflection.Register(grpcServer)

@@ -7,35 +7,37 @@ import (
 )
 
 type ServiceContext struct {
-	Config                 config.Config
-	UserService            coderhub.UserServiceClient
-	ImageAuthService       coderhub.ImageServiceClient
-	ArticlesService        coderhub.ArticleServiceClient
-	AcademicService        coderhub.AcademicNavigatorServiceClient
-	UserFollowService      coderhub.UserFollowServiceClient
-	ImagesService          coderhub.ImageServiceClient
-	CommentService         coderhub.CommentServiceClient
-	QuestionBankService    coderhub.QuestionServiceClient
-	FavoriteService        coderhub.FavorFoldServiceClient
-	FavoriteContentService coderhub.FavorServiceClient
-	EmotionService         coderhub.EmotionServiceClient
-	TagService             coderhub.ArticleTagServiceClient
+	Config                      config.Config
+	UserService                 coderhub.UserServiceClient
+	ImageAuthService            coderhub.ImageServiceClient
+	ArticlesService             coderhub.ArticleServiceClient
+	AcademicService             coderhub.AcademicNavigatorServiceClient
+	UserFollowService           coderhub.UserFollowServiceClient
+	ImagesService               coderhub.ImageServiceClient
+	CommentService              coderhub.CommentServiceClient
+	QuestionBankService         coderhub.QuestionServiceClient
+	FavoriteService             coderhub.FavorFoldServiceClient
+	FavoriteContentService      coderhub.FavorServiceClient
+	EmotionService              coderhub.EmotionServiceClient
+	TagService                  coderhub.ArticleTagServiceClient
+	QuestionBankCategoryService coderhub.QuestionBankCategoryServiceClient
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
 	return &ServiceContext{
-		Config:                 c,
-		UserService:            coderhub.NewUserServiceClient(zrpc.MustNewClient(c.UserService).Conn()),
-		ImageAuthService:       coderhub.NewImageServiceClient(zrpc.MustNewClient(c.ImageAuthService).Conn()),
-		ArticlesService:        coderhub.NewArticleServiceClient(zrpc.MustNewClient(c.ArticlesService).Conn()),
-		AcademicService:        coderhub.NewAcademicNavigatorServiceClient(zrpc.MustNewClient(c.AcademicService).Conn()),
-		UserFollowService:      coderhub.NewUserFollowServiceClient(zrpc.MustNewClient(c.UserFollowService).Conn()),
-		ImagesService:          coderhub.NewImageServiceClient(zrpc.MustNewClient(c.ImagesService).Conn()),
-		CommentService:         coderhub.NewCommentServiceClient(zrpc.MustNewClient(c.CommentService).Conn()),
-		QuestionBankService:    coderhub.NewQuestionServiceClient(zrpc.MustNewClient(c.QuestionBankService).Conn()),
-		FavoriteService:        coderhub.NewFavorFoldServiceClient(zrpc.MustNewClient(c.FavoriteService).Conn()),
-		FavoriteContentService: coderhub.NewFavorServiceClient(zrpc.MustNewClient(c.FavoriteContentService).Conn()),
-		EmotionService:         coderhub.NewEmotionServiceClient(zrpc.MustNewClient(c.EmotionService).Conn()),
-		TagService:             coderhub.NewArticleTagServiceClient(zrpc.MustNewClient(c.TagService).Conn()),
+		Config:                      c,
+		UserService:                 coderhub.NewUserServiceClient(zrpc.MustNewClient(c.UserService).Conn()),
+		ImageAuthService:            coderhub.NewImageServiceClient(zrpc.MustNewClient(c.ImageAuthService).Conn()),
+		ArticlesService:             coderhub.NewArticleServiceClient(zrpc.MustNewClient(c.ArticlesService).Conn()),
+		AcademicService:             coderhub.NewAcademicNavigatorServiceClient(zrpc.MustNewClient(c.AcademicService).Conn()),
+		UserFollowService:           coderhub.NewUserFollowServiceClient(zrpc.MustNewClient(c.UserFollowService).Conn()),
+		ImagesService:               coderhub.NewImageServiceClient(zrpc.MustNewClient(c.ImagesService).Conn()),
+		CommentService:              coderhub.NewCommentServiceClient(zrpc.MustNewClient(c.CommentService).Conn()),
+		QuestionBankService:         coderhub.NewQuestionServiceClient(zrpc.MustNewClient(c.QuestionBankService).Conn()),
+		FavoriteService:             coderhub.NewFavorFoldServiceClient(zrpc.MustNewClient(c.FavoriteService).Conn()),
+		FavoriteContentService:      coderhub.NewFavorServiceClient(zrpc.MustNewClient(c.FavoriteContentService).Conn()),
+		EmotionService:              coderhub.NewEmotionServiceClient(zrpc.MustNewClient(c.EmotionService).Conn()),
+		TagService:                  coderhub.NewArticleTagServiceClient(zrpc.MustNewClient(c.TagService).Conn()),
+		QuestionBankCategoryService: coderhub.NewQuestionBankCategoryServiceClient(zrpc.MustNewClient(c.QuestionBankCategoryService).Conn()),
 	}
 }

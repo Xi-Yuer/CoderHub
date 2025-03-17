@@ -11,16 +11,17 @@ type Config struct {
 		AccessSecret string
 		AccessExpire int64
 	}
-	UserService            zrpc.RpcClientConf
-	ImageAuthService       zrpc.RpcClientConf
-	ArticlesService        zrpc.RpcClientConf
-	AcademicService        zrpc.RpcClientConf
-	UserFollowService      zrpc.RpcClientConf
-	ImagesService          zrpc.RpcClientConf
-	CommentService         zrpc.RpcClientConf
-	QuestionBankService    zrpc.RpcClientConf
-	FavoriteService        zrpc.RpcClientConf
-	FavoriteContentService zrpc.RpcClientConf
-	EmotionService         zrpc.RpcClientConf
-	TagService             zrpc.RpcClientConf
+	UserService                 zrpc.RpcClientConf
+	ImageAuthService            zrpc.RpcClientConf
+	ArticlesService             zrpc.RpcClientConf
+	AcademicService             zrpc.RpcClientConf
+	UserFollowService           zrpc.RpcClientConf
+	ImagesService               zrpc.RpcClientConf
+	CommentService              zrpc.RpcClientConf
+	QuestionBankService         zrpc.RpcClientConf
+	FavoriteService             zrpc.RpcClientConf
+	FavoriteContentService      zrpc.RpcClientConf
+	EmotionService              zrpc.RpcClientConf
+	TagService                  zrpc.RpcClientConf
+	QuestionBankCategoryService zrpc.RpcClientConf
 }

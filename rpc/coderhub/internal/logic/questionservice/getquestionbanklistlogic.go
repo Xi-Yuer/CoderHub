@@ -28,7 +28,7 @@ func NewGetQuestionBankListLogic(ctx context.Context, svcCtx *svc.ServiceContext
 
 // GetQuestionBankList 获取题库列表
 func (l *GetQuestionBankListLogic) GetQuestionBankList(in *coderhub.GetQuestionBankListRequest) (*coderhub.GetQuestionBankListResponse, error) {
-	banks, total, err := l.svcCtx.QuestionBankRepository.GetQuestionBanks(l.ctx, in.Page, in.PageSize)
+	banks, total, err := l.svcCtx.QuestionBankRepository.GetQuestionBanks(l.ctx, in.CategoryId, in.Page, in.PageSize)
 
 	// 获取封面
 	entityIds := make([]int64, 0)

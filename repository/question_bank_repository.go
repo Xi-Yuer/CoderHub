@@ -11,7 +11,7 @@ type QuestionBankRepository interface {
 	CreateQuestionBank(ctx context.Context, questionBank *model.QuestionBank) error
 	GetQuestionBankByID(ctx context.Context, id int64) (*model.QuestionBank, error)
 	BatchGetQuestion(ctx context.Context, ids []int64) ([]*model.QuestionBanksPreviewWithCreateUser, error)
-	GetQuestionBanks(ctx context.Context, page, pageSize int32) ([]*model.QuestionBank, int64, error)
+	GetQuestionBanks(ctx context.Context, categoryID int64, page, pageSize int32) ([]*model.QuestionBank, int64, error)
 	UpdateQuestionBank(ctx context.Context, questionBank *model.QuestionBank) error
 	DeleteQuestionBank(ctx context.Context, id int64) error
 }
@@ -40,10 +40,10 @@ func (r *QuestionRepositoryRepositoryImpl) GetQuestionBankByID(ctx context.Conte
 	return questionBank, db.Error
 }
 
-func (r *QuestionRepositoryRepositoryImpl) GetQuestionBanks(ctx context.Context, page, pageSize int32) ([]*model.QuestionBank, int64, error) {
+func (r *QuestionRepositoryRepositoryImpl) GetQuestionBanks(ctx context.Context, categoryID int64, page, pageSize int32) ([]*model.QuestionBank, int64, error) {
 	var questionBanks []*model.QuestionBank
 	var total int64
-	err := r.DB.WithContext(ctx).Model(&model.QuestionBank{}).Limit(int(pageSize)).Offset(int((page - 1) * pageSize)).Find(&questionBanks).Count(&total).Error
+	err := r.DB.WithContext(ctx).Model(&model.QuestionBank{}).Where("cate_gory_id = ?", categoryID).Limit(int(pageSize)).Offset(int((page - 1) * pageSize)).Find(&questionBanks).Count(&total).Error
 	return questionBanks, total, err
 }
 

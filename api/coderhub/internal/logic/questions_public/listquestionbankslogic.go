@@ -29,8 +29,9 @@ func NewListQuestionBanksLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 
 func (l *ListQuestionBanksLogic) ListQuestionBanks(req *types.GetQuestionBankListReq) (resp *types.GetQuestionBankListResp, err error) {
 	list, err := l.svcCtx.QuestionBankService.GetQuestionBankList(l.ctx, &coderhub.GetQuestionBankListRequest{
-		Page:     req.Page,
-		PageSize: req.PageSize,
+		CategoryId: utils.String2Int(req.CategoryID),
+		Page:       req.Page,
+		PageSize:   req.PageSize,
 	})
 	if err != nil {
 		return l.errorResp(err)

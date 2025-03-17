@@ -5,6 +5,7 @@ import (
 	"coderhub/rpc/coderhub/coderhub"
 	"coderhub/rpc/coderhub/internal/svc"
 	"context"
+	"errors"
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
@@ -24,7 +25,14 @@ func NewCreateQuestionLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Cr
 
 // CreateQuestion 创建题目
 func (l *CreateQuestionLogic) CreateQuestion(in *coderhub.CreateQuestionRequest) (*coderhub.CreateQuestionResponse, error) {
-	err := l.svcCtx.QuestionRepository.CreateQuestion(l.ctx, &model.Question{
+	bank, err := l.svcCtx.QuestionBankRepository.GetQuestionBankByID(l.ctx, in.BankId)
+	if err != nil {
+		return nil, err
+	}
+	if bank == nil {
+		return nil, errors.New("题库不存在")
+	}
+	err = l.svcCtx.QuestionRepository.CreateQuestion(l.ctx, &model.Question{
 		BankID:     in.BankId,
 		Title:      in.Title,
 		Content:    in.Content,

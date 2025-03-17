@@ -52,7 +52,7 @@ func (l *CreateCommentLogic) CreateComment(req *types.CreateCommentReq) (resp *t
 
 func (l *CreateCommentLogic) successResp(comment *commentservice.CreateCommentResponse) (*types.CreateCommentResp, error) {
 
-	Images := make([]types.ImageInfo, len(comment.Comment.Images))
+	var Images []types.ImageInfo
 	for _, image := range comment.Comment.Images {
 		Images = append(Images, types.ImageInfo{
 			ImageId:      utils.Int2String(image.ImageId),

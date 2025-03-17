@@ -2,7 +2,7 @@
 // goctl 1.7.3
 // Source: coderhub.proto
 
-package imagerelationservice
+package questionbankcategoryservice
 
 import (
 	"context"
@@ -175,72 +175,34 @@ type (
 	UserFollowInfo                      = coderhub.UserFollowInfo
 	UserInfo                            = coderhub.UserInfo
 
-	ImageRelationService interface {
-		// 创建图片关系
-		CreateRelation(ctx context.Context, in *CreateRelationRequest, opts ...grpc.CallOption) (*CreateRelationResponse, error)
-		// 批量创建图片关系
-		BatchCreateRelation(ctx context.Context, in *BatchCreateRelationRequest, opts ...grpc.CallOption) (*BatchCreateRelationResponse, error)
-		// 批量删除图片关系
-		BatchDeleteRelation(ctx context.Context, in *BatchDeleteRelationRequest, opts ...grpc.CallOption) (*BatchDeleteRelationResponse, error)
-		// 批量获取图片关联，根据实体ID列表、实体类型列表获取
-		BatchGetImagesByEntity(ctx context.Context, in *BatchGetImagesByEntityRequest, opts ...grpc.CallOption) (*BatchGetImagesByEntityResponse, error)
-		// 根据实体ID、实体类型删除图片关系
-		DeleteByEntityID(ctx context.Context, in *DeleteByEntityIDRequest, opts ...grpc.CallOption) (*DeleteByEntityIDResponse, error)
-		// 获取实体关联的图片列表
-		GetImagesByEntity(ctx context.Context, in *GetImagesByEntityRequest, opts ...grpc.CallOption) (*GetImagesByEntityResponse, error)
-		// 获取图片关联的实体列表
-		GetEntitiesByImage(ctx context.Context, in *GetEntitiesByImageRequest, opts ...grpc.CallOption) (*GetEntitiesByImageResponse, error)
+	QuestionBankCategoryService interface {
+		CreateQuestionBankCategory(ctx context.Context, in *CreateQuestionBankCategoryRequest, opts ...grpc.CallOption) (*CreateQuestionBankCategoryResponse, error)
+		DeleteQuestionBankCategory(ctx context.Context, in *DeleteQuestionBankCategoryRequest, opts ...grpc.CallOption) (*DeleteQuestionBankCategoryResponse, error)
+		GetQuestionBankCategoryList(ctx context.Context, in *GetQuestionBankCategoryListRequest, opts ...grpc.CallOption) (*GetQuestionBankCategoryListResponse, error)
 	}
 
-	defaultImageRelationService struct {
+	defaultQuestionBankCategoryService struct {
 		cli zrpc.Client
 	}
 )
 
-func NewImageRelationService(cli zrpc.Client) ImageRelationService {
-	return &defaultImageRelationService{
+func NewQuestionBankCategoryService(cli zrpc.Client) QuestionBankCategoryService {
+	return &defaultQuestionBankCategoryService{
 		cli: cli,
 	}
 }
 
-// 创建图片关系
-func (m *defaultImageRelationService) CreateRelation(ctx context.Context, in *CreateRelationRequest, opts ...grpc.CallOption) (*CreateRelationResponse, error) {
-	client := coderhub.NewImageRelationServiceClient(m.cli.Conn())
-	return client.CreateRelation(ctx, in, opts...)
+func (m *defaultQuestionBankCategoryService) CreateQuestionBankCategory(ctx context.Context, in *CreateQuestionBankCategoryRequest, opts ...grpc.CallOption) (*CreateQuestionBankCategoryResponse, error) {
+	client := coderhub.NewQuestionBankCategoryServiceClient(m.cli.Conn())
+	return client.CreateQuestionBankCategory(ctx, in, opts...)
 }
 
-// 批量创建图片关系
-func (m *defaultImageRelationService) BatchCreateRelation(ctx context.Context, in *BatchCreateRelationRequest, opts ...grpc.CallOption) (*BatchCreateRelationResponse, error) {
-	client := coderhub.NewImageRelationServiceClient(m.cli.Conn())
-	return client.BatchCreateRelation(ctx, in, opts...)
+func (m *defaultQuestionBankCategoryService) DeleteQuestionBankCategory(ctx context.Context, in *DeleteQuestionBankCategoryRequest, opts ...grpc.CallOption) (*DeleteQuestionBankCategoryResponse, error) {
+	client := coderhub.NewQuestionBankCategoryServiceClient(m.cli.Conn())
+	return client.DeleteQuestionBankCategory(ctx, in, opts...)
 }
 
-// 批量删除图片关系
-func (m *defaultImageRelationService) BatchDeleteRelation(ctx context.Context, in *BatchDeleteRelationRequest, opts ...grpc.CallOption) (*BatchDeleteRelationResponse, error) {
-	client := coderhub.NewImageRelationServiceClient(m.cli.Conn())
-	return client.BatchDeleteRelation(ctx, in, opts...)
-}
-
-// 批量获取图片关联，根据实体ID列表、实体类型列表获取
-func (m *defaultImageRelationService) BatchGetImagesByEntity(ctx context.Context, in *BatchGetImagesByEntityRequest, opts ...grpc.CallOption) (*BatchGetImagesByEntityResponse, error) {
-	client := coderhub.NewImageRelationServiceClient(m.cli.Conn())
-	return client.BatchGetImagesByEntity(ctx, in, opts...)
-}
-
-// 根据实体ID、实体类型删除图片关系
-func (m *defaultImageRelationService) DeleteByEntityID(ctx context.Context, in *DeleteByEntityIDRequest, opts ...grpc.CallOption) (*DeleteByEntityIDResponse, error) {
-	client := coderhub.NewImageRelationServiceClient(m.cli.Conn())
-	return client.DeleteByEntityID(ctx, in, opts...)
-}
-
-// 获取实体关联的图片列表
-func (m *defaultImageRelationService) GetImagesByEntity(ctx context.Context, in *GetImagesByEntityRequest, opts ...grpc.CallOption) (*GetImagesByEntityResponse, error) {
-	client := coderhub.NewImageRelationServiceClient(m.cli.Conn())
-	return client.GetImagesByEntity(ctx, in, opts...)
-}
-
-// 获取图片关联的实体列表
-func (m *defaultImageRelationService) GetEntitiesByImage(ctx context.Context, in *GetEntitiesByImageRequest, opts ...grpc.CallOption) (*GetEntitiesByImageResponse, error) {
-	client := coderhub.NewImageRelationServiceClient(m.cli.Conn())
-	return client.GetEntitiesByImage(ctx, in, opts...)
+func (m *defaultQuestionBankCategoryService) GetQuestionBankCategoryList(ctx context.Context, in *GetQuestionBankCategoryListRequest, opts ...grpc.CallOption) (*GetQuestionBankCategoryListResponse, error) {
+	client := coderhub.NewQuestionBankCategoryServiceClient(m.cli.Conn())
+	return client.GetQuestionBankCategoryList(ctx, in, opts...)
 }

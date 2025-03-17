@@ -750,9 +750,10 @@ message CreateQuestionBankRequest {
   string name = 1;           // 题库名称
   string description = 2;     // 题库描述
   string difficulty = 3;      // 题库难度
-  repeated string tags = 4;            // 题库标签
+  repeated string tags = 4;   // 题库标签
   int64 create_user = 5;      // 创建人
-  Image cover_image = 6;
+  Image cover_image = 6;      // 题库封面图片
+  int64 category_id = 7;     // 题库分类ID
 }
 
 // 创建题库响应
@@ -798,8 +799,9 @@ message DeleteQuestionResponse {
 
 // 获取题库请求
 message GetQuestionBankListRequest {
-  int32 page = 1;
-  int32 page_size = 2;
+  int64 category_id = 1;
+  int32 page = 2;
+  int32 page_size = 3;
 }
 
 // 题库响应
@@ -841,8 +843,6 @@ message GetQuestionResponse {
 // 获取题库下的所有题目目录
 message GetQuestionTreeRequest {
   int64 bank_id = 1;
-  int32 page = 2;
-  int32 page_size = 3;
 }
 
 // 题目目录节点
@@ -853,6 +853,7 @@ message GetQuestionTreeResponse {
 message QuestionTreeNode {
   int64 id = 1;
   string title = 2;
+  string difficulty = 3;
 }
 
 service QuestionService {
@@ -1122,4 +1123,41 @@ service ArticleTagService {
   rpc GetArticleTagList(GetArticleTagListRequest) returns (GetArticleTagListResponse) {}
   rpc GetSystemProviderTagList(GetSystemProviderTagListRequest) returns (GetSystemProviderTagListResponse) {}
   rpc UpdateArticleTagUsageCount(UpdateArticleTagUsageCountRequest) returns (UpdateArticleTagUsageCountResponse) {}
+}
+
+message CreateQuestionBankCategoryRequest {
+  string name = 1;
+  string description = 2;
+}
+
+message CreateQuestionBankCategoryResponse {
+  bool success = 1;
+}
+
+message DeleteQuestionBankCategoryRequest {
+  int64 id = 1;
+}
+
+message DeleteQuestionBankCategoryResponse {
+  bool success = 1;
+}
+
+message GetQuestionBankCategoryListRequest {}
+
+message QuestionBankCategory {
+  int64 id = 1;
+  string name = 2;
+  string description = 3;
+  int64 created_at = 4;
+  int64 updated_at = 5;
+}
+
+message GetQuestionBankCategoryListResponse {
+  repeated QuestionBankCategory question_bank_categories = 1;
+}
+
+service QuestionBankCategoryService {
+  rpc CreateQuestionBankCategory(CreateQuestionBankCategoryRequest) returns (CreateQuestionBankCategoryResponse) {}
+  rpc DeleteQuestionBankCategory(DeleteQuestionBankCategoryRequest) returns (DeleteQuestionBankCategoryResponse) {}
+  rpc GetQuestionBankCategoryList(GetQuestionBankCategoryListRequest) returns (GetQuestionBankCategoryListResponse) {}
 }

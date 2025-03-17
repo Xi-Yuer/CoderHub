@@ -3610,3 +3610,182 @@ var ArticleTagService_ServiceDesc = grpc.ServiceDesc{
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "coderhub.proto",
 }
+
+const (
+	QuestionBankCategoryService_CreateQuestionBankCategory_FullMethodName  = "/coderhub.QuestionBankCategoryService/CreateQuestionBankCategory"
+	QuestionBankCategoryService_DeleteQuestionBankCategory_FullMethodName  = "/coderhub.QuestionBankCategoryService/DeleteQuestionBankCategory"
+	QuestionBankCategoryService_GetQuestionBankCategoryList_FullMethodName = "/coderhub.QuestionBankCategoryService/GetQuestionBankCategoryList"
+)
+
+// QuestionBankCategoryServiceClient is the client API for QuestionBankCategoryService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type QuestionBankCategoryServiceClient interface {
+	CreateQuestionBankCategory(ctx context.Context, in *CreateQuestionBankCategoryRequest, opts ...grpc.CallOption) (*CreateQuestionBankCategoryResponse, error)
+	DeleteQuestionBankCategory(ctx context.Context, in *DeleteQuestionBankCategoryRequest, opts ...grpc.CallOption) (*DeleteQuestionBankCategoryResponse, error)
+	GetQuestionBankCategoryList(ctx context.Context, in *GetQuestionBankCategoryListRequest, opts ...grpc.CallOption) (*GetQuestionBankCategoryListResponse, error)
+}
+
+type questionBankCategoryServiceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewQuestionBankCategoryServiceClient(cc grpc.ClientConnInterface) QuestionBankCategoryServiceClient {
+	return &questionBankCategoryServiceClient{cc}
+}
+
+func (c *questionBankCategoryServiceClient) CreateQuestionBankCategory(ctx context.Context, in *CreateQuestionBankCategoryRequest, opts ...grpc.CallOption) (*CreateQuestionBankCategoryResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CreateQuestionBankCategoryResponse)
+	err := c.cc.Invoke(ctx, QuestionBankCategoryService_CreateQuestionBankCategory_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *questionBankCategoryServiceClient) DeleteQuestionBankCategory(ctx context.Context, in *DeleteQuestionBankCategoryRequest, opts ...grpc.CallOption) (*DeleteQuestionBankCategoryResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeleteQuestionBankCategoryResponse)
+	err := c.cc.Invoke(ctx, QuestionBankCategoryService_DeleteQuestionBankCategory_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *questionBankCategoryServiceClient) GetQuestionBankCategoryList(ctx context.Context, in *GetQuestionBankCategoryListRequest, opts ...grpc.CallOption) (*GetQuestionBankCategoryListResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetQuestionBankCategoryListResponse)
+	err := c.cc.Invoke(ctx, QuestionBankCategoryService_GetQuestionBankCategoryList_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// QuestionBankCategoryServiceServer is the server API for QuestionBankCategoryService service.
+// All implementations must embed UnimplementedQuestionBankCategoryServiceServer
+// for forward compatibility.
+type QuestionBankCategoryServiceServer interface {
+	CreateQuestionBankCategory(context.Context, *CreateQuestionBankCategoryRequest) (*CreateQuestionBankCategoryResponse, error)
+	DeleteQuestionBankCategory(context.Context, *DeleteQuestionBankCategoryRequest) (*DeleteQuestionBankCategoryResponse, error)
+	GetQuestionBankCategoryList(context.Context, *GetQuestionBankCategoryListRequest) (*GetQuestionBankCategoryListResponse, error)
+	mustEmbedUnimplementedQuestionBankCategoryServiceServer()
+}
+
+// UnimplementedQuestionBankCategoryServiceServer must be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedQuestionBankCategoryServiceServer struct{}
+
+func (UnimplementedQuestionBankCategoryServiceServer) CreateQuestionBankCategory(context.Context, *CreateQuestionBankCategoryRequest) (*CreateQuestionBankCategoryResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateQuestionBankCategory not implemented")
+}
+func (UnimplementedQuestionBankCategoryServiceServer) DeleteQuestionBankCategory(context.Context, *DeleteQuestionBankCategoryRequest) (*DeleteQuestionBankCategoryResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteQuestionBankCategory not implemented")
+}
+func (UnimplementedQuestionBankCategoryServiceServer) GetQuestionBankCategoryList(context.Context, *GetQuestionBankCategoryListRequest) (*GetQuestionBankCategoryListResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetQuestionBankCategoryList not implemented")
+}
+func (UnimplementedQuestionBankCategoryServiceServer) mustEmbedUnimplementedQuestionBankCategoryServiceServer() {
+}
+func (UnimplementedQuestionBankCategoryServiceServer) testEmbeddedByValue() {}
+
+// UnsafeQuestionBankCategoryServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to QuestionBankCategoryServiceServer will
+// result in compilation errors.
+type UnsafeQuestionBankCategoryServiceServer interface {
+	mustEmbedUnimplementedQuestionBankCategoryServiceServer()
+}
+
+func RegisterQuestionBankCategoryServiceServer(s grpc.ServiceRegistrar, srv QuestionBankCategoryServiceServer) {
+	// If the following call pancis, it indicates UnimplementedQuestionBankCategoryServiceServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&QuestionBankCategoryService_ServiceDesc, srv)
+}
+
+func _QuestionBankCategoryService_CreateQuestionBankCategory_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateQuestionBankCategoryRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QuestionBankCategoryServiceServer).CreateQuestionBankCategory(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: QuestionBankCategoryService_CreateQuestionBankCategory_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QuestionBankCategoryServiceServer).CreateQuestionBankCategory(ctx, req.(*CreateQuestionBankCategoryRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _QuestionBankCategoryService_DeleteQuestionBankCategory_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteQuestionBankCategoryRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QuestionBankCategoryServiceServer).DeleteQuestionBankCategory(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: QuestionBankCategoryService_DeleteQuestionBankCategory_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QuestionBankCategoryServiceServer).DeleteQuestionBankCategory(ctx, req.(*DeleteQuestionBankCategoryRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _QuestionBankCategoryService_GetQuestionBankCategoryList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetQuestionBankCategoryListRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QuestionBankCategoryServiceServer).GetQuestionBankCategoryList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: QuestionBankCategoryService_GetQuestionBankCategoryList_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QuestionBankCategoryServiceServer).GetQuestionBankCategoryList(ctx, req.(*GetQuestionBankCategoryListRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// QuestionBankCategoryService_ServiceDesc is the grpc.ServiceDesc for QuestionBankCategoryService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var QuestionBankCategoryService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "coderhub.QuestionBankCategoryService",
+	HandlerType: (*QuestionBankCategoryServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "CreateQuestionBankCategory",
+			Handler:    _QuestionBankCategoryService_CreateQuestionBankCategory_Handler,
+		},
+		{
+			MethodName: "DeleteQuestionBankCategory",
+			Handler:    _QuestionBankCategoryService_DeleteQuestionBankCategory_Handler,
+		},
+		{
+			MethodName: "GetQuestionBankCategoryList",
+			Handler:    _QuestionBankCategoryService_GetQuestionBankCategoryList_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "coderhub.proto",
+}

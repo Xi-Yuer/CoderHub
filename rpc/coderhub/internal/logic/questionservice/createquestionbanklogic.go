@@ -6,6 +6,7 @@ import (
 	"coderhub/rpc/coderhub/internal/svc"
 	"coderhub/shared/utils"
 	"context"
+	"errors"
 	"github.com/zeromicro/go-zero/core/logx"
 	"strings"
 )
@@ -27,7 +28,15 @@ func NewCreateQuestionBankLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 // CreateQuestionBank 创建题库
 func (l *CreateQuestionBankLogic) CreateQuestionBank(in *coderhub.CreateQuestionBankRequest) (*coderhub.CreateQuestionBankResponse, error) {
 	id := utils.GenID()
-	err := l.svcCtx.QuestionBankRepository.CreateQuestionBank(l.ctx, &model.QuestionBank{
+	category, err := l.svcCtx.QuestionBankCategoryRepository.GetCategoryByID(l.ctx, in.CategoryId)
+	if err != nil {
+		return nil, err
+	}
+	if category == nil {
+		return nil, errors.New("题库分类不存在")
+	}
+
+	err = l.svcCtx.QuestionBankRepository.CreateQuestionBank(l.ctx, &model.QuestionBank{
 		ID:          id,
 		Name:        in.Name,
 		Description: in.Description,
@@ -35,6 +44,7 @@ func (l *CreateQuestionBankLogic) CreateQuestionBank(in *coderhub.CreateQuestion
 		Tags:        strings.Join(in.Tags, ","),
 		CreateUser:  in.CreateUser,
 		CoverImage:  nil,
+		CateGoryID:  in.CategoryId,
 	})
 	if err != nil {
 		return nil, err
