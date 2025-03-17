@@ -534,6 +534,16 @@ type GetQuestionBankCategoryListResp struct {
 	Data *QuestionBankCategoryList `json:"data"`
 }
 
+type GetQuestionBankDetailReq struct {
+	Id            string `path:"id"`
+	RequestUserID string `header:"request-user-id,optional"`
+}
+
+type GetQuestionBankDetailResp struct {
+	Response
+	Data *GetQuestionBankResqonse `json:"data"` // 题库详情
+}
+
 type GetQuestionBankListReq struct {
 	CategoryID string `path:"categoryId"`
 	Page       int32  `form:"page"`
@@ -552,6 +562,11 @@ type GetQuestionBankReq struct {
 type GetQuestionBankResp struct {
 	Response
 	Data *Question `json:"data"` // 题库详情
+}
+
+type GetQuestionBankResqonse struct {
+	QuestionBank
+	IsFavorited bool `json:"isFavorited"` // 是否收藏
 }
 
 type GetQuestionListReq struct {

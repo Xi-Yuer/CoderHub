@@ -36,8 +36,11 @@ func (r *QuestionRepositoryRepositoryImpl) CreateQuestionBank(ctx context.Contex
 
 func (r *QuestionRepositoryRepositoryImpl) GetQuestionBankByID(ctx context.Context, id int64) (*model.QuestionBank, error) {
 	questionBank := &model.QuestionBank{}
-	db := r.DB.WithContext(ctx).Where("id = ?", id).First(questionBank)
-	return questionBank, db.Error
+	err := r.DB.WithContext(ctx).Where("id = ?", id).Limit(1).Find(questionBank).Error
+	if err != nil {
+		return nil, err
+	}
+	return questionBank, nil
 }
 
 func (r *QuestionRepositoryRepositoryImpl) GetQuestionBanks(ctx context.Context, categoryID int64, page, pageSize int32) ([]*model.QuestionBank, int64, error) {

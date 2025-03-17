@@ -29,6 +29,12 @@ func (s *QuestionServiceServer) CreateQuestionBank(ctx context.Context, in *code
 	return l.CreateQuestionBank(in)
 }
 
+// 获取题库详情
+func (s *QuestionServiceServer) GetQuestionBank(ctx context.Context, in *coderhub.GetQuestionBankRequest) (*coderhub.GetQuestionBankResponse, error) {
+	l := questionservicelogic.NewGetQuestionBankLogic(ctx, s.svcCtx)
+	return l.GetQuestionBank(in)
+}
+
 // 删除题库
 func (s *QuestionServiceServer) DeleteQuestionBank(ctx context.Context, in *coderhub.DeleteQuestionBankRequest) (*coderhub.DeleteQuestionBankResponse, error) {
 	l := questionservicelogic.NewDeleteQuestionBankLogic(ctx, s.svcCtx)

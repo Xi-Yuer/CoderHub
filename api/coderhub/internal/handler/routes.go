@@ -419,6 +419,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 	server.AddRoutes(
 		[]rest.Route{
 			{
+				// 获取题库详情
+				Method:  http.MethodGet,
+				Path:    "/bank/:id",
+				Handler: questions_public.GetQuestionBankDetailHandler(serverCtx),
+			},
+			{
 				// 获取题库列表
 				Method:  http.MethodGet,
 				Path:    "/bank_list/:categoryId",

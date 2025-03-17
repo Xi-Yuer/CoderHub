@@ -125,6 +125,8 @@ type (
 	GetQuestionBankCategoryListResponse = coderhub.GetQuestionBankCategoryListResponse
 	GetQuestionBankListRequest          = coderhub.GetQuestionBankListRequest
 	GetQuestionBankListResponse         = coderhub.GetQuestionBankListResponse
+	GetQuestionBankRequest              = coderhub.GetQuestionBankRequest
+	GetQuestionBankResponse             = coderhub.GetQuestionBankResponse
 	GetQuestionRequest                  = coderhub.GetQuestionRequest
 	GetQuestionResponse                 = coderhub.GetQuestionResponse
 	GetQuestionTreeRequest              = coderhub.GetQuestionTreeRequest
@@ -178,6 +180,8 @@ type (
 	QuestionService interface {
 		// 创建题库
 		CreateQuestionBank(ctx context.Context, in *CreateQuestionBankRequest, opts ...grpc.CallOption) (*CreateQuestionBankResponse, error)
+		// 获取题库详情
+		GetQuestionBank(ctx context.Context, in *GetQuestionBankRequest, opts ...grpc.CallOption) (*GetQuestionBankResponse, error)
 		// 删除题库
 		DeleteQuestionBank(ctx context.Context, in *DeleteQuestionBankRequest, opts ...grpc.CallOption) (*DeleteQuestionBankResponse, error)
 		// 创建题目
@@ -207,6 +211,12 @@ func NewQuestionService(cli zrpc.Client) QuestionService {
 func (m *defaultQuestionService) CreateQuestionBank(ctx context.Context, in *CreateQuestionBankRequest, opts ...grpc.CallOption) (*CreateQuestionBankResponse, error) {
 	client := coderhub.NewQuestionServiceClient(m.cli.Conn())
 	return client.CreateQuestionBank(ctx, in, opts...)
+}
+
+// 获取题库详情
+func (m *defaultQuestionService) GetQuestionBank(ctx context.Context, in *GetQuestionBankRequest, opts ...grpc.CallOption) (*GetQuestionBankResponse, error) {
+	client := coderhub.NewQuestionServiceClient(m.cli.Conn())
+	return client.GetQuestionBank(ctx, in, opts...)
 }
 
 // 删除题库

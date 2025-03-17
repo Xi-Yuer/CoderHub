@@ -856,9 +856,21 @@ message QuestionTreeNode {
   string difficulty = 3;
 }
 
+message GetQuestionBankRequest {
+  int64 bank_id = 1;
+  int64 user_id = 2;
+}
+
+message GetQuestionBankResponse {
+  QuestionBank bank = 1;
+  bool is_favorite = 2;
+}
+
 service QuestionService {
   // 创建题库
   rpc CreateQuestionBank(CreateQuestionBankRequest) returns (CreateQuestionBankResponse) {}
+  // 获取题库详情
+  rpc GetQuestionBank(GetQuestionBankRequest) returns (GetQuestionBankResponse) {}
   // 删除题库
   rpc DeleteQuestionBank(DeleteQuestionBankRequest) returns (DeleteQuestionBankResponse) {}
   // 创建题目

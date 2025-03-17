@@ -125,6 +125,8 @@ type (
 	GetQuestionBankCategoryListResponse = coderhub.GetQuestionBankCategoryListResponse
 	GetQuestionBankListRequest          = coderhub.GetQuestionBankListRequest
 	GetQuestionBankListResponse         = coderhub.GetQuestionBankListResponse
+	GetQuestionBankRequest              = coderhub.GetQuestionBankRequest
+	GetQuestionBankResponse             = coderhub.GetQuestionBankResponse
 	GetQuestionRequest                  = coderhub.GetQuestionRequest
 	GetQuestionResponse                 = coderhub.GetQuestionResponse
 	GetQuestionTreeRequest              = coderhub.GetQuestionTreeRequest

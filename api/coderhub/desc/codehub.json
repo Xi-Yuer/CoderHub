@@ -1598,6 +1598,35 @@
       }
     },
     "/api/questions/bank/{id}": {
+      "get": {
+        "summary": "获取题库详情",
+        "operationId": "GetQuestionBankDetail",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/GetQuestionBankDetailResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "request-user-id",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "questions_public"
+        ]
+      },
       "delete": {
         "summary": "删除题库",
         "operationId": "DeleteQuestionBank",
@@ -4391,6 +4420,32 @@
         "data"
       ]
     },
+    "GetQuestionBankDetailReq": {
+      "type": "object",
+      "title": "GetQuestionBankDetailReq"
+    },
+    "GetQuestionBankDetailResp": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32",
+          "description": " 状态码"
+        },
+        "message": {
+          "type": "string",
+          "description": " 提示信息"
+        },
+        "data": {
+          "$ref": "#/definitions/GetQuestionBankResqonse",
+          "description": " 题库详情"
+        }
+      },
+      "title": "GetQuestionBankDetailResp",
+      "required": [
+        "data"
+      ]
+    },
     "GetQuestionBankListReq": {
       "type": "object",
       "properties": {
@@ -4455,6 +4510,52 @@
       "title": "GetQuestionBankResp",
       "required": [
         "data"
+      ]
+    },
+    "GetQuestionBankResqonse": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "difficulty": {
+          "type": "string"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "coverImage": {
+          "$ref": "#/definitions/ImageInfo"
+        },
+        "createUser": {
+          "$ref": "#/definitions/UserInfo"
+        },
+        "createdAt": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "updatedAt": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "isFavorited": {
+          "type": "boolean",
+          "format": "boolean",
+          "description": " 是否收藏"
+        }
+      },
+      "title": "GetQuestionBankResqonse",
+      "required": [
+        "isFavorited"
       ]
     },
     "GetQuestionListReq": {

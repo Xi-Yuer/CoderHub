@@ -13,6 +13,7 @@ type UserFavorEntityRepository interface {
 	Delete(ctx context.Context, userFavorEntity *model.UserFavor) error
 	GetList(ctx context.Context, userFavorEntity *model.UserFavor, page, pageSize int) ([]*model.UserFavor, int64, error)
 	BatchGetUserFavorEntity(ctx context.Context, entityIDs []int64, userID int64) (map[int64]bool, error)
+	IsFavorEntityExist(ctx context.Context, userID int64, entityID int64, entityType string) (bool, error)
 }
 
 type UserFavorEntityRepositoryImpl struct {
@@ -69,4 +70,17 @@ func (r *UserFavorEntityRepositoryImpl) BatchGetUserFavorEntity(ctx context.Cont
 		userFavorEntityMap[userFavorEntity.EntityId] = true
 	}
 	return userFavorEntityMap, nil
+}
+
+// IsFavorEntityExist 判断实体是否被用户收藏
+func (r *UserFavorEntityRepositoryImpl) IsFavorEntityExist(ctx context.Context, userID int64, entityID int64, entityType string) (bool, error) {
+	var userFavorEntity model.UserFavor
+	err := r.DB.WithContext(ctx).Model(&model.UserFavor{}).Where("user_id = ? AND entity_id = ? AND entity_type = ?", userID, entityID, entityType).First(&userFavorEntity).Error
+	if err != nil {
+		return false, nil
+	}
+	if userFavorEntity.ID > 0 {
+		return true, nil
+	}
+	return false, nil
 }

@@ -573,6 +573,19 @@ type (
         Page int32 `form:"page"`
         PageSize int32 `form:"page_size"`
 	}
+        // 获取题库详情
+    GetQuestionBankDetailReq {
+        Id string `path:"id"`
+        RequestUserID string `header:"request-user-id,optional"`
+    }
+    GetQuestionBankResqonse {
+        QuestionBank
+        IsFavorited bool `json:"isFavorited"` // 是否收藏
+    }
+    GetQuestionBankDetailResp {
+        Response
+        Data *GetQuestionBankResqonse `json:"data"` // 题库详情
+    }
         // 题库列表
 	QuestionBankList {
         Total int64 `json:"total"`
@@ -1211,6 +1224,12 @@ service CodeHubAPI {
 	)
 	@handler ListQuestionBanks
     get /bank_list/:categoryId (GetQuestionBankListReq) returns (GetQuestionBankListResp)
+
+    @doc(
+        summary: "获取题库详情"
+    )
+    @handler GetQuestionBankDetail
+    get /bank/:id (GetQuestionBankDetailReq) returns (GetQuestionBankDetailResp)
 
     @doc(
 		summary: "获取题目列表"

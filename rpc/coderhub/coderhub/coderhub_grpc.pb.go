@@ -2429,6 +2429,7 @@ var ImageService_ServiceDesc = grpc.ServiceDesc{
 
 const (
 	QuestionService_CreateQuestionBank_FullMethodName  = "/coderhub.QuestionService/CreateQuestionBank"
+	QuestionService_GetQuestionBank_FullMethodName     = "/coderhub.QuestionService/GetQuestionBank"
 	QuestionService_DeleteQuestionBank_FullMethodName  = "/coderhub.QuestionService/DeleteQuestionBank"
 	QuestionService_CreateQuestion_FullMethodName      = "/coderhub.QuestionService/CreateQuestion"
 	QuestionService_DeleteQuestion_FullMethodName      = "/coderhub.QuestionService/DeleteQuestion"
@@ -2443,6 +2444,8 @@ const (
 type QuestionServiceClient interface {
 	// 创建题库
 	CreateQuestionBank(ctx context.Context, in *CreateQuestionBankRequest, opts ...grpc.CallOption) (*CreateQuestionBankResponse, error)
+	// 获取题库详情
+	GetQuestionBank(ctx context.Context, in *GetQuestionBankRequest, opts ...grpc.CallOption) (*GetQuestionBankResponse, error)
 	// 删除题库
 	DeleteQuestionBank(ctx context.Context, in *DeleteQuestionBankRequest, opts ...grpc.CallOption) (*DeleteQuestionBankResponse, error)
 	// 创建题目
@@ -2469,6 +2472,16 @@ func (c *questionServiceClient) CreateQuestionBank(ctx context.Context, in *Crea
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CreateQuestionBankResponse)
 	err := c.cc.Invoke(ctx, QuestionService_CreateQuestionBank_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *questionServiceClient) GetQuestionBank(ctx context.Context, in *GetQuestionBankRequest, opts ...grpc.CallOption) (*GetQuestionBankResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetQuestionBankResponse)
+	err := c.cc.Invoke(ctx, QuestionService_GetQuestionBank_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -2541,6 +2554,8 @@ func (c *questionServiceClient) GetQuestion(ctx context.Context, in *GetQuestion
 type QuestionServiceServer interface {
 	// 创建题库
 	CreateQuestionBank(context.Context, *CreateQuestionBankRequest) (*CreateQuestionBankResponse, error)
+	// 获取题库详情
+	GetQuestionBank(context.Context, *GetQuestionBankRequest) (*GetQuestionBankResponse, error)
 	// 删除题库
 	DeleteQuestionBank(context.Context, *DeleteQuestionBankRequest) (*DeleteQuestionBankResponse, error)
 	// 创建题目
@@ -2565,6 +2580,9 @@ type UnimplementedQuestionServiceServer struct{}
 
 func (UnimplementedQuestionServiceServer) CreateQuestionBank(context.Context, *CreateQuestionBankRequest) (*CreateQuestionBankResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateQuestionBank not implemented")
+}
+func (UnimplementedQuestionServiceServer) GetQuestionBank(context.Context, *GetQuestionBankRequest) (*GetQuestionBankResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetQuestionBank not implemented")
 }
 func (UnimplementedQuestionServiceServer) DeleteQuestionBank(context.Context, *DeleteQuestionBankRequest) (*DeleteQuestionBankResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteQuestionBank not implemented")
@@ -2619,6 +2637,24 @@ func _QuestionService_CreateQuestionBank_Handler(srv interface{}, ctx context.Co
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(QuestionServiceServer).CreateQuestionBank(ctx, req.(*CreateQuestionBankRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _QuestionService_GetQuestionBank_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetQuestionBankRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QuestionServiceServer).GetQuestionBank(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: QuestionService_GetQuestionBank_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QuestionServiceServer).GetQuestionBank(ctx, req.(*GetQuestionBankRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -2741,6 +2777,10 @@ var QuestionService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateQuestionBank",
 			Handler:    _QuestionService_CreateQuestionBank_Handler,
+		},
+		{
+			MethodName: "GetQuestionBank",
+			Handler:    _QuestionService_GetQuestionBank_Handler,
 		},
 		{
 			MethodName: "DeleteQuestionBank",
