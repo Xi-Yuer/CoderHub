@@ -3829,3 +3829,359 @@ var QuestionBankCategoryService_ServiceDesc = grpc.ServiceDesc{
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "coderhub.proto",
 }
+
+const (
+	SchoolExpService_CreateSchoolExp_FullMethodName  = "/coderhub.SchoolExpService/CreateSchoolExp"
+	SchoolExpService_DeleteSchoolExp_FullMethodName  = "/coderhub.SchoolExpService/DeleteSchoolExp"
+	SchoolExpService_GetSchoolExpList_FullMethodName = "/coderhub.SchoolExpService/GetSchoolExpList"
+)
+
+// SchoolExpServiceClient is the client API for SchoolExpService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type SchoolExpServiceClient interface {
+	CreateSchoolExp(ctx context.Context, in *CreateSchoolExpRequest, opts ...grpc.CallOption) (*CreateSchoolExpResponse, error)
+	DeleteSchoolExp(ctx context.Context, in *DeleteSchoolExpRequest, opts ...grpc.CallOption) (*DeleteSchoolExpResponse, error)
+	GetSchoolExpList(ctx context.Context, in *GetSchoolExpListRequest, opts ...grpc.CallOption) (*GetSchoolExpListResponse, error)
+}
+
+type schoolExpServiceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewSchoolExpServiceClient(cc grpc.ClientConnInterface) SchoolExpServiceClient {
+	return &schoolExpServiceClient{cc}
+}
+
+func (c *schoolExpServiceClient) CreateSchoolExp(ctx context.Context, in *CreateSchoolExpRequest, opts ...grpc.CallOption) (*CreateSchoolExpResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CreateSchoolExpResponse)
+	err := c.cc.Invoke(ctx, SchoolExpService_CreateSchoolExp_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *schoolExpServiceClient) DeleteSchoolExp(ctx context.Context, in *DeleteSchoolExpRequest, opts ...grpc.CallOption) (*DeleteSchoolExpResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeleteSchoolExpResponse)
+	err := c.cc.Invoke(ctx, SchoolExpService_DeleteSchoolExp_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *schoolExpServiceClient) GetSchoolExpList(ctx context.Context, in *GetSchoolExpListRequest, opts ...grpc.CallOption) (*GetSchoolExpListResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetSchoolExpListResponse)
+	err := c.cc.Invoke(ctx, SchoolExpService_GetSchoolExpList_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// SchoolExpServiceServer is the server API for SchoolExpService service.
+// All implementations must embed UnimplementedSchoolExpServiceServer
+// for forward compatibility.
+type SchoolExpServiceServer interface {
+	CreateSchoolExp(context.Context, *CreateSchoolExpRequest) (*CreateSchoolExpResponse, error)
+	DeleteSchoolExp(context.Context, *DeleteSchoolExpRequest) (*DeleteSchoolExpResponse, error)
+	GetSchoolExpList(context.Context, *GetSchoolExpListRequest) (*GetSchoolExpListResponse, error)
+	mustEmbedUnimplementedSchoolExpServiceServer()
+}
+
+// UnimplementedSchoolExpServiceServer must be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedSchoolExpServiceServer struct{}
+
+func (UnimplementedSchoolExpServiceServer) CreateSchoolExp(context.Context, *CreateSchoolExpRequest) (*CreateSchoolExpResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateSchoolExp not implemented")
+}
+func (UnimplementedSchoolExpServiceServer) DeleteSchoolExp(context.Context, *DeleteSchoolExpRequest) (*DeleteSchoolExpResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteSchoolExp not implemented")
+}
+func (UnimplementedSchoolExpServiceServer) GetSchoolExpList(context.Context, *GetSchoolExpListRequest) (*GetSchoolExpListResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetSchoolExpList not implemented")
+}
+func (UnimplementedSchoolExpServiceServer) mustEmbedUnimplementedSchoolExpServiceServer() {}
+func (UnimplementedSchoolExpServiceServer) testEmbeddedByValue()                          {}
+
+// UnsafeSchoolExpServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to SchoolExpServiceServer will
+// result in compilation errors.
+type UnsafeSchoolExpServiceServer interface {
+	mustEmbedUnimplementedSchoolExpServiceServer()
+}
+
+func RegisterSchoolExpServiceServer(s grpc.ServiceRegistrar, srv SchoolExpServiceServer) {
+	// If the following call pancis, it indicates UnimplementedSchoolExpServiceServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&SchoolExpService_ServiceDesc, srv)
+}
+
+func _SchoolExpService_CreateSchoolExp_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateSchoolExpRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SchoolExpServiceServer).CreateSchoolExp(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SchoolExpService_CreateSchoolExp_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SchoolExpServiceServer).CreateSchoolExp(ctx, req.(*CreateSchoolExpRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SchoolExpService_DeleteSchoolExp_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteSchoolExpRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SchoolExpServiceServer).DeleteSchoolExp(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SchoolExpService_DeleteSchoolExp_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SchoolExpServiceServer).DeleteSchoolExp(ctx, req.(*DeleteSchoolExpRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SchoolExpService_GetSchoolExpList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetSchoolExpListRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SchoolExpServiceServer).GetSchoolExpList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SchoolExpService_GetSchoolExpList_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SchoolExpServiceServer).GetSchoolExpList(ctx, req.(*GetSchoolExpListRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// SchoolExpService_ServiceDesc is the grpc.ServiceDesc for SchoolExpService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var SchoolExpService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "coderhub.SchoolExpService",
+	HandlerType: (*SchoolExpServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "CreateSchoolExp",
+			Handler:    _SchoolExpService_CreateSchoolExp_Handler,
+		},
+		{
+			MethodName: "DeleteSchoolExp",
+			Handler:    _SchoolExpService_DeleteSchoolExp_Handler,
+		},
+		{
+			MethodName: "GetSchoolExpList",
+			Handler:    _SchoolExpService_GetSchoolExpList_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "coderhub.proto",
+}
+
+const (
+	WorkExpService_CreateWorkExp_FullMethodName  = "/coderhub.WorkExpService/CreateWorkExp"
+	WorkExpService_DeleteWorkExp_FullMethodName  = "/coderhub.WorkExpService/DeleteWorkExp"
+	WorkExpService_GetWorkExpList_FullMethodName = "/coderhub.WorkExpService/GetWorkExpList"
+)
+
+// WorkExpServiceClient is the client API for WorkExpService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type WorkExpServiceClient interface {
+	CreateWorkExp(ctx context.Context, in *CreateWorkExpRequest, opts ...grpc.CallOption) (*CreateWorkExpResponse, error)
+	DeleteWorkExp(ctx context.Context, in *DeleteWorkExpRequest, opts ...grpc.CallOption) (*DeleteWorkExpResponse, error)
+	GetWorkExpList(ctx context.Context, in *GetWorkExpListRequest, opts ...grpc.CallOption) (*GetWorkExpListResponse, error)
+}
+
+type workExpServiceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewWorkExpServiceClient(cc grpc.ClientConnInterface) WorkExpServiceClient {
+	return &workExpServiceClient{cc}
+}
+
+func (c *workExpServiceClient) CreateWorkExp(ctx context.Context, in *CreateWorkExpRequest, opts ...grpc.CallOption) (*CreateWorkExpResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CreateWorkExpResponse)
+	err := c.cc.Invoke(ctx, WorkExpService_CreateWorkExp_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *workExpServiceClient) DeleteWorkExp(ctx context.Context, in *DeleteWorkExpRequest, opts ...grpc.CallOption) (*DeleteWorkExpResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeleteWorkExpResponse)
+	err := c.cc.Invoke(ctx, WorkExpService_DeleteWorkExp_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *workExpServiceClient) GetWorkExpList(ctx context.Context, in *GetWorkExpListRequest, opts ...grpc.CallOption) (*GetWorkExpListResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetWorkExpListResponse)
+	err := c.cc.Invoke(ctx, WorkExpService_GetWorkExpList_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// WorkExpServiceServer is the server API for WorkExpService service.
+// All implementations must embed UnimplementedWorkExpServiceServer
+// for forward compatibility.
+type WorkExpServiceServer interface {
+	CreateWorkExp(context.Context, *CreateWorkExpRequest) (*CreateWorkExpResponse, error)
+	DeleteWorkExp(context.Context, *DeleteWorkExpRequest) (*DeleteWorkExpResponse, error)
+	GetWorkExpList(context.Context, *GetWorkExpListRequest) (*GetWorkExpListResponse, error)
+	mustEmbedUnimplementedWorkExpServiceServer()
+}
+
+// UnimplementedWorkExpServiceServer must be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedWorkExpServiceServer struct{}
+
+func (UnimplementedWorkExpServiceServer) CreateWorkExp(context.Context, *CreateWorkExpRequest) (*CreateWorkExpResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateWorkExp not implemented")
+}
+func (UnimplementedWorkExpServiceServer) DeleteWorkExp(context.Context, *DeleteWorkExpRequest) (*DeleteWorkExpResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteWorkExp not implemented")
+}
+func (UnimplementedWorkExpServiceServer) GetWorkExpList(context.Context, *GetWorkExpListRequest) (*GetWorkExpListResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetWorkExpList not implemented")
+}
+func (UnimplementedWorkExpServiceServer) mustEmbedUnimplementedWorkExpServiceServer() {}
+func (UnimplementedWorkExpServiceServer) testEmbeddedByValue()                        {}
+
+// UnsafeWorkExpServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to WorkExpServiceServer will
+// result in compilation errors.
+type UnsafeWorkExpServiceServer interface {
+	mustEmbedUnimplementedWorkExpServiceServer()
+}
+
+func RegisterWorkExpServiceServer(s grpc.ServiceRegistrar, srv WorkExpServiceServer) {
+	// If the following call pancis, it indicates UnimplementedWorkExpServiceServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&WorkExpService_ServiceDesc, srv)
+}
+
+func _WorkExpService_CreateWorkExp_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateWorkExpRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WorkExpServiceServer).CreateWorkExp(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WorkExpService_CreateWorkExp_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WorkExpServiceServer).CreateWorkExp(ctx, req.(*CreateWorkExpRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _WorkExpService_DeleteWorkExp_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteWorkExpRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WorkExpServiceServer).DeleteWorkExp(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WorkExpService_DeleteWorkExp_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WorkExpServiceServer).DeleteWorkExp(ctx, req.(*DeleteWorkExpRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _WorkExpService_GetWorkExpList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetWorkExpListRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WorkExpServiceServer).GetWorkExpList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WorkExpService_GetWorkExpList_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WorkExpServiceServer).GetWorkExpList(ctx, req.(*GetWorkExpListRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// WorkExpService_ServiceDesc is the grpc.ServiceDesc for WorkExpService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var WorkExpService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "coderhub.WorkExpService",
+	HandlerType: (*WorkExpServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "CreateWorkExp",
+			Handler:    _WorkExpService_CreateWorkExp_Handler,
+		},
+		{
+			MethodName: "DeleteWorkExp",
+			Handler:    _WorkExpService_DeleteWorkExp_Handler,
+		},
+		{
+			MethodName: "GetWorkExpList",
+			Handler:    _WorkExpService_GetWorkExpList_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "coderhub.proto",
+}

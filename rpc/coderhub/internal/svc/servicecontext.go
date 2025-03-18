@@ -32,6 +32,8 @@ type ServiceContext struct {
 	EmotionRepository              repository.Repository
 	ArticleTagRepository           repository.ArticleTagRepository
 	QuestionBankCategoryRepository repository.QuestionBankCategoryRepository
+	SchoolExpRepository            repository.SchoolExpRepository
+	WorkExpRepository              repository.WorkExpRepository
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -76,7 +78,6 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		CommentRelationLikeRepository:  repository.NewCommentRelationLikeRepository(sql, redisDB),
 		UserRepository:                 repository.NewUserRepositoryImpl(sql, redisDB),
 		UserFollowRepository:           repository.NewUserFollowRepositoryImpl(sql, redisDB),
-		//AcademicNavigatorRepository:    repository.NewAcademicNavigatorRepositoryImpl(sql, &cfg),
 		AcademicNavigatorRepository:    repository.NewAcademicNavigatorRepositoryImpl(sql),
 		QuestionBankRepository:         repository.NewQuestionRepositoryRepositoryImpl(sql, redisDB),
 		QuestionRepository:             repository.NewQuestionRepositoryImpl(sql, redisDB),
@@ -85,5 +86,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		EmotionRepository:              repository.NewEmoticonRepository(sql),
 		ArticleTagRepository:           repository.NewArticleTagRepositoryImpl(sql),
 		QuestionBankCategoryRepository: repository.NewQuestionBankCategoryRepository(sql),
+		SchoolExpRepository:            repository.NewSchoolExpRepository(sql),
+		WorkExpRepository:              repository.NewWorkExpRepository(sql),
 	}
 }

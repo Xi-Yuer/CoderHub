@@ -199,6 +199,20 @@ type CreateQuestionResp struct {
 	Data bool `json:"data"` // 题目详情
 }
 
+type CreateSchoolExpReq struct {
+	Education     string `json:"education"`
+	School        string `json:"school"`
+	Major         string `json:"major"`
+	WorkExp       string `json:"workExp"`
+	Content       string `json:"content"`
+	RequestUserId string `header:"request-user-id"`
+}
+
+type CreateSchoolExpResp struct {
+	Response
+	Data bool `json:"data"`
+}
+
 type CreateTagReq struct {
 	Name             string `json:"name"`               // 标签名称
 	Description      string `json:"description"`        // 标签描述
@@ -207,6 +221,19 @@ type CreateTagReq struct {
 }
 
 type CreateTagResp struct {
+	Response
+	Data bool `json:"data"`
+}
+
+type CreateWorkExpReq struct {
+	RequestUserId string `header:"request-user-id"`
+	WorkExp       string `json:"workExp"`
+	Company       string `json:"company"`
+	Region        string `json:"region"`
+	Content       string `json:"content"`
+}
+
+type CreateWorkExpResp struct {
 	Response
 	Data bool `json:"data"`
 }
@@ -303,6 +330,15 @@ type DeleteResponse struct {
 	Data bool `json:"success"` // 删除是否成功
 }
 
+type DeleteSchoolExpReq struct {
+	Id string `path:"id"`
+}
+
+type DeleteSchoolExpResp struct {
+	Response
+	Data bool `json:"data"`
+}
+
 type DeleteTagReq struct {
 	Id string `path:"id"` // 标签 ID
 }
@@ -319,6 +355,15 @@ type DeleteUserReq struct {
 type DeleteUserResp struct {
 	Response
 	Data bool `json:"data"` // 是否删除成功
+}
+
+type DeleteWorkExpReq struct {
+	Id string `path:"id"`
+}
+
+type DeleteWorkExpResp struct {
+	Response
+	Data bool `json:"data"`
 }
 
 type Emoji struct {
@@ -586,6 +631,20 @@ type GetResponse struct {
 	Data *ImageInfo `json:"data"` // 图片详情
 }
 
+type GetSchoolExpListReq struct {
+	Page      int32  `form:"page"`
+	PageSize  int32  `form:"page_size"`
+	Education string `form:"education,optional"`
+	School    string `form:"school,optional"`
+	Major     string `form:"major,optional"`
+	WorkExp   string `form:"workExp,optional"`
+}
+
+type GetSchoolExpListResp struct {
+	Response
+	Data *SchoolExpList `json:"data"`
+}
+
 type GetTagListReq struct {
 	Page     int32 `form:"page"`      // 页码
 	PageSize int32 `form:"page_size"` // 每页数量
@@ -614,6 +673,19 @@ type GetUserListReq struct {
 type GetUserListResp struct {
 	Response
 	Data UserList `json:"data"` // 用户列表
+}
+
+type GetWorkExpListReq struct {
+	Page     int32  `form:"page"`
+	PageSize int32  `form:"page_size"`
+	WorkExp  string `form:"workExp,optional"`
+	Company  string `form:"company,optional"`
+	Region   string `form:"region,optional"`
+}
+
+type GetWorkExpListResp struct {
+	Response
+	Data *WorkExpList `json:"data"`
 }
 
 type HealthResp struct {
@@ -764,6 +836,23 @@ type Response struct {
 	Message string `json:"message"` // 提示信息
 }
 
+type SchoolExp struct {
+	ID        string `json:"id"`
+	Education string `json:"education"`
+	School    string `json:"school"`
+	Major     string `json:"major"`
+	WorkExp   string `json:"workExp"`
+	Content   string `json:"content"`
+	CreatedAt int64  `json:"createdAt"`
+	UpdatedAt int64  `json:"updatedAt"`
+	UserId    string `json:"userId"`
+}
+
+type SchoolExpList struct {
+	Total int64        `json:"total"`
+	List  []*SchoolExp `json:"list"`
+}
+
 type SendResetPasswordLinkReq struct {
 	Email string `form:"email"` // 邮箱
 }
@@ -904,4 +993,20 @@ type UserInfo struct {
 type UserList struct {
 	Total int64      `json:"total"` // 总数
 	List  []UserInfo `json:"list"`  // 用户列表
+}
+
+type WorkExp struct {
+	ID        string `json:"id"`
+	WorkExp   string `json:"workExp"`
+	Company   string `json:"company"`
+	Region    string `json:"region"`
+	Content   string `json:"content"`
+	UserID    string `json:"userID"`
+	CreatedAt int64  `json:"createdAt"`
+	UpdatedAt int64  `json:"updatedAt"`
+}
+
+type WorkExpList struct {
+	Total int64      `json:"total"`
+	List  []*WorkExp `json:"list"`
 }

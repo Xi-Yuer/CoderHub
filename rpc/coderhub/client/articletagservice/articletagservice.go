@@ -57,10 +57,14 @@ type (
 	CreateQuestionResponse              = coderhub.CreateQuestionResponse
 	CreateRelationRequest               = coderhub.CreateRelationRequest
 	CreateRelationResponse              = coderhub.CreateRelationResponse
+	CreateSchoolExpRequest              = coderhub.CreateSchoolExpRequest
+	CreateSchoolExpResponse             = coderhub.CreateSchoolExpResponse
 	CreateUserFollowReq                 = coderhub.CreateUserFollowReq
 	CreateUserFollowResp                = coderhub.CreateUserFollowResp
 	CreateUserRequest                   = coderhub.CreateUserRequest
 	CreateUserResponse                  = coderhub.CreateUserResponse
+	CreateWorkExpRequest                = coderhub.CreateWorkExpRequest
+	CreateWorkExpResponse               = coderhub.CreateWorkExpResponse
 	DeleteAcademicNavigatorRequest      = coderhub.DeleteAcademicNavigatorRequest
 	DeleteArticleRequest                = coderhub.DeleteArticleRequest
 	DeleteArticleResponse               = coderhub.DeleteArticleResponse
@@ -84,10 +88,14 @@ type (
 	DeleteQuestionResponse              = coderhub.DeleteQuestionResponse
 	DeleteRequest                       = coderhub.DeleteRequest
 	DeleteResponse                      = coderhub.DeleteResponse
+	DeleteSchoolExpRequest              = coderhub.DeleteSchoolExpRequest
+	DeleteSchoolExpResponse             = coderhub.DeleteSchoolExpResponse
 	DeleteUserFollowReq                 = coderhub.DeleteUserFollowReq
 	DeleteUserFollowResp                = coderhub.DeleteUserFollowResp
 	DeleteUserRequest                   = coderhub.DeleteUserRequest
 	DeleteUserResponse                  = coderhub.DeleteUserResponse
+	DeleteWorkExpRequest                = coderhub.DeleteWorkExpRequest
+	DeleteWorkExpResponse               = coderhub.DeleteWorkExpResponse
 	Emotion                             = coderhub.Emotion
 	EntityInfo                          = coderhub.EntityInfo
 	Favor                               = coderhub.Favor
@@ -132,6 +140,8 @@ type (
 	GetQuestionTreeRequest              = coderhub.GetQuestionTreeRequest
 	GetQuestionTreeResponse             = coderhub.GetQuestionTreeResponse
 	GetRequest                          = coderhub.GetRequest
+	GetSchoolExpListRequest             = coderhub.GetSchoolExpListRequest
+	GetSchoolExpListResponse            = coderhub.GetSchoolExpListResponse
 	GetSystemProviderTagListRequest     = coderhub.GetSystemProviderTagListRequest
 	GetSystemProviderTagListResponse    = coderhub.GetSystemProviderTagListResponse
 	GetUserFansReq                      = coderhub.GetUserFansReq
@@ -140,6 +150,8 @@ type (
 	GetUserFollowsResp                  = coderhub.GetUserFollowsResp
 	GetUserInfoByUsernameRequest        = coderhub.GetUserInfoByUsernameRequest
 	GetUserInfoRequest                  = coderhub.GetUserInfoRequest
+	GetWorkExpListRequest               = coderhub.GetWorkExpListRequest
+	GetWorkExpListResponse              = coderhub.GetWorkExpListResponse
 	Image                               = coderhub.Image
 	ImageInfo                           = coderhub.ImageInfo
 	ImageRelation                       = coderhub.ImageRelation
@@ -158,6 +170,7 @@ type (
 	ResetPasswordRequest                = coderhub.ResetPasswordRequest
 	ResetPasswordResponse               = coderhub.ResetPasswordResponse
 	Response                            = coderhub.Response
+	SchoolExp                           = coderhub.SchoolExp
 	UpdateArticleRequest                = coderhub.UpdateArticleRequest
 	UpdateArticleResponse               = coderhub.UpdateArticleResponse
 	UpdateArticleTagUsageCountRequest   = coderhub.UpdateArticleTagUsageCountRequest
@@ -176,6 +189,7 @@ type (
 	UploadRequest                       = coderhub.UploadRequest
 	UserFollowInfo                      = coderhub.UserFollowInfo
 	UserInfo                            = coderhub.UserInfo
+	WorkExp                             = coderhub.WorkExp
 
 	ArticleTagService interface {
 		CreateArticleTag(ctx context.Context, in *CreateArticleTagRequest, opts ...grpc.CallOption) (*CreateArticleTagResponse, error)

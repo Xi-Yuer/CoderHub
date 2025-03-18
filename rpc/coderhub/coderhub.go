@@ -17,8 +17,10 @@ import (
 	imageserviceServer "coderhub/rpc/coderhub/internal/server/imageservice"
 	questionbankcategoryserviceServe "coderhub/rpc/coderhub/internal/server/questionbankcategoryservice"
 	questionserviceServer "coderhub/rpc/coderhub/internal/server/questionservice"
+	schoolExpServer "coderhub/rpc/coderhub/internal/server/schoolexpservice"
 	userfollowserviceServer "coderhub/rpc/coderhub/internal/server/userfollowservice"
 	userserviceServer "coderhub/rpc/coderhub/internal/server/userservice"
+	workExpServer "coderhub/rpc/coderhub/internal/server/workexpservice"
 	"coderhub/rpc/coderhub/internal/svc"
 
 	"github.com/zeromicro/go-zero/core/conf"
@@ -51,6 +53,8 @@ func main() {
 		coderhub.RegisterEmotionServiceServer(grpcServer, emotionserviceServer.NewEmotionServiceServer(ctx))
 		coderhub.RegisterArticleTagServiceServer(grpcServer, articletagserviceServer.NewArticleTagServiceServer(ctx))
 		coderhub.RegisterQuestionBankCategoryServiceServer(grpcServer, questionbankcategoryserviceServe.NewQuestionBankCategoryServiceServer(ctx))
+		coderhub.RegisterSchoolExpServiceServer(grpcServer, schoolExpServer.NewSchoolExpServiceServer(ctx))
+		coderhub.RegisterWorkExpServiceServer(grpcServer, workExpServer.NewWorkExpServiceServer(ctx))
 
 		if c.Mode == service.DevMode || c.Mode == service.TestMode {
 			reflection.Register(grpcServer)

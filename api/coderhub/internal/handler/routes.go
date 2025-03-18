@@ -24,10 +24,14 @@ import (
 	question_bank_category_public "coderhub/api/coderhub/internal/handler/question_bank_category_public"
 	questions_auth "coderhub/api/coderhub/internal/handler/questions_auth"
 	questions_public "coderhub/api/coderhub/internal/handler/questions_public"
+	school_exp_auth "coderhub/api/coderhub/internal/handler/school_exp_auth"
+	school_exp_public "coderhub/api/coderhub/internal/handler/school_exp_public"
 	tag_auth "coderhub/api/coderhub/internal/handler/tag_auth"
 	tag_public "coderhub/api/coderhub/internal/handler/tag_public"
 	user_auth "coderhub/api/coderhub/internal/handler/user_auth"
 	user_public "coderhub/api/coderhub/internal/handler/user_public"
+	work_exp_auth "coderhub/api/coderhub/internal/handler/work_exp_auth"
+	work_exp_public "coderhub/api/coderhub/internal/handler/work_exp_public"
 	"coderhub/api/coderhub/internal/svc"
 
 	"github.com/zeromicro/go-zero/rest"
@@ -449,6 +453,37 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 	server.AddRoutes(
 		[]rest.Route{
 			{
+				// 删除学校经历
+				Method:  http.MethodDelete,
+				Path:    "/:id",
+				Handler: school_exp_auth.DeleteSchoolExpHandler(serverCtx),
+			},
+			{
+				// 创建学校经历
+				Method:  http.MethodPost,
+				Path:    "/create",
+				Handler: school_exp_auth.CreateSchoolExpHandler(serverCtx),
+			},
+		},
+		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
+		rest.WithPrefix("/api/school_exp"),
+	)
+
+	server.AddRoutes(
+		[]rest.Route{
+			{
+				// 获取学校经历列表
+				Method:  http.MethodGet,
+				Path:    "/list",
+				Handler: school_exp_public.ListSchoolExpHandler(serverCtx),
+			},
+		},
+		rest.WithPrefix("/api/school_exp"),
+	)
+
+	server.AddRoutes(
+		[]rest.Route{
+			{
 				// 删除分类标签
 				Method:  http.MethodDelete,
 				Path:    "/:id",
@@ -560,5 +595,36 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			},
 		},
 		rest.WithPrefix("/api/user"),
+	)
+
+	server.AddRoutes(
+		[]rest.Route{
+			{
+				// 删除工作经历
+				Method:  http.MethodDelete,
+				Path:    "/:id",
+				Handler: work_exp_auth.DeleteWorkExpHandler(serverCtx),
+			},
+			{
+				// 创建工作经历
+				Method:  http.MethodPost,
+				Path:    "/create",
+				Handler: work_exp_auth.CreateWorkExpHandler(serverCtx),
+			},
+		},
+		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
+		rest.WithPrefix("/api/work_exp"),
+	)
+
+	server.AddRoutes(
+		[]rest.Route{
+			{
+				// 获取工作经历列表
+				Method:  http.MethodGet,
+				Path:    "/list",
+				Handler: work_exp_public.ListWorkExpHandler(serverCtx),
+			},
+		},
+		rest.WithPrefix("/api/work_exp"),
 	)
 }

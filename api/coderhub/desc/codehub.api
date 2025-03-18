@@ -873,6 +873,96 @@ type (
 		Response
 		Data bool `json:"data"`
 	}
+	CreateSchoolExpReq {
+		Education string `json:"education"`
+		School string `json:"school"`
+		Major string `json:"major"`
+		workExp string `json:"workExp"`
+		Content string `json:"content"`
+		RequestUserId string `header:"request-user-id"`
+	}
+	CreateSchoolExpResp {
+		Response
+		Data bool `json:"data"`
+	}
+	DeleteSchoolExpReq {
+		Id string `path:"id"`
+	}
+	DeleteSchoolExpResp {
+		Response
+		Data bool `json:"data"`
+	}
+	GetSchoolExpListReq {
+		Page int32 `form:"page"`
+		PageSize int32 `form:"page_size"`
+		Education string `form:"education,optional"`
+		School string `form:"school,optional"`
+		Major string `form:"major,optional"`
+		WorkExp string `form:"workExp,optional"`
+	}
+	SchoolExp {
+		ID string `json:"id"`
+		Education string `json:"education"`
+		School string `json:"school"`
+		Major string `json:"major"`
+		WorkExp string `json:"workExp"`
+		Content string `json:"content"`
+		CreatedAt int64 `json:"createdAt"`
+		UpdatedAt int64 `json:"updatedAt"`
+		UserId string `json:"userId"`
+	}
+	SchoolExpList {
+		Total int64 `json:"total"`
+		List []*SchoolExp `json:"list"`
+	}
+	GetSchoolExpListResp {
+		Response
+		Data *SchoolExpList `json:"data"`
+	}
+		//
+	CreateWorkExpReq {
+		RequestUserId string `header:"request-user-id"`
+		WorkExp string `json:"workExp"`
+		Company string `json:"company"`
+		Region string `json:"region"`
+		Content string `json:"content"`
+	}
+	CreateWorkExpResp {
+		Response
+		Data bool `json:"data"`
+	}
+	DeleteWorkExpReq {
+		Id string `path:"id"`
+	}
+	DeleteWorkExpResp {
+		Response
+		Data bool `json:"data"`
+	}
+	GetWorkExpListReq {
+		Page int32 `form:"page"`
+		PageSize int32 `form:"page_size"`
+		WorkExp string `form:"workExp,optional"`
+		Company string `form:"company,optional"`
+		Region string `form:"region,optional"`
+	}
+	WorkExp {
+		ID string `json:"id"`
+		WorkExp string `json:"workExp"`
+		Company string `json:"company"`
+		Region string `json:"region"`
+		Content string `json:"content"`
+		UserID string `json:"userID"`
+		CreatedAt int64 `json:"createdAt"`
+		UpdatedAt int64 `json:"updatedAt"`
+	}
+	WorkExpList {
+		Total int64 `json:"total"`
+		List []*WorkExp `json:"list"`
+	}
+	GetWorkExpListResp {
+		Response
+		Data *WorkExpList `json:"data"`
+	}
 )
 
 @server (
@@ -1408,5 +1498,67 @@ service CodeHubAPI {
 	)
 	@handler ListQuestionBankCategory
 	get /list (GetQuestionBankCategoryListReq) returns (GetQuestionBankCategoryListResp)
+}
+
+@server(
+	jwt: Auth
+	prefix: /api/school_exp
+	group: school_exp_auth
+)
+service CodeHubAPI {
+	@doc(
+		summary: "创建学校经历"
+	)
+	@handler CreateSchoolExp
+	post /create (CreateSchoolExpReq) returns (CreateSchoolExpResp)
+
+	@doc(
+		summary: "删除学校经历"
+	)
+	@handler DeleteSchoolExp
+	delete /:id (DeleteSchoolExpReq) returns (DeleteSchoolExpResp)
+}
+
+@server(
+	prefix: /api/school_exp
+	group: school_exp_public
+)
+service CodeHubAPI {
+	@doc(
+		summary: "获取学校经历列表"
+	)
+	@handler ListSchoolExp
+	get /list (GetSchoolExpListReq) returns (GetSchoolExpListResp)
+}
+
+@server(
+	jwt: Auth
+	prefix: /api/work_exp
+	group: work_exp_auth
+)
+service CodeHubAPI {
+	@doc(
+		summary: "创建工作经历"
+	)
+	@handler CreateWorkExp
+	post /create (CreateWorkExpReq) returns (CreateWorkExpResp)
+
+	@doc(
+		summary: "删除工作经历"
+	)
+	@handler DeleteWorkExp
+	delete /:id (DeleteWorkExpReq) returns (DeleteWorkExpResp)
+}
+
+@server(
+	prefix: /api/work_exp
+	group: work_exp_public
+)
+service CodeHubAPI {
+	@doc(
+		summary: "获取工作经历列表"
+	)
+	@handler ListWorkExp
+	get /list (GetWorkExpListReq) returns (GetWorkExpListResp)
 }
 

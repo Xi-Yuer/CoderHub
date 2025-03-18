@@ -1171,3 +1171,106 @@ service QuestionBankCategoryService {
   rpc DeleteQuestionBankCategory(DeleteQuestionBankCategoryRequest) returns (DeleteQuestionBankCategoryResponse) {}
   rpc GetQuestionBankCategoryList(GetQuestionBankCategoryListRequest) returns (GetQuestionBankCategoryListResponse) {}
 }
+
+message CreateSchoolExpRequest {
+  string education = 1;
+  string school = 2;
+  string major = 3;
+  string workExp = 4;
+  string content = 5;
+  int64 userId = 6;
+}
+
+message CreateSchoolExpResponse {
+  bool success = 1;
+}
+
+message DeleteSchoolExpRequest {
+  int64 id = 1;
+}
+
+message DeleteSchoolExpResponse {
+  bool success = 1;
+}
+
+message GetSchoolExpListRequest {
+  int32 page = 1;
+  int32 page_size = 2;
+  string education = 3;
+  string school = 4;
+  string major = 5;
+  string workExp = 6;
+}
+
+message SchoolExp {
+  int64 id = 1;
+  string education = 2;
+  string school = 3;
+  string major = 4;
+  string workExp = 5;
+  string content = 6;
+  int64 userId = 7;
+  int64 createTime = 8;
+  int64 updateTime = 9;
+}
+
+message GetSchoolExpListResponse {
+  repeated SchoolExp school_exps = 1;
+  int64 total = 2;
+}
+
+service SchoolExpService {
+  rpc CreateSchoolExp(CreateSchoolExpRequest) returns (CreateSchoolExpResponse) {}
+  rpc DeleteSchoolExp(DeleteSchoolExpRequest) returns (DeleteSchoolExpResponse) {}
+  rpc GetSchoolExpList(GetSchoolExpListRequest) returns (GetSchoolExpListResponse) {}
+}
+
+message CreateWorkExpRequest {
+  string company = 1;
+  string workExp = 2;
+  string region = 3;
+  string content = 4;
+  int64 userId = 5;
+}
+
+message CreateWorkExpResponse {
+  bool success = 1;
+}
+
+message DeleteWorkExpRequest {
+  int64 id = 1;
+}
+
+message DeleteWorkExpResponse {
+  bool success = 1;
+}
+
+message GetWorkExpListRequest {
+  int32 page = 1;
+  int32 page_size = 2;
+  string company = 3;
+  string workExp = 4;
+  string region = 5;
+}
+
+message WorkExp {
+  int64 id = 1;
+  string company = 2;
+  string region = 3;
+  string workExp = 4;
+  string content = 5;
+  int64 userId = 6;
+  int64 createTime = 7;
+  int64 updateTime = 8;
+}
+
+message GetWorkExpListResponse {
+  repeated WorkExp work_exps = 1;
+  int64 total = 2;
+}
+
+service WorkExpService {
+  rpc CreateWorkExp(CreateWorkExpRequest) returns (CreateWorkExpResponse) {}
+  rpc DeleteWorkExp(DeleteWorkExpRequest) returns (DeleteWorkExpResponse) {}
+  rpc GetWorkExpList(GetWorkExpListRequest) returns (GetWorkExpListResponse) {}
+}

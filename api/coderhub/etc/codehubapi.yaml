@@ -70,3 +70,13 @@ QuestionBankCategoryService:
     Hosts:
       - etcd:2379
     Key: coderhub.rpc
+SchoolExpService:
+  Etcd:
+    Hosts:
+      - etcd:2379
+    Key: coderhub.rpc
+WorkExpService:
+  Etcd:
+    Hosts:
+      - etcd:2379
+    Key: coderhub.rpc

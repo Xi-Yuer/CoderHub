@@ -24,4 +24,6 @@ type Config struct {
 	EmotionService              zrpc.RpcClientConf
 	TagService                  zrpc.RpcClientConf
 	QuestionBankCategoryService zrpc.RpcClientConf
+	SchoolExpService            zrpc.RpcClientConf
+	WorkExpService              zrpc.RpcClientConf
 }
