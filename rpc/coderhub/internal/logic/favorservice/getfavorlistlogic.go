@@ -45,7 +45,7 @@ func (l *GetFavorListLogic) GetFavorList(in *coderhub.GetFavorListRequest) (*cod
 	entityValue := make(map[int64]*coderhub.FavorPreview)
 
 	// 获取收藏夹内容详情
-	if in.EntityType == "article" {
+	if in.EntityType == model.UserFavorRelationArticle {
 		articles, err := l.svcCtx.ArticleRepository.BatchGetArticle(ids)
 		if err != nil {
 			return nil, err
@@ -55,7 +55,7 @@ func (l *GetFavorListLogic) GetFavorList(in *coderhub.GetFavorListRequest) (*cod
 				EntityId:   v.ArticleID,
 				Title:      v.Title,
 				Content:    v.Summary,
-				EntityType: "article",
+				EntityType: model.UserFavorRelationArticle,
 				CoverImage: v.CoverImage,
 				User: &coderhub.UserInfo{
 					UserId:   v.AuthID,
@@ -67,7 +67,7 @@ func (l *GetFavorListLogic) GetFavorList(in *coderhub.GetFavorListRequest) (*cod
 	}
 
 	// 获取收藏夹内容详情
-	if in.EntityType == "question" {
+	if in.EntityType == model.UserFavorRelationQuestion {
 		banks, err := l.svcCtx.QuestionBankRepository.BatchGetQuestion(l.ctx, ids)
 		if err != nil {
 			return nil, err
@@ -77,7 +77,7 @@ func (l *GetFavorListLogic) GetFavorList(in *coderhub.GetFavorListRequest) (*cod
 				EntityId:   v.ID,
 				Title:      v.Name,
 				Content:    v.Description,
-				EntityType: "question",
+				EntityType: model.UserFavorRelationQuestion,
 				CoverImage: v.CoverImage,
 				User: &coderhub.UserInfo{
 					UserId:   v.CreateUserID,

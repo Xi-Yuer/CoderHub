@@ -929,7 +929,7 @@
         ]
       }
     },
-    "/api/favorites/content/{id}": {
+    "/api/favorites/content": {
       "delete": {
         "summary": "删除收藏夹内容",
         "operationId": "DeleteFavoriteContent",
@@ -943,8 +943,8 @@
         },
         "parameters": [
           {
-            "name": "id",
-            "in": "path",
+            "name": "request-user-id",
+            "in": "header",
             "required": true,
             "type": "string"
           },
@@ -3378,9 +3378,6 @@
     "DeleteFavorReq": {
       "type": "object",
       "properties": {
-        "favor_fold_id": {
-          "type": "string"
-        },
         "entity_id": {
           "type": "string"
         },
@@ -3394,7 +3391,6 @@
       },
       "title": "DeleteFavorReq",
       "required": [
-        "favor_fold_id",
         "entity_id",
         "entity_type"
       ]

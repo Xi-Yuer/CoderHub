@@ -257,10 +257,9 @@ type DeleteFavorFoldResp struct {
 }
 
 type DeleteFavorReq struct {
-	Id          string `path:"id"` // 收藏夹 ID
-	FavorFoldId string `json:"favor_fold_id"`
-	EntityId    string `json:"entity_id"`
-	EntityType  string `json:"entity_type,options=article|question"`
+	EntityId      string `json:"entity_id"`
+	EntityType    string `json:"entity_type,options=article|question"`
+	RequestUserId string `header:"request-user-id"`
 }
 
 type DeleteFavorResp struct {

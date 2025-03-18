@@ -85,8 +85,12 @@ func (l *GetQuestionBankLogic) GetQuestionBank(in *coderhub.GetQuestionBankReque
 
 	// 判断是否被收藏（避免无效查询）
 	exist := false
-	if user.ID > 0 {
-		exist, err = l.svcCtx.UserFavorEntityRepository.IsFavorEntityExist(l.ctx, user.ID, in.BankId, model.ImageRelationQuestionCover)
+	if user.ID > 0 && in.BankId > 0 {
+		exist, err = l.svcCtx.UserFavorEntityRepository.IsFavorEntityExist(l.ctx, in.UserId, in.BankId, model.UserFavorRelationQuestion)
+		fmt.Println("in.UserId", in.UserId)
+		fmt.Println("in.BankId", in.BankId)
+		fmt.Println("model.UserFavorRelationQuestion", model.UserFavorRelationQuestion)
+		fmt.Println("exist", exist)
 		if err != nil {
 			return nil, fmt.Errorf("查询收藏状态失败: %w", err)
 		}

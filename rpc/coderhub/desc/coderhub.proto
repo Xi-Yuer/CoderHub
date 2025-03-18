@@ -971,11 +971,9 @@ message CreateFavorResponse {
 
 // 删除收藏实体
 message DeleteFavorRequest {
-  int64 id = 1;
-  int64 user_id = 2;
-  int64 favor_folder_id = 3;
-  int64 entity_id = 4;
-  string entity_type = 5;
+  int64 user_id = 1;
+  int64 entity_id = 2;
+  string entity_type = 3;
 }
 
 // 删除收藏响应

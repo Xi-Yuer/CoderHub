@@ -43,7 +43,7 @@ func (r *UserFavorEntityRepositoryImpl) Delete(ctx context.Context, userFavorEnt
 		if err != nil {
 			return err
 		}
-		return r.DB.WithContext(ctx).Where("id = ? user_id = ? AND favor_fold_id = ? AND entity_id = ? AND entity_type = ?", userFavorEntity.ID, userFavorEntity.UserId, userFavorEntity.FavorFoldId, userFavorEntity.EntityId, userFavorEntity.EntityType).Delete(userFavorEntity).Error
+		return r.DB.WithContext(ctx).Where("user_id = ? AND entity_id = ? AND entity_type = ?", userFavorEntity.UserId, userFavorEntity.EntityId, userFavorEntity.EntityType).Delete(userFavorEntity).Error
 	})
 }
 

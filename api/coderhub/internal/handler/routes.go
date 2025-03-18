@@ -254,7 +254,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			{
 				// 删除收藏夹内容
 				Method:  http.MethodDelete,
-				Path:    "/content/:id",
+				Path:    "/content",
 				Handler: favorites_auth.DeleteFavoriteContentHandler(serverCtx),
 			},
 			{

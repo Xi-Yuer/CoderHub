@@ -33,3 +33,8 @@ var FavorEntityEnum = map[string]string{
 	"question": "问题",
 	"article":  "文章",
 }
+
+const (
+	UserFavorRelationQuestion = "question"
+	UserFavorRelationArticle  = "article"
+)
