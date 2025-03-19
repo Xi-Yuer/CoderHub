@@ -25,9 +25,10 @@ func NewGetWorkExpListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Ge
 
 func (l *GetWorkExpListLogic) GetWorkExpList(in *coderhub.GetWorkExpListRequest) (*coderhub.GetWorkExpListResponse, error) {
 	list, i, err := l.svcCtx.WorkExpRepository.List(l.ctx, &model.WorkExp{
-		Company:      "",
-		WorkDuration: "",
-		Region:       "",
+		Company:      in.Company,
+		WorkDuration: in.WorkExp,
+		Region:       in.Region,
+		Position:     in.Position,
 	}, int64(in.Page), int64(in.PageSize))
 	if err != nil {
 		return nil, err
@@ -42,6 +43,7 @@ func (l *GetWorkExpListLogic) GetWorkExpList(in *coderhub.GetWorkExpListRequest)
 			WorkExp:    v.WorkDuration,
 			Content:    v.Content,
 			UserId:     v.UserId,
+			Position:   v.Position,
 			CreateTime: v.CreateTime.Unix(),
 			UpdateTime: v.UpdateTime.Unix(),
 		})

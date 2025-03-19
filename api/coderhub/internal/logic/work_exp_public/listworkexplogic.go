@@ -33,6 +33,7 @@ func (l *ListWorkExpLogic) ListWorkExp(req *types.GetWorkExpListReq) (resp *type
 		PageSize: req.PageSize,
 		Company:  req.Company,
 		WorkExp:  req.WorkExp,
+		Position: req.Position,
 		Region:   req.Region,
 	})
 	if err != nil {
@@ -46,6 +47,7 @@ func (l *ListWorkExpLogic) ListWorkExp(req *types.GetWorkExpListReq) (resp *type
 			WorkExp:   v.WorkExp,
 			Company:   v.Company,
 			Region:    v.Region,
+			Position:  v.Position,
 			Content:   v.Content,
 			UserID:    utils.Int2String(v.UserId),
 			CreatedAt: v.CreateTime,

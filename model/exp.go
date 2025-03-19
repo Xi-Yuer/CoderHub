@@ -30,6 +30,7 @@ type WorkExp struct {
 	ID           int64     `gorm:"primaryKey;autoIncrement" json:"id"`
 	Company      string    `gorm:"column:company;not null;index:idx_company" json:"company"`                   // 公司名称
 	WorkDuration string    `gorm:"column:work_duration;not null;index:idx_work_duration" json:"work_duration"` // 工作时长
+	Position     string    `gorm:"column:position;not null;index:idx_position" json:"position"`                // 职位
 	Region       string    `gorm:"column:region;not null;index:idx_region" json:"region"`                      // 地区
 	Content      string    `gorm:"column:content;not null;type:text" json:"content"`                           // 内容
 	UserId       int64     `gorm:"column:user_id;not null;index:idx_user_id" json:"user_id"`                   // 用户ID

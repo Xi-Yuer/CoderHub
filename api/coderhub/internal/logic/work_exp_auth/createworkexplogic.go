@@ -29,11 +29,12 @@ func NewCreateWorkExpLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Cre
 
 func (l *CreateWorkExpLogic) CreateWorkExp(req *types.CreateWorkExpReq) (resp *types.CreateWorkExpResp, err error) {
 	_, err = l.svcCtx.WorkExpService.CreateWorkExp(l.ctx, &coderhub.CreateWorkExpRequest{
-		Company: req.Company,
-		WorkExp: req.WorkExp,
-		Region:  req.Region,
-		Content: req.Content,
-		UserId:  utils.String2Int(req.RequestUserId),
+		Company:  req.Company,
+		WorkExp:  req.WorkExp,
+		Region:   req.Region,
+		Content:  req.Content,
+		Position: req.Position,
+		UserId:   utils.String2Int(req.RequestUserId),
 	})
 	if err != nil {
 		return l.errorResp(err)

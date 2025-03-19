@@ -33,21 +33,21 @@ type (
 	}
 	// 用户信息
 	UserInfo {
-		Id string `json:"id"`                    // 用户ID
-		Username string `json:"username"`        // 用户名
-		Nickname string `json:"nickname"`        // 昵称
-		Email string `json:"email"`              // 邮箱
-		Phone string `json:"phone"`              // 手机号
-		Avatar string `json:"avatar"`            // 头像
-		Gender int32 `json:"gender,options=0|1"` // 性别 0:未知 1:男 2:女
-		Age int32 `json:"age,range=[0:120]"`     // 年龄
-		Status bool `json:"status"`              // 状态 true:正常 false:禁用
-		IsAdmin bool `json:"is_admin"`           // 角色 0:普通用户 1:管理员
-		CreateAt int64 `json:"create_at"`        // 创建时间
-		UpdateAt int64 `json:"update_at"`        // 更新时间
-		FollowCount int64 `json:"follow_count"`  // 关注数量
-		FansCount int64 `json:"fans_count"`      // 粉丝数量
-		IsFollowed bool `json:"is_followed"`     // 是否已关注
+        Id string `json:"id"`                    // 用户ID
+        Username string `json:"username"`        // 用户名
+        Nickname string `json:"nickname"`        // 昵称
+        Email string `json:"email"`              // 邮箱
+        Phone string `json:"phone"`              // 手机号
+        Avatar string `json:"avatar"`            // 头像
+        Gender int32 `json:"gender,options=0|1"` // 性别 0:未知 1:男 2:女
+        Age int32 `json:"age,range=[0:120]"`     // 年龄
+        Status bool `json:"status"`              // 状态 true:正常 false:禁用
+        IsAdmin bool `json:"is_admin"`           // 角色 0:普通用户 1:管理员
+        CreateAt int64 `json:"create_at"`        // 创建时间
+        UpdateAt int64 `json:"update_at"`        // 更新时间
+        FollowCount int64 `json:"follow_count"`  // 关注数量
+        FansCount int64 `json:"fans_count"`      // 粉丝数量
+        IsFollowed bool `json:"is_followed"`     // 是否已关注
 	}
 	// 用户注册请求
 	RegisterReq {
@@ -71,7 +71,7 @@ type (
 	}
 	// 获取用户信息请求
 	GetUserInfoReq {
-		Id string `path:"id"` // 用户ID
+        Id string `path:"id"` // 用户ID
 		RequestUserID string `header:"request-user-id,optional"`
 	}
 	// 获取用户信息响应
@@ -81,23 +81,23 @@ type (
 	}
 	// 更新用户信息请求
 	UpdateUserInfoReq {
-		Id string `path:"id"`                             // 用户ID
+        Id string `path:"id"`                             // 用户ID
 		Nickname string `json:"nickname,optional"` // 昵称
-		Email string `json:"email,optional"`              // 邮箱
-		Phone string `json:"phone,optional"`              // 手机号
-		Gender int32 `json:"gender,options=0|1,optional"` // 性别 0:未知 1:男 2:女
-		Age int32 `json:"age,range=[0:120],optional"`     // 年龄
+        Email string `json:"email,optional"`              // 邮箱
+        Phone string `json:"phone,optional"`              // 手机号
+        Gender int32 `json:"gender,options=0|1,optional"` // 性别 0:未知 1:男 2:女
+        Age int32 `json:"age,range=[0:120],optional"`     // 年龄
 	}
 	// 更新用户信息响应
 	UpdateUserInfoResp {
 		Response
 		Data bool `json:"data"` // 是否更新成功
 	}
-		// 更新用户头像
+        // 更新用户头像
 	UpdateUserAvatarReq {
 		Avatar string `json:"avatar"` // 头像
 	}
-		// 更新用户头像响应
+        // 更新用户头像响应
 	UpdateUserAvatarResp {
 		Response
 		Data bool `json:"data"` // 是否更新成功
@@ -177,14 +177,14 @@ type (
 	}
 	// 获取关注列表请求
 	GetFollowListReq {
-		UserId string `form:"user_id"`    // 用户ID
-		Page int64 `form:"page"`          // 页码
-		PageSize int64 `form:"page_size"` // 每页数量
+        UserId string `form:"user_id"`    // 用户ID
+        Page int64 `form:"page"`          // 页码
+        PageSize int64 `form:"page_size"` // 每页数量
 	}
 	// 关注列表
 	FollowList {
-		Total int64 `json:"total"`    // 总数
-		List []UserInfo `json:"list"` // 关注列表
+        Total int64 `json:"total"`    // 总数
+        List []UserInfo `json:"list"` // 关注列表
 	}
 	// 获取关注列表响应
 	GetFollowListResp {
@@ -193,9 +193,9 @@ type (
 	}
 	// 获取粉丝列表请求
 	GetFansListReq {
-		UserId string `form:"user_id"`    // 用户ID
-		Page int64 `form:"page"`          // 页码
-		PageSize int64 `form:"page_size"` // 每页数量
+        UserId string `form:"user_id"`    // 用户ID
+        Page int64 `form:"page"`          // 页码
+        PageSize int64 `form:"page_size"` // 每页数量
 	}
 	// 粉丝列表响应
 	GetFansListResp {
@@ -204,7 +204,7 @@ type (
 	}
 	// 图片信息
 	ImageInfo {
-		ImageId string `json:"image_id"`           // 图片ID
+        ImageId string `json:"image_id"`           // 图片ID
 		BucketName   string `json:"bucket_name"` // MinIO bucket名称
 		ObjectName   string `json:"object_name"` // MinIO中的对象名称
 		Url          string `json:"url"` // 完整的访问URL
@@ -214,8 +214,8 @@ type (
 		Width        int32  `json:"width"` // 图片宽度(px)
 		Height       int32  `json:"height"` // 图片高度(px)
 		UploadIp     string `json:"upload_ip"` // 上传者IP
-		UserId string `json:"user_id"`             // 上传者ID
-		CreatedAt int64 `json:"created_at"`        // 创建时间
+        UserId string `json:"user_id"`             // 上传者ID
+        CreatedAt int64 `json:"created_at"`        // 创建时间
 	}
 	// 上传图片响应
 	UploadResponse {
@@ -242,9 +242,9 @@ type (
 	}
 	// 获取用户图片列表请求
 	ListByUserRequest {
-		UserId string `json:"user_id"`    // 用户ID
-		Page int32 `json:"page"`          // 页码
-		PageSize int32 `json:"page_size"` // 每页数量
+        UserId string `json:"user_id"`    // 用户ID
+        Page int32 `json:"page"`          // 页码
+        PageSize int32 `json:"page_size"` // 每页数量
 	}
 	// 图片列表
 	ImageInfoList {
@@ -258,8 +258,8 @@ type (
 	}
 	// 学术导航信息
 	AcademicNavigator {
-		Id string `json:"id"`                // 学术导航 ID
-		UserId string `json:"user_id"`       // 用户 ID
+        Id string `json:"id"`                // 学术导航 ID
+        UserId string `json:"user_id"`       // 用户 ID
 		Education string `json:"education"` // 学历
 		Content   string `json:"content"` // 内容
 		Major     string `json:"major"` // 专业
@@ -269,7 +269,7 @@ type (
 	}
 	// 获取学术导航列表请求
 	GetAcademicNavigatorReq {
-		UserId string `json:"user_id,optional"`      // 用户 ID
+        UserId string `json:"user_id,optional"`      // 用户 ID
 		Education string `json:"education,optional"` // 学历
 		Content   string `json:"content,optional"` // 内容
 		Major     string `json:"major,optional"` // 专业
@@ -328,127 +328,127 @@ type (
 		Response
 		Data bool `json:"data"` // 是否取消点赞成功
 	}
-		// 评论实体
+        // 评论实体
 	Comment {
-		Id string `json:"id"`                                 // 评论ID
-		EntityID string `json:"entity_id"`                    // 文章ID
-		Content string `json:"content"`                       // 评论内容
-		RootId string `json:"root_id"`                        // 根评论ID
-		ParentId string `json:"parent_id"`                    // 父评论ID
-		EntityAuthorId string `json:"entity_author_id"`       // 实体作者ID
-		UserInfo *UserInfo `json:"user_info"`                 // 评论者信息
-		CreatedAt int64 `json:"created_at"`                   // 创建时间
-		UpdatedAt int64 `json:"updated_at"`                   // 更新时间
-		Replies []*Comment `json:"replies"`                   // 子评论列表
-		ReplyToUserInfo *UserInfo `json:"reply_to_user_info"` // 被回复者信息
-		RepliesCount int64 `json:"replies_count"`             // 子评论数量
-		LikeCount int32 `json:"like_count"`                   // 点赞数
-		IsLiked bool `json:"is_liked"`                        // 是否已点赞
-		Images []ImageInfo `json:"images"`                    // 评论图片列表
+        Id string `json:"id"`                                 // 评论ID
+        EntityID string `json:"entity_id"`                    // 文章ID
+        Content string `json:"content"`                       // 评论内容
+        RootId string `json:"root_id"`                        // 根评论ID
+        ParentId string `json:"parent_id"`                    // 父评论ID
+        EntityAuthorId string `json:"entity_author_id"`       // 实体作者ID
+        UserInfo *UserInfo `json:"user_info"`                 // 评论者信息
+        CreatedAt int64 `json:"created_at"`                   // 创建时间
+        UpdatedAt int64 `json:"updated_at"`                   // 更新时间
+        Replies []*Comment `json:"replies"`                   // 子评论列表
+        ReplyToUserInfo *UserInfo `json:"reply_to_user_info"` // 被回复者信息
+        RepliesCount int64 `json:"replies_count"`             // 子评论数量
+        LikeCount int32 `json:"like_count"`                   // 点赞数
+        IsLiked bool `json:"is_liked"`                        // 是否已点赞
+        Images []ImageInfo `json:"images"`                    // 评论图片列表
 	}
-		// 创建评论请求
+        // 创建评论请求
 	CreateCommentReq {
-		EntityID string `json:"entity_id"`              // 文章ID
-		Content string `json:"content"`                 // 评论内容
-		RootId string `json:"root_id"`                  // 根评论ID
-		ParentId string `json:"parent_id"`              // 父评论ID（可选）
-		EntityAuthorID string `json:"entity_author_id"` // 实体作者ID
-		ReplyToUID string `json:"reply_to_uid"`         // 回复的目标评论ID（可选）
-		ImageIds []string `json:"image_ids"`            // 图片ID列表
+        EntityID string `json:"entity_id"`              // 文章ID
+        Content string `json:"content"`                 // 评论内容
+        RootId string `json:"root_id"`                  // 根评论ID
+        ParentId string `json:"parent_id"`              // 父评论ID（可选）
+        EntityAuthorID string `json:"entity_author_id"` // 实体作者ID
+        ReplyToUID string `json:"reply_to_uid"`         // 回复的目标评论ID（可选）
+        ImageIds []string `json:"image_ids"`            // 图片ID列表
 	}
-		// 创建评论响应
+        // 创建评论响应
 	CreateCommentResp {
 		Response
 		Data *Comment `json:"data"` // 创建的评论
 	}
-		// 获取评论列表请求
+        // 获取评论列表请求
 	GetCommentsReq {
 		EntityID string `path:"entity_id"` // 文章ID
-		Page int32 `form:"page"`           // 页码
-		PageSize int32 `form:"page_size"`  // 每页数量
+        Page int32 `form:"page"`           // 页码
+        PageSize int32 `form:"page_size"`  // 每页数量
 	}
-		// 列表
+        // 列表
 	List {
-		List []*Comment `json:"list"` // 评论列表
-		Total int32 `json:"total"`    // 总评论数
+        List []*Comment `json:"list"` // 评论列表
+        Total int32 `json:"total"`    // 总评论数
 	}
-		// 获取评论列表响应
+        // 获取评论列表响应
 	GetCommentsResp {
 		Response
 		Data List `json:"data"` // 评论列表
 	}
-		// 获取单个评论请求
+        // 获取单个评论请求
 	GetCommentReq {
 		CommentId string `path:"comment_id"` // 评论ID
 	}
-		// 获取单个评论响应
+        // 获取单个评论响应
 	GetCommentResp {
 		Response
 		Data *Comment `json:"data"` // 评论详情
 	}
-		// 删除评论请求
+        // 删除评论请求
 	DeleteCommentReq {
 		CommentId string `path:"comment_id"` // 评论ID
 	}
-		// 获取某条评论的子评论列表请求
+        // 获取某条评论的子评论列表请求
 	GetCommentRepliesReq {
 		CommentId string `path:"comment_id"` // 评论ID
-		Page int32 `form:"page"`             // 页码
-		PageSize int32 `form:"page_size"`    // 每页数量
+        Page int32 `form:"page"`             // 页码
+        PageSize int32 `form:"page_size"`    // 每页数量
 	}
-		// 获取某条评论的子评论列表响应
+        // 获取某条评论的子评论列表响应
 	GetCommentRepliesResp {
 		Response
 		Data List `json:"data"` // 子评论列表
 	}
-		// 删除评论响应
+        // 删除评论响应
 	DeleteCommentResp {
 		Response
 		Data bool `json:"data"` // 删除是否成功
 	}
-		// 更新评论点赞数请求
+        // 更新评论点赞数请求
 	UpdateCommentLikeCountReq {
 		CommentId string `json:"comment_id"` // 评论ID
 	}
-		// 更新评论点赞数响应
+        // 更新评论点赞数响应
 	UpdateCommentLikeCountResp {
 		Response
 		Data bool `json:"data"` // 更新是否成功
 	}
 	Article {
-		Id string `json:"id" form:"id"`                              // 主键 ID
-		Type string `json:"type" form:"type"`                        // 内容类型：长文或短文
-		Title string `json:"title" form:"title"`                     // 标题
-		Content string `json:"content" form:"content"`               // 内容
-		Summary string `json:"summary" form:"summary"`               // 摘要
-		ImageUrls []string `json:"imageUrls" form:"imageUrls"`       // 图片 URL 列表
-		CoverImage *string `json:"coverImage" form:"coverImage"`     // 封面图片 URL
-		AuthorId string `json:"authorId" form:"authorId"`            // 作者 ID
-		Tags []string `json:"tags" form:"tags"`                      // 标签列表
-		CategoryId string `json:"categoryId" form:"categoryId"`      // 分类 ID
-		ViewCount int64 `json:"viewCount" form:"viewCount"`          // 阅读次数
-		LikeCount int64 `json:"likeCount" form:"likeCount"`          // 点赞次数
-		IsLiked bool `json:"isLiked" form:"isLiked"`                 // 是否已点赞
-		IsFavorited bool `json:"isFavorited" form:"isFavorited"`     // 是否已收藏
-		CommentCount int64 `json:"commentCount" form:"commentCount"` // 评论数
-		Status string `json:"status" form:"status"`                  // 文章状态
-		CreatedAt int64 `json:"createdAt" form:"createdAt"`          // 创建时间
-		UpdatedAt int64 `json:"updatedAt" form:"updatedAt"`          // 更新时间
+        Id string `json:"id" form:"id"`                              // 主键 ID
+        Type string `json:"type" form:"type"`                        // 内容类型：长文或短文
+        Title string `json:"title" form:"title"`                     // 标题
+        Content string `json:"content" form:"content"`               // 内容
+        Summary string `json:"summary" form:"summary"`               // 摘要
+        ImageUrls []string `json:"imageUrls" form:"imageUrls"`       // 图片 URL 列表
+        CoverImage *string `json:"coverImage" form:"coverImage"`     // 封面图片 URL
+        AuthorId string `json:"authorId" form:"authorId"`            // 作者 ID
+        Tags []string `json:"tags" form:"tags"`                      // 标签列表
+        CategoryId string `json:"categoryId" form:"categoryId"`      // 分类 ID
+        ViewCount int64 `json:"viewCount" form:"viewCount"`          // 阅读次数
+        LikeCount int64 `json:"likeCount" form:"likeCount"`          // 点赞次数
+        IsLiked bool `json:"isLiked" form:"isLiked"`                 // 是否已点赞
+        IsFavorited bool `json:"isFavorited" form:"isFavorited"`     // 是否已收藏
+        CommentCount int64 `json:"commentCount" form:"commentCount"` // 评论数
+        Status string `json:"status" form:"status"`                  // 文章状态
+        CreatedAt int64 `json:"createdAt" form:"createdAt"`          // 创建时间
+        UpdatedAt int64 `json:"updatedAt" form:"updatedAt"`          // 更新时间
 	}
 	GetArticleReq {
-		Id string `path:"id"` // 文章 ID
+        Id string `path:"id"` // 文章 ID
 		RequestUserID string `header:"request-user-id,optional"`
 	}
 	GetArticle {
-		Article *Article `json:"article"` // 文章详情
-		Author *UserInfo `json:"author"`  // 作者信息
+        Article *Article `json:"article"` // 文章详情
+        Author *UserInfo `json:"author"`  // 作者信息
 	}
 	GetArticlesReq {
-		Type string `form:"type,options=article|micro_post"` // 内容类型
-		Page int32 `form:"page"`                             // 页码
-		PageSize int32 `form:"page_size"`                    // 每页数量
-		UserID string `form:"user_id,optional"`              // 用户 ID
-		CategoryID string `form:"category_id"`               // 分类 ID
+        Type string `form:"type,options=article|micro_post"` // 内容类型
+        Page int32 `form:"page"`                             // 页码
+        PageSize int32 `form:"page_size"`                    // 每页数量
+        UserID string `form:"user_id,optional"`              // 用户 ID
+        CategoryID string `form:"category_id"`               // 分类 ID
 	}
 	GetArticlesResp {
 		Response
@@ -459,42 +459,42 @@ type (
 		Data *GetArticle `json:"data"` // 文章详情
 	}
 	ArticleExtra {
-		ID string `json:"id"`
-		ViewCount int64 `json:"view_count"`
-		LikeCount int64 `json:"like_count"`
-		CommentCount int64 `json:"comment_count"`
-		IsLiked bool `json:"is_liked"`
-		IsFavorited bool `json:"is_favorited"`
+        ID string `json:"id"`
+        ViewCount int64 `json:"view_count"`
+        LikeCount int64 `json:"like_count"`
+        CommentCount int64 `json:"comment_count"`
+        IsLiked bool `json:"is_liked"`
+        IsFavorited bool `json:"is_favorited"`
 	}
 	GetArticleExtraResp {
 		Response
 		Data *ArticleExtra `json:"data"`
 	}
 	CreateArticleReq {
-		Type string `json:"type,options=article|micro_post"`                    // 内容类型
-		Title string `json:"title,optional"`                                    // 标题
-		Content string `json:"content"`                                         // 内容
-		Summary string `json:"summary,optional"`                                // 摘要
-		ImageIds []string `json:"imageIds,optional"`                            // 图片 URL 列表
-		CoverImageID string `json:"coverImageID,optional"`                      // 封面图片 URL
-		Tags []string `json:"tags,optional"`                                    // 标签列表
-		Status string `json:"status,options=draft|published,default=published"` // 文章状态
-		CategoryID string `json:"categoryId"`                                   // 分类 ID
+        Type string `json:"type,options=article|micro_post"`                    // 内容类型
+        Title string `json:"title,optional"`                                    // 标题
+        Content string `json:"content"`                                         // 内容
+        Summary string `json:"summary,optional"`                                // 摘要
+        ImageIds []string `json:"imageIds,optional"`                            // 图片 URL 列表
+        CoverImageID string `json:"coverImageID,optional"`                      // 封面图片 URL
+        Tags []string `json:"tags,optional"`                                    // 标签列表
+        Status string `json:"status,options=draft|published,default=published"` // 文章状态
+        CategoryID string `json:"categoryId"`                                   // 分类 ID
 	}
 	CreateArticleResp {
 		Response
 		Data string `json:"data"` // 文章详情
 	}
 	UpdateArticleReq {
-		Id string `path:"id"`                              // 文章 ID
-		Title string `json:"title,optional"`               // 标题
-		Content string `json:"content,optional,optional"`  // 内容
-		Summary string `json:"summary,optional"`           // 摘要
-		ImageIds []string `json:"imageIds,optional"`       // 图片 URL 列表
-		CoverImageID string `json:"coverImageID,optional"` // 封面图片 URL
-		Tags []string `json:"tags,optional"`               // 标签列表
-		Status string `json:"status,optional"`             // 文章状态
-		CategoryID string `json:"categoryId"`              // 分类 ID
+        Id string `path:"id"`                              // 文章 ID
+        Title string `json:"title,optional"`               // 标题
+        Content string `json:"content,optional,optional"`  // 内容
+        Summary string `json:"summary,optional"`           // 摘要
+        ImageIds []string `json:"imageIds,optional"`       // 图片 URL 列表
+        CoverImageID string `json:"coverImageID,optional"` // 封面图片 URL
+        Tags []string `json:"tags,optional"`               // 标签列表
+        Status string `json:"status,optional"`             // 文章状态
+        CategoryID string `json:"categoryId"`              // 分类 ID
 	}
 	UpdateArticleResp {
 		Response
@@ -514,48 +514,48 @@ type (
 		Response
 		Data bool `json:"data"` // 是否更新成功
 	}
-		// 创建题库请求
+        // 创建题库请求
 	CreateQuestionBankReq {
-		CategoryId string `json:"categoryId"`
-		Name string `json:"name"`
-		Description string `json:"description"`
-		Difficulty string `json:"difficulty,options=default|easy|medium|hard"`
-		Tags []string `json:"tags"`
-		CoverImage string `json:"coverImage"` // 封面图片 URL
+        CategoryId string `json:"categoryId"`
+        Name string `json:"name"`
+        Description string `json:"description"`
+        Difficulty string `json:"difficulty,options=default|easy|medium|hard"`
+        Tags []string `json:"tags"`
+        CoverImage string `json:"coverImage"` // 封面图片 URL
 	}
 	QuestionBank {
-		Id string `json:"id"`
-		Name string `json:"name"`
-		Description string `json:"description"`
-		Difficulty string `json:"difficulty"`
-		Tags []string `json:"tags"`
-		CoverImage *ImageInfo `json:"coverImage" form:"coverImage"`
-		CreateUser *UserInfo `json:"createUser"`
-		CreatedAt int64 `json:"createdAt"`
-		UpdatedAt int64 `json:"updatedAt"`
+        Id string `json:"id"`
+        Name string `json:"name"`
+        Description string `json:"description"`
+        Difficulty string `json:"difficulty"`
+        Tags []string `json:"tags"`
+        CoverImage *ImageInfo `json:"coverImage" form:"coverImage"`
+        CreateUser *UserInfo `json:"createUser"`
+        CreatedAt int64 `json:"createdAt"`
+        UpdatedAt int64 `json:"updatedAt"`
 	}
-		// 创建题库相应
+        // 创建题库相应
 	CreateQuestionBankResp {
 		Response
 		Data bool `json:"data"` // 题库详情
 	}
-		// 创建题目
+        // 创建题目
 	CreateQuestionReq {
-		Title string `json:"title"`
-		BankId string `json:"bankId"`
-		Content string `json:"content"`
+        Title string `json:"title"`
+        BankId string `json:"bankId"`
+        Content string `json:"content"`
 		Difficulty string `json:"difficulty,options=default|easy|medium|hard"`
 	}
-		// 创建题目响应
+        // 创建题目响应
 	CreateQuestionResp {
 		Response
 		Data bool `json:"data"` // 题目详情
 	}
-		// 删除题库
+        // 删除题库
 	DeleteQuestionBankReq {
 		Id string `path:"id"` // 题库 ID
 	}
-		// 删除题目
+        // 删除题目
 	DeleteQuestionReq {
 		Id string `path:"id"` // 题目 ID
 	}
@@ -567,15 +567,15 @@ type (
 		Response
 		Data bool `json:"data"` // 是否删除成功
 	}
-		// 获取题库列表
+        // 获取题库列表
 	GetQuestionBankListReq {
 		CategoryID string `path:"categoryId"`
-		Page int32 `form:"page"`
-		PageSize int32 `form:"page_size"`
+        Page int32 `form:"page"`
+        PageSize int32 `form:"page_size"`
 	}
-		// 获取题库详情
+        // 获取题库详情
 	GetQuestionBankDetailReq {
-		Id string `path:"id"`
+        Id string `path:"id"`
 		RequestUserID string `header:"request-user-id,optional"`
 	}
 	GetQuestionBankResqonse {
@@ -586,248 +586,248 @@ type (
 		Response
 		Data *GetQuestionBankResqonse `json:"data"` // 题库详情
 	}
-		// 题库列表
+        // 题库列表
 	QuestionBankList {
-		Total int64 `json:"total"`
-		List []*QuestionBank `json:"list"`
+        Total int64 `json:"total"`
+        List []*QuestionBank `json:"list"`
 	}
-		// 获取题库列表响应
+        // 获取题库列表响应
 	GetQuestionBankListResp {
 		Response
 		Data QuestionBankList `json:"data"` // 题库列表
 	}
-		// 获取题库详情
+        // 获取题库详情
 	GetQuestionBankReq {
 		Id string `path:"id"` // 题库 ID
 	}
-		// 获取题库详情响应
+        // 获取题库详情响应
 	Question {
-		Id string `json:"id"`
-		Title string `json:"title"`
-		BankId string `json:"bankId"`
-		Content string `json:"content"`
+        Id string `json:"id"`
+        Title string `json:"title"`
+        BankId string `json:"bankId"`
+        Content string `json:"content"`
 		Difficult string `json:"difficult"`
-		CreatedAt int64 `json:"createdAt"`
-		UpdatedAt int64 `json:"updatedAt"`
+        CreatedAt int64 `json:"createdAt"`
+        UpdatedAt int64 `json:"updatedAt"`
 	}
 	QuestionMenus {
-		Id string `json:"id"`
-		Title string `json:"title"`
+        Id string `json:"id"`
+        Title string `json:"title"`
 		Difficult string `json:"difficult"`
 	}
-		// 题库详情
+        // 题库详情
 	GetQuestionBankResp {
 		Response
 		Data *Question `json:"data"` // 题库详情
 	}
-		// 获取题目列表
+        // 获取题目列表
 	GetQuestionListReq {
 		BankId string `path:"id"` // 题库 ID
 	}
-		// 题目列表
+        // 题目列表
 	QuestionList {
-		Total int64 `json:"total"`
-		List []*QuestionMenus `json:"list"`
+        Total int64 `json:"total"`
+        List []*QuestionMenus `json:"list"`
 	}
-		// 获取题目列表响应
+        // 获取题目列表响应
 	GetQuestionListResp {
 		Response
 		Data QuestionList `json:"data"` // 题目列表
 	}
-		// 创建收藏夹
+        // 创建收藏夹
 	CreateFavorFoldReq {
-		Name string `json:"name"`               // 收藏夹名称
+        Name string `json:"name"`               // 收藏夹名称
 		Description string `json:"description"` // 描述
-		IsPublic bool `json:"isPublic"`         // 是否公开
+        IsPublic bool `json:"isPublic"`         // 是否公开
 	}
-		// 创建收藏夹相应
+        // 创建收藏夹相应
 	CreateFavorFoldResp {
 		Response
 		Data bool `json:"data"` // 收藏夹详情
 	}
-		// 删除收藏夹
+        // 删除收藏夹
 	DeleteFavorFoldReq {
 		Id string `path:"id"` // 收藏夹 ID
 	}
-		// 删除收藏夹相应
+        // 删除收藏夹相应
 	DeleteFavorFoldResp {
 		Response
 		Data bool `json:"data"`
 	}
-		// 更新收藏夹
+        // 更新收藏夹
 	UpdateFavorFoldReq {
-		Id string `path:"id"`                            // 收藏夹 ID
-		Name string `json:"name,optional"`               // 收藏夹名称
+        Id string `path:"id"`                            // 收藏夹 ID
+        Name string `json:"name,optional"`               // 收藏夹名称
 		Description string `json:"description,optional"` // 描述
-		IsPublic bool `json:"isPublic,optional"`         // 是否公开
+        IsPublic bool `json:"isPublic,optional"`         // 是否公开
 	}
-		// 更新收藏夹相应
+        // 更新收藏夹相应
 	UpdateFavorFoldResp {
 		Response
 		Data bool `json:"data"` // 收藏夹详情
 	}
-		// 获取收藏夹列表
+        // 获取收藏夹列表
 	GetFavorFoldListReq {
-		UserId string `form:"user_id"`                           // 用户 ID
+        UserId string `form:"user_id"`                           // 用户 ID
 		RequestUserId string `header:"request-user-id,optional"` // 请求用户 ID
-		Page int32 `form:"page"`                                 // 页码
-		PageSize int32 `form:"page_size"`                        // 每页数量
+        Page int32 `form:"page"`                                 // 页码
+        PageSize int32 `form:"page_size"`                        // 每页数量
 	}
-		// 收藏夹
+        // 收藏夹
 	FavorFold {
-		ID string `json:"id"`
-		Name string `json:"name"`
+        ID string `json:"id"`
+        Name string `json:"name"`
 		Description string `json:"description"`
-		IsPublic bool `json:"is_public"`
-		CreateUser string `json:"create_user"`
-		CreatedAt int64 `json:"createdAt"`
-		UpdatedAt int64 `json:"updatedAt"`
+        IsPublic bool `json:"is_public"`
+        CreateUser string `json:"create_user"`
+        CreatedAt int64 `json:"createdAt"`
+        UpdatedAt int64 `json:"updatedAt"`
 	}
 	FavorFoldList {
-		Total int64 `json:"total"`
-		List []*FavorFold `json:"list"`
+        Total int64 `json:"total"`
+        List []*FavorFold `json:"list"`
 	}
-		// 获取收藏夹列表相应
+        // 获取收藏夹列表相应
 	GetFavorFoldListResp {
 		Response
 		Data FavorFoldList `json:"data"`
 	}
-		// 创建收藏实体
+        // 创建收藏实体
 	CreateFavorReq {
-		FoldId string `json:"foldId"`                                   // 收藏夹 ID
-		EntityId string `json:"entityId"`                               // 实体 ID
+        FoldId string `json:"foldId"`                                   // 收藏夹 ID
+        EntityId string `json:"entityId"`                               // 实体 ID
 		EntityType string `json:"entity_type,options=article|question"` // 实体类型
 	}
-		// 创建收藏实体相应
+        // 创建收藏实体相应
 	CreateFavorResp {
 		Response
 		Data bool `json:"data"` // 收藏夹详情
 	}
-		//  删除收藏实体
+        //  删除收藏实体
 	DeleteFavorReq {
-		EntityId string `json:"entity_id"`
-		EntityType string `json:"entity_type,options=article|question"`
+        EntityId string `json:"entity_id"`
+        EntityType string `json:"entity_type,options=article|question"`
 		RequestUserId string `header:"request-user-id"`
 	}
-		// 删除收藏响应
+        // 删除收藏响应
 	DeleteFavorResp {
 		Response
 		Data bool `json:"data"`
 	}
-		// 获取收藏夹列表
+        // 获取收藏夹列表
 	GetFavorListReq {
-		UserId string `json:"userId"`                                   // 用户 ID
-		EntityType string `json:"entity_type,options=article|question"` // 实体类型
-		FavorFoldId string `json:"favor_fold_id"`                       // 收藏夹 ID
-		Page int32 `json:"page"`                                        // 页码
-		PageSize int32 `json:"page_size"`                               // 每页数量
+        UserId string `json:"userId"`                                   // 用户 ID
+        EntityType string `json:"entity_type,options=article|question"` // 实体类型
+        FavorFoldId string `json:"favor_fold_id"`                       // 收藏夹 ID
+        Page int32 `json:"page"`                                        // 页码
+        PageSize int32 `json:"page_size"`                               // 每页数量
 	}
-		// 收藏夹
+        // 收藏夹
 	Favor {
-		ID string `json:"id"`
-		CreateUser string `json:"create_user"`
-		FavorFoldId string `json:"favor_fold_id"`
-		EntityId string `json:"entity_id"`
+        ID string `json:"id"`
+        CreateUser string `json:"create_user"`
+        FavorFoldId string `json:"favor_fold_id"`
+        EntityId string `json:"entity_id"`
 		EntityValue EntityPreviewValue `json:"entity_value"`
-		EntityType string `json:"entity_type"`
-		CreatedAt int64 `json:"createdAt"`
+        EntityType string `json:"entity_type"`
+        CreatedAt int64 `json:"createdAt"`
 	}
 	EntityPreviewValue {
-		EntityId string `json:"entity_id"`
-		Title string `json:"title"`
-		Content string `json:"content"`
-		EntityType string `json:"entity_type"`
-		CoverImage string `json:"cover_image"`
-		UserInfo UserInfo `json:"user_info"`
+        EntityId string `json:"entity_id"`
+        Title string `json:"title"`
+        Content string `json:"content"`
+        EntityType string `json:"entity_type"`
+        CoverImage string `json:"cover_image"`
+        UserInfo UserInfo `json:"user_info"`
 	}
 	FavorList {
-		Total int64 `json:"total"`
-		List []*Favor `json:"list"`
+        Total int64 `json:"total"`
+        List []*Favor `json:"list"`
 	}
-		// 获取收藏夹列表相应
+        // 获取收藏夹列表相应
 	GetFavorListResp {
 		Response
 		Data FavorList `json:"data"`
 	}
-		// 创建表情包
+        // 创建表情包
 	CreateEmojiReq {
-		Code string `json:"code"`               // 表情包名称
+        Code string `json:"code"`               // 表情包名称
 		Description string `json:"description"` // 描述
-		URL string `json:"url"`                 // 图片地址
+        URL string `json:"url"`                 // 图片地址
 	}
-		// 创建表情包相应
+        // 创建表情包相应
 	CreateEmojiResp {
 		Response
 		Data bool `json:"data"` // 表情包详情
 	}
-		// 删除表情包
+        // 删除表情包
 	DeleteEmojiReq {
 		Id string `path:"id"` // 表情包 ID
 	}
-		// 删除表情包相应
+        // 删除表情包相应
 	DeleteEmojiResp {
 		Response
 		Data bool `json:"data"`
 	}
 	Emoji {
-		ID string `json:"id"`
-		Code string `json:"code"`
+        ID string `json:"id"`
+        Code string `json:"code"`
 		Description string `json:"description"`
-		URL string `json:"url"`
-		CreatedAt int64 `json:"createdAt"`
-		UpdatedAt int64 `json:"updatedAt"`
+        URL string `json:"url"`
+        CreatedAt int64 `json:"createdAt"`
+        UpdatedAt int64 `json:"updatedAt"`
 	}
-		// 表情包列表
+        // 表情包列表
 	EmojiList {
-		Total int64 `json:"total"`
-		List []*Emoji `json:"list"`
+        Total int64 `json:"total"`
+        List []*Emoji `json:"list"`
 	}
-		// 获取表情包列表
+        // 获取表情包列表
 	GetEmojiListReq {
-		Page int32 `form:"page"`          // 页码
+        Page int32 `form:"page"`          // 页码
 		PageSize int32 `form:"page_size"` // 每页数量
 	}
-		// 获取表情包列表相应
+        // 获取表情包列表相应
 	GetEmojiListResp {
 		Response
 		Data EmojiList `json:"data"`
 	}
-		//  标签
+        //  标签
 	Tag {
-		ID string `json:"id"`                             // 标签 ID
-		Name string `json:"name"`                         // 标签名称
-		Description string `json:"description"`           // 标签描述
-		IsSystemProvider bool `json:"is_system_provider"` // 是否为系统标签
-		Icon string `json:"icon"`                         // 标签图标
-		UsageCount int64 `json:"usage_count"`             // 标签使用次数
-		CreatedAt int64 `json:"createdAt"`                // 创建时间
-		UpdatedAt int64 `json:"updatedAt"`                // 更新时间
+        ID string `json:"id"`                             // 标签 ID
+        Name string `json:"name"`                         // 标签名称
+        Description string `json:"description"`           // 标签描述
+        IsSystemProvider bool `json:"is_system_provider"` // 是否为系统标签
+        Icon string `json:"icon"`                         // 标签图标
+        UsageCount int64 `json:"usage_count"`             // 标签使用次数
+        CreatedAt int64 `json:"createdAt"`                // 创建时间
+        UpdatedAt int64 `json:"updatedAt"`                // 更新时间
 	}
 	TagList {
-		Total int64 `json:"total"`
-		List []*Tag `json:"list"`
+        Total int64 `json:"total"`
+        List []*Tag `json:"list"`
 	}
-		// 获取标签列表
+        // 获取标签列表
 	GetTagListReq {
-		Page int32 `form:"page"`          // 页码
+        Page int32 `form:"page"`          // 页码
 		PageSize int32 `form:"page_size"` // 每页数量
 	}
 	GetTagListResp {
 		Response
 		Data *TagList `json:"data"`
 	}
-		// 创建标签
+        // 创建标签
 	CreateTagReq {
-		Name string `json:"name"`                         // 标签名称
-		Description string `json:"description"`           // 标签描述
-		IsSystemProvider bool `json:"is_system_provider"` // 是否为系统标签
-		Icon string `json:"icon"`                         // 标签图标
+        Name string `json:"name"`                         // 标签名称
+        Description string `json:"description"`           // 标签描述
+        IsSystemProvider bool `json:"is_system_provider"` // 是否为系统标签
+        Icon string `json:"icon"`                         // 标签图标
 	}
 	CreateTagResp {
 		Response
 		Data bool `json:"data"`
 	}
-		// 删除标签
+        // 删除标签
 	DeleteTagReq {
 		Id string `path:"id"` // 标签 ID
 	}
@@ -843,7 +843,7 @@ type (
 		Data string `json:"data"`
 	}
 	CreateQuestionBankCategoryReq {
-		Name string `json:"name"`
+        Name string `json:"name"`
 		Description string `json:"description"`
 	}
 	CreateQuestionBankCategoryResp {
@@ -851,17 +851,17 @@ type (
 		Data bool `json:"data"`
 	}
 	QuestionBankCategory {
-		ID string `json:"id"`
-		Name string `json:"name"`
+        ID string `json:"id"`
+        Name string `json:"name"`
 		Description string `json:"description"`
-		CreatedAt int64 `json:"createdAt"`
-		UpdatedAt int64 `json:"updatedAt"`
+        CreatedAt int64 `json:"createdAt"`
+        UpdatedAt int64 `json:"updatedAt"`
 	}
 	QuestionBankCategoryList {
 		List []*QuestionBankCategory `json:"list"`
 	}
-	GetQuestionBankCategoryListReq{
-	}
+    GetQuestionBankCategoryListReq{
+    }
 	GetQuestionBankCategoryListResp {
 		Response
 		Data *QuestionBankCategoryList `json:"data"`
@@ -874,11 +874,11 @@ type (
 		Data bool `json:"data"`
 	}
 	CreateSchoolExpReq {
-		Education string `json:"education"`
-		School string `json:"school"`
-		Major string `json:"major"`
-		workExp string `json:"workExp"`
-		Content string `json:"content"`
+        Education string `json:"education"`
+        School string `json:"school"`
+        Major string `json:"major"`
+        workExp string `json:"workExp"`
+        Content string `json:"content"`
 		RequestUserId string `header:"request-user-id"`
 	}
 	CreateSchoolExpResp {
@@ -893,39 +893,40 @@ type (
 		Data bool `json:"data"`
 	}
 	GetSchoolExpListReq {
-		Page int32 `form:"page"`
-		PageSize int32 `form:"page_size"`
+        Page int32 `form:"page"`
+        PageSize int32 `form:"page_size"`
 		Education string `form:"education,optional"`
-		School string `form:"school,optional"`
-		Major string `form:"major,optional"`
-		WorkExp string `form:"workExp,optional"`
+        School string `form:"school,optional"`
+        Major string `form:"major,optional"`
+        WorkExp string `form:"workExp,optional"`
 	}
 	SchoolExp {
-		ID string `json:"id"`
+        ID string `json:"id"`
 		Education string `json:"education"`
-		School string `json:"school"`
-		Major string `json:"major"`
-		WorkExp string `json:"workExp"`
-		Content string `json:"content"`
-		CreatedAt int64 `json:"createdAt"`
-		UpdatedAt int64 `json:"updatedAt"`
-		UserId string `json:"userId"`
+        School string `json:"school"`
+        Major string `json:"major"`
+        WorkExp string `json:"workExp"`
+        Content string `json:"content"`
+        CreatedAt int64 `json:"createdAt"`
+        UpdatedAt int64 `json:"updatedAt"`
+        UserId string `json:"userId"`
 	}
 	SchoolExpList {
-		Total int64 `json:"total"`
-		List []*SchoolExp `json:"list"`
+        Total int64 `json:"total"`
+        List []*SchoolExp `json:"list"`
 	}
 	GetSchoolExpListResp {
 		Response
 		Data *SchoolExpList `json:"data"`
 	}
-		//
+        //
 	CreateWorkExpReq {
 		RequestUserId string `header:"request-user-id"`
-		WorkExp string `json:"workExp"`
-		Company string `json:"company"`
-		Region string `json:"region"`
-		Content string `json:"content"`
+        WorkExp string `json:"workExp"`
+        Company string `json:"company"`
+        Position string `json:"position"`
+        Region string `json:"region"`
+        Content string `json:"content"`
 	}
 	CreateWorkExpResp {
 		Response
@@ -939,25 +940,27 @@ type (
 		Data bool `json:"data"`
 	}
 	GetWorkExpListReq {
-		Page int32 `form:"page"`
-		PageSize int32 `form:"page_size"`
-		WorkExp string `form:"workExp,optional"`
-		Company string `form:"company,optional"`
-		Region string `form:"region,optional"`
+        Page int32 `form:"page"`
+        PageSize int32 `form:"page_size"`
+        WorkExp string `form:"workExp,optional"`
+        Company string `form:"company,optional"`
+        Position string `form:"position,optional"`
+        Region string `form:"region,optional"`
 	}
 	WorkExp {
-		ID string `json:"id"`
-		WorkExp string `json:"workExp"`
-		Company string `json:"company"`
-		Region string `json:"region"`
-		Content string `json:"content"`
-		UserID string `json:"userID"`
-		CreatedAt int64 `json:"createdAt"`
-		UpdatedAt int64 `json:"updatedAt"`
+        ID string `json:"id"`
+        WorkExp string `json:"workExp"`
+        Company string `json:"company"`
+        Region string `json:"region"`
+        Position string `json:"position"`
+        Content string `json:"content"`
+        UserID string `json:"userID"`
+        CreatedAt int64 `json:"createdAt"`
+        UpdatedAt int64 `json:"updatedAt"`
 	}
 	WorkExpList {
-		Total int64 `json:"total"`
-		List []*WorkExp `json:"list"`
+        Total int64 `json:"total"`
+        List []*WorkExp `json:"list"`
 	}
 	GetWorkExpListResp {
 		Response
@@ -967,7 +970,7 @@ type (
 
 @server (
 	prefix: /api/coderhub
-	group: coderhub
+    group: coderhub
 )
 service CodeHubAPI {
 	@doc (
@@ -980,7 +983,7 @@ service CodeHubAPI {
 // 用户服务 - 公共路由
 @server(
 	prefix: /api/user
-	group: user_public
+    group: user_public
 )
 service CodeHubAPI {
 	@doc (
@@ -1033,13 +1036,13 @@ service CodeHubAPI {
 	@handler UpdateUserInfo
 	put /update/:id (UpdateUserInfoReq) returns (UpdateUserInfoResp)
 
-	@doc(
+    @doc(
 		summary: "更新用户头像"
 	)
 	@handler UpdateUserAvatar
 	put /update_avatar (UpdateUserAvatarReq) returns (UpdateUserAvatarResp)
 
-	@doc(
+    @doc(
 		summary: "根据用户的token获取用户信息"
 	)
 	@handler GetUserInfoByToken
@@ -1175,42 +1178,42 @@ service CodeHubAPI {
 }
 
 @server(
-	jwt: Auth
+    jwt: Auth
 	prefix: /api/comments
-	group: comments_auth
+    group: comments_auth
 )
 service CodeHubAPI {
-	@doc(
+    @doc(
 		summary: "创建评论"
 	)
 	@handler CreateComment
 	post /create (CreateCommentReq) returns (CreateCommentResp)
 
-	@doc(
+    @doc(
 		summary: "获取评论列表"
 	)
 	@handler GetComments
 	get /article/:entity_id (GetCommentsReq) returns (GetCommentsResp)
 
-	@doc(
+    @doc(
 		summary: "获取某条评论的子评论列表"
 	)
 	@handler GetCommentReplies
 	get /replies/:comment_id (GetCommentRepliesReq) returns (GetCommentRepliesResp)
 
-	@doc(
+    @doc(
 		summary: "更新评论点赞数"
 	)
 	@handler UpdateCommentLikeCount
 	post /update_like_count (UpdateCommentLikeCountReq) returns (UpdateCommentLikeCountResp)
 
-	@doc(
+    @doc(
 		summary: "获取单个评论"
 	)
 	@handler GetComment
 	get /:comment_id (GetCommentReq) returns (GetCommentResp)
 
-	@doc(
+    @doc(
 		summary: "删除评论"
 	)
 	@handler DeleteComment
@@ -1219,22 +1222,22 @@ service CodeHubAPI {
 
 @server(
 	prefix: /api/articles
-	group: articles_public
+    group: articles_public
 )
 service CodeHubAPI {
-	@doc(
+    @doc(
 		summary: "获取文章"
 	)
 	@handler GetArticle
 	get /detail/:id (GetArticleReq) returns (GetArticleResp)
 
-	@doc(
+    @doc(
 		summary: "获取文章附加信息"
 	)
 	@handler GetArticleExtra
 	get /extra/:id (GetArticleReq) returns (GetArticleExtraResp)
 
-	@doc(
+    @doc(
 		summary: "获取文章列表"
 	)
 	@handler GetArticles
@@ -1242,30 +1245,30 @@ service CodeHubAPI {
 }
 
 @server(
-	jwt: Auth
+    jwt: Auth
 	prefix: /api/articles
-	group: articles_auth
+    group: articles_auth
 )
 service CodeHubAPI {
-	@doc(
+    @doc(
 		summary: "创建文章"
 	)
 	@handler CreateArticle
 	post /create (CreateArticleReq) returns (CreateArticleResp)
 
-	@doc(
+    @doc(
 		summary: "更新文章"
 	)
 	@handler UpdateArticle
 	put /:id (UpdateArticleReq) returns (UpdateArticleResp)
 
-	@doc(
+    @doc(
 		summary: "删除文章"
 	)
 	@handler DeleteArticle
 	delete /:id (DeleteArticleReq) returns (DeleteArticleResp)
 
-	@doc(
+    @doc(
 		summary: "更新文章点赞数"
 	)
 	@handler UpdateLikeCount
@@ -1273,30 +1276,30 @@ service CodeHubAPI {
 }
 
 @server(
-	jwt: Auth
+    jwt: Auth
 	prefix: /api/questions
-	group: questions_auth
+    group: questions_auth
 )
 service CodeHubAPI {
-	@doc(
+    @doc(
 		summary: "创建题库"
 	)
 	@handler CreateQuestionBank
 	post /bank/create (CreateQuestionBankReq) returns (CreateQuestionBankResp)
 
-	@doc(
+    @doc(
 		summary: "删除题库"
 	)
 	@handler DeleteQuestionBank
 	delete /bank/:id (DeleteQuestionBankReq) returns (DeleteQuestionBankResp)
 
-	@doc(
+    @doc(
 		summary: "创建题目"
 	)
 	@handler CreateQuestion
 	post /question/create (CreateQuestionReq) returns (CreateQuestionResp)
 
-	@doc(
+    @doc(
 		summary: "删除题目"
 	)
 	@handler DeleteQuestion
@@ -1305,28 +1308,28 @@ service CodeHubAPI {
 
 @server(
 	prefix: /api/questions
-	group: questions_public
+    group: questions_public
 )
 service CodeHubAPI {
-	@doc(
+    @doc(
 		summary: "获取题库列表"
 	)
 	@handler ListQuestionBanks
 	get /bank_list/:categoryId (GetQuestionBankListReq) returns (GetQuestionBankListResp)
 
-	@doc(
+    @doc(
 		summary: "获取题库详情"
 	)
 	@handler GetQuestionBankDetail
 	get /bank/:id (GetQuestionBankDetailReq) returns (GetQuestionBankDetailResp)
 
-	@doc(
+    @doc(
 		summary: "获取题目列表"
 	)
 	@handler ListQuestions
 	get /question_list/:id (GetQuestionListReq) returns (GetQuestionListResp)
 
-	@doc(
+    @doc(
 		summary: "获取题目详情"
 	)
 	@handler GetQuestionBank
@@ -1335,16 +1338,16 @@ service CodeHubAPI {
 
 @server(
 	prefix: /api/favorites
-	group: favorites_public
+    group: favorites_public
 )
 service CodeHubAPI {
-	@doc(
+    @doc(
 		summary: "获取收藏夹列表"
 	)
 	@handler ListFavorite
 	get /list (GetFavorFoldListReq) returns (GetFavorFoldListResp)
 
-	@doc(
+    @doc(
 		summary: "获取收藏内容列表"
 	)
 	@handler ListFavoriteContent
@@ -1352,36 +1355,36 @@ service CodeHubAPI {
 }
 
 @server(
-	jwt: Auth
+    jwt: Auth
 	prefix: /api/favorites
-	group: favorites_auth
+    group: favorites_auth
 )
 service CodeHubAPI {
-	@doc(
+    @doc(
 		summary: "创建收藏夹"
 	)
 	@handler CreateFavorite
 	post /create (CreateFavorFoldReq) returns (CreateFavorFoldResp)
 
-	@doc(
+    @doc(
 		summary: "更新收藏夹"
 	)
 	@handler UpdateFavorite
 	put /:id (UpdateFavorFoldReq) returns (UpdateFavorFoldResp)
 
-	@doc(
+    @doc(
 		summary: "删除收藏夹"
 	)
 	@handler DeleteFavorite
 	delete /:id (DeleteFavorFoldReq) returns (DeleteFavorFoldResp)
 
-	@doc(
+    @doc(
 		summary: "添加收藏内容"
 	)
 	@handler AddFavoriteContent
 	post /add (CreateFavorReq) returns (CreateFavorResp)
 
-	@doc(
+    @doc(
 		summary: "删除收藏夹内容"
 	)
 	@handler DeleteFavoriteContent
@@ -1390,10 +1393,10 @@ service CodeHubAPI {
 
 @server(
 	prefix: /api/emotion
-	group: emotion_public
+    group: emotion_public
 )
 service CodeHubAPI {
-	@doc(
+    @doc(
 		summary: "获取表情包列表"
 	)
 	@handler ListEmotion
@@ -1401,18 +1404,18 @@ service CodeHubAPI {
 }
 
 @server(
-	jwt: Auth
+    jwt: Auth
 	prefix: /api/emotion
-	group: emotion_auth
+    group: emotion_auth
 )
 service CodeHubAPI {
-	@doc(
+    @doc(
 		summary: "创建表情包"
 	)
 	@handler CreateEmotion
 	post /create (CreateEmojiReq) returns (CreateEmojiResp)
 
-	@doc(
+    @doc(
 		summary: "删除表情包"
 	)
 	@handler DeleteEmotion
@@ -1421,16 +1424,16 @@ service CodeHubAPI {
 
 @server(
 	prefix: /api/tag
-	group: tag_public
+    group: tag_public
 )
 service CodeHubAPI {
-	@doc(
+    @doc(
 		summary: "获取系统分类标签"
 	)
 	@handler GetSystemTagList
 	get /system/list returns (GetTagListResp)
 
-	@doc(
+    @doc(
 		summary: "获取全部分类标签（包含系统和用户自定义的标签）"
 	)
 	@handler GetAllTagList
@@ -1438,18 +1441,18 @@ service CodeHubAPI {
 }
 
 @server(
-	jwt: Auth
+    jwt: Auth
 	prefix: /api/tag
-	group: tag_auth
+    group: tag_auth
 )
 service CodeHubAPI {
-	@doc(
+    @doc(
 		summary: "创建分类标签"
 	)
 	@handler CreateTag
 	post /create (CreateTagReq) returns (CreateTagResp)
 
-	@doc(
+    @doc(
 		summary: "删除分类标签"
 	)
 	@handler DeleteTag
@@ -1457,12 +1460,12 @@ service CodeHubAPI {
 }
 
 @server(
-	jwt: Auth
+    jwt: Auth
 	prefix: /api/ai
-	group: ai_auth
+    group: ai_auth
 )
 service CodeHubAPI {
-	@doc(
+    @doc(
 		summary: "与AI对话"
 	)
 	@handler ChatWithAI
@@ -1470,18 +1473,18 @@ service CodeHubAPI {
 }
 
 @server(
-	jwt: Auth
+    jwt: Auth
 	prefix: /api/question_bank_category
-	group: question_bank_category_auth
+    group: question_bank_category_auth
 )
 service CodeHubAPI {
-	@doc(
+    @doc(
 		summary: "创建题库分类"
 	)
 	@handler CreateQuestionBankCategory
 	post /create (CreateQuestionBankCategoryReq) returns (CreateQuestionBankCategoryResp)
 
-	@doc(
+    @doc(
 		summary: "删除题库分类"
 	)
 	@handler DeleteQuestionBankCategory
@@ -1490,10 +1493,10 @@ service CodeHubAPI {
 
 @server(
 	prefix: /api/question_bank_category
-	group: question_bank_category_public
+    group: question_bank_category_public
 )
 service CodeHubAPI {
-	@doc(
+    @doc(
 		summary: "获取题库分类列表"
 	)
 	@handler ListQuestionBankCategory
@@ -1501,18 +1504,18 @@ service CodeHubAPI {
 }
 
 @server(
-	jwt: Auth
+    jwt: Auth
 	prefix: /api/school_exp
-	group: school_exp_auth
+    group: school_exp_auth
 )
 service CodeHubAPI {
-	@doc(
+    @doc(
 		summary: "创建学校经历"
 	)
 	@handler CreateSchoolExp
 	post /create (CreateSchoolExpReq) returns (CreateSchoolExpResp)
 
-	@doc(
+    @doc(
 		summary: "删除学校经历"
 	)
 	@handler DeleteSchoolExp
@@ -1521,10 +1524,10 @@ service CodeHubAPI {
 
 @server(
 	prefix: /api/school_exp
-	group: school_exp_public
+    group: school_exp_public
 )
 service CodeHubAPI {
-	@doc(
+    @doc(
 		summary: "获取学校经历列表"
 	)
 	@handler ListSchoolExp
@@ -1532,18 +1535,18 @@ service CodeHubAPI {
 }
 
 @server(
-	jwt: Auth
+    jwt: Auth
 	prefix: /api/work_exp
-	group: work_exp_auth
+    group: work_exp_auth
 )
 service CodeHubAPI {
-	@doc(
+    @doc(
 		summary: "创建工作经历"
 	)
 	@handler CreateWorkExp
 	post /create (CreateWorkExpReq) returns (CreateWorkExpResp)
 
-	@doc(
+    @doc(
 		summary: "删除工作经历"
 	)
 	@handler DeleteWorkExp
@@ -1552,10 +1555,10 @@ service CodeHubAPI {
 
 @server(
 	prefix: /api/work_exp
-	group: work_exp_public
+    group: work_exp_public
 )
 service CodeHubAPI {
-	@doc(
+    @doc(
 		summary: "获取工作经历列表"
 	)
 	@handler ListWorkExp

@@ -1231,6 +1231,7 @@ message CreateWorkExpRequest {
   string region = 3;
   string content = 4;
   int64 userId = 5;
+  string position = 6;
 }
 
 message CreateWorkExpResponse {
@@ -1251,6 +1252,7 @@ message GetWorkExpListRequest {
   string company = 3;
   string workExp = 4;
   string region = 5;
+  string position = 6;
 }
 
 message WorkExp {
@@ -1260,8 +1262,9 @@ message WorkExp {
   string workExp = 4;
   string content = 5;
   int64 userId = 6;
-  int64 createTime = 7;
-  int64 updateTime = 8;
+  string position = 7;
+  int64 createTime = 8;
+  int64 updateTime = 9;
 }
 
 message GetWorkExpListResponse {

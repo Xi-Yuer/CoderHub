@@ -30,6 +30,7 @@ func (l *CreateWorkExpLogic) CreateWorkExp(in *coderhub.CreateWorkExpRequest) (*
 		Region:       in.Region,
 		Content:      in.Content,
 		UserId:       in.UserId,
+		Position:     in.Position,
 	})
 	if err != nil {
 		return nil, err

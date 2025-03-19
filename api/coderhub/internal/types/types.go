@@ -229,6 +229,7 @@ type CreateWorkExpReq struct {
 	RequestUserId string `header:"request-user-id"`
 	WorkExp       string `json:"workExp"`
 	Company       string `json:"company"`
+	Position      string `json:"position"`
 	Region        string `json:"region"`
 	Content       string `json:"content"`
 }
@@ -680,6 +681,7 @@ type GetWorkExpListReq struct {
 	PageSize int32  `form:"page_size"`
 	WorkExp  string `form:"workExp,optional"`
 	Company  string `form:"company,optional"`
+	Position string `form:"position,optional"`
 	Region   string `form:"region,optional"`
 }
 
@@ -1000,6 +1002,7 @@ type WorkExp struct {
 	WorkExp   string `json:"workExp"`
 	Company   string `json:"company"`
 	Region    string `json:"region"`
+	Position  string `json:"position"`
 	Content   string `json:"content"`
 	UserID    string `json:"userID"`
 	CreatedAt int64  `json:"createdAt"`

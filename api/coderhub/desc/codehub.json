@@ -2521,6 +2521,12 @@
             "type": "string"
           },
           {
+            "name": "position",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
             "name": "region",
             "in": "query",
             "required": false,
@@ -3567,6 +3573,9 @@
         "company": {
           "type": "string"
         },
+        "position": {
+          "type": "string"
+        },
         "region": {
           "type": "string"
         },
@@ -3578,6 +3587,7 @@
       "required": [
         "workExp",
         "company",
+        "position",
         "region",
         "content"
       ]
@@ -5197,6 +5207,9 @@
         "company": {
           "type": "string"
         },
+        "position": {
+          "type": "string"
+        },
         "region": {
           "type": "string"
         }
@@ -6509,6 +6522,9 @@
         "region": {
           "type": "string"
         },
+        "position": {
+          "type": "string"
+        },
         "content": {
           "type": "string"
         },
@@ -6530,6 +6546,7 @@
         "workExp",
         "company",
         "region",
+        "position",
         "content",
         "userID",
         "createdAt",
