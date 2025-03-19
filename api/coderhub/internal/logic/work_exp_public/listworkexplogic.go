@@ -39,9 +39,9 @@ func (l *ListWorkExpLogic) ListWorkExp(req *types.GetWorkExpListReq) (resp *type
 		return l.errorResp(err)
 	}
 
-	var workExpList *types.WorkExpList
+	var workExpList []*types.WorkExp
 	for _, v := range list.WorkExps {
-		workExpList.List = append(workExpList.List, &types.WorkExp{
+		workExpList = append(workExpList, &types.WorkExp{
 			ID:        utils.Int2String(v.Id),
 			WorkExp:   v.WorkExp,
 			Company:   v.Company,
@@ -52,9 +52,11 @@ func (l *ListWorkExpLogic) ListWorkExp(req *types.GetWorkExpListReq) (resp *type
 			UpdatedAt: v.UpdateTime,
 		})
 	}
-	workExpList.Total = list.Total
 
-	return l.successResp(workExpList)
+	return l.successResp(&types.WorkExpList{
+		Total: list.Total,
+		List:  workExpList,
+	})
 }
 func (l *ListWorkExpLogic) errorResp(err error) (resp *types.GetWorkExpListResp, err1 error) {
 	return &types.GetWorkExpListResp{
