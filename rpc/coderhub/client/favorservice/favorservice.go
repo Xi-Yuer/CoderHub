@@ -166,6 +166,7 @@ type (
 	IsUserFollowedReq                   = coderhub.IsUserFollowedReq
 	IsUserFollowedResp                  = coderhub.IsUserFollowedResp
 	LikeAcademicNavigatorRequest        = coderhub.LikeAcademicNavigatorRequest
+	ListAuthorArticlesRequest           = coderhub.ListAuthorArticlesRequest
 	ListByUserRequest                   = coderhub.ListByUserRequest
 	ListByUserResponse                  = coderhub.ListByUserResponse
 	ListRecommendedArticlesRequest      = coderhub.ListRecommendedArticlesRequest

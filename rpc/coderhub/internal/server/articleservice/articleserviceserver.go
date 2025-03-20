@@ -62,3 +62,8 @@ func (s *ArticleServiceServer) DeleteArticle(ctx context.Context, in *coderhub.D
 	l := articleservicelogic.NewDeleteArticleLogic(ctx, s.svcCtx)
 	return l.DeleteArticle(in)
 }
+
+func (s *ArticleServiceServer) ListArticleIDsByAuthor(ctx context.Context, in *coderhub.ListAuthorArticlesRequest) (*coderhub.ListRecommendedArticlesResponse, error) {
+	l := articleservicelogic.NewListArticleIDsByAuthorLogic(ctx, s.svcCtx)
+	return l.ListArticleIDsByAuthor(in)
+}

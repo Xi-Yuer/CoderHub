@@ -1140,6 +1140,7 @@ const (
 	ArticleService_UpdateArticle_FullMethodName           = "/coderhub.ArticleService/UpdateArticle"
 	ArticleService_UpdateLikeCount_FullMethodName         = "/coderhub.ArticleService/UpdateLikeCount"
 	ArticleService_DeleteArticle_FullMethodName           = "/coderhub.ArticleService/DeleteArticle"
+	ArticleService_ListArticleIDsByAuthor_FullMethodName  = "/coderhub.ArticleService/ListArticleIDsByAuthor"
 )
 
 // ArticleServiceClient is the client API for ArticleService service.
@@ -1156,6 +1157,7 @@ type ArticleServiceClient interface {
 	UpdateArticle(ctx context.Context, in *UpdateArticleRequest, opts ...grpc.CallOption) (*UpdateArticleResponse, error)
 	UpdateLikeCount(ctx context.Context, in *UpdateLikeCountRequest, opts ...grpc.CallOption) (*UpdateLikeCountResponse, error)
 	DeleteArticle(ctx context.Context, in *DeleteArticleRequest, opts ...grpc.CallOption) (*DeleteArticleResponse, error)
+	ListArticleIDsByAuthor(ctx context.Context, in *ListAuthorArticlesRequest, opts ...grpc.CallOption) (*ListRecommendedArticlesResponse, error)
 }
 
 type articleServiceClient struct {
@@ -1246,6 +1248,16 @@ func (c *articleServiceClient) DeleteArticle(ctx context.Context, in *DeleteArti
 	return out, nil
 }
 
+func (c *articleServiceClient) ListArticleIDsByAuthor(ctx context.Context, in *ListAuthorArticlesRequest, opts ...grpc.CallOption) (*ListRecommendedArticlesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListRecommendedArticlesResponse)
+	err := c.cc.Invoke(ctx, ArticleService_ListArticleIDsByAuthor_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ArticleServiceServer is the server API for ArticleService service.
 // All implementations must embed UnimplementedArticleServiceServer
 // for forward compatibility.
@@ -1260,6 +1272,7 @@ type ArticleServiceServer interface {
 	UpdateArticle(context.Context, *UpdateArticleRequest) (*UpdateArticleResponse, error)
 	UpdateLikeCount(context.Context, *UpdateLikeCountRequest) (*UpdateLikeCountResponse, error)
 	DeleteArticle(context.Context, *DeleteArticleRequest) (*DeleteArticleResponse, error)
+	ListArticleIDsByAuthor(context.Context, *ListAuthorArticlesRequest) (*ListRecommendedArticlesResponse, error)
 	mustEmbedUnimplementedArticleServiceServer()
 }
 
@@ -1293,6 +1306,9 @@ func (UnimplementedArticleServiceServer) UpdateLikeCount(context.Context, *Updat
 }
 func (UnimplementedArticleServiceServer) DeleteArticle(context.Context, *DeleteArticleRequest) (*DeleteArticleResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteArticle not implemented")
+}
+func (UnimplementedArticleServiceServer) ListArticleIDsByAuthor(context.Context, *ListAuthorArticlesRequest) (*ListRecommendedArticlesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListArticleIDsByAuthor not implemented")
 }
 func (UnimplementedArticleServiceServer) mustEmbedUnimplementedArticleServiceServer() {}
 func (UnimplementedArticleServiceServer) testEmbeddedByValue()                        {}
@@ -1459,6 +1475,24 @@ func _ArticleService_DeleteArticle_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ArticleService_ListArticleIDsByAuthor_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListAuthorArticlesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ArticleServiceServer).ListArticleIDsByAuthor(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ArticleService_ListArticleIDsByAuthor_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ArticleServiceServer).ListArticleIDsByAuthor(ctx, req.(*ListAuthorArticlesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ArticleService_ServiceDesc is the grpc.ServiceDesc for ArticleService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1497,6 +1531,10 @@ var ArticleService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteArticle",
 			Handler:    _ArticleService_DeleteArticle_Handler,
+		},
+		{
+			MethodName: "ListArticleIDsByAuthor",
+			Handler:    _ArticleService_ListArticleIDsByAuthor_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

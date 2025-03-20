@@ -451,6 +451,21 @@ type (
         UserID string `form:"user_id,optional"`              // 用户 ID
         CategoryID string `form:"category_id"`               // 分类 ID
 	}
+    GetArticlesByUserReq {
+        Type string `form:"type,options=article|micro_post"`     // 内容类型
+        Page int32 `form:"page"`                                 // 页码
+        PageSize int32 `form:"page_size"`                        // 每页数量
+        AuthorID string `form:"author_id"`                       // 作者 ID
+        RequestUserID string `header:"request-user-id,optional"` // 请求用户 ID
+    }
+    GetArticleResponse {
+        List []*GetArticle `json:"list"`
+        Total int32 `json:"total"`
+    }
+    GetArticlesByUserResp {
+        Response
+        Data GetArticleResponse `json:"data"` // 文章列表
+    }
 	GetArticlesResp {
 		Response
 		Data []*GetArticle `json:"data"` // 文章列表
@@ -1274,6 +1289,12 @@ service CodeHubAPI {
 	)
 	@handler GetArticle
 	get /detail/:id (GetArticleReq) returns (GetArticleResp)
+
+    @doc(
+        summary: "获取某个用户的文章列表"
+    )
+    @handler GetArticlesByUser
+    get /user/:user_id (GetArticlesByUserReq) returns (GetArticlesByUserResp)
 
     @doc(
 		summary: "获取文章附加信息"

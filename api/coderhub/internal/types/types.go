@@ -480,6 +480,24 @@ type GetArticleResp struct {
 	Data *GetArticle `json:"data"` // 文章详情
 }
 
+type GetArticleResponse struct {
+	List  []*GetArticle `json:"list"`
+	Total int32         `json:"total"`
+}
+
+type GetArticlesByUserReq struct {
+	Type          string `form:"type,options=article|micro_post"` // 内容类型
+	Page          int32  `form:"page"`                            // 页码
+	PageSize      int32  `form:"page_size"`                       // 每页数量
+	AuthorID      string `form:"author_id"`                       // 作者 ID
+	RequestUserID string `header:"request-user-id,optional"`      // 请求用户 ID
+}
+
+type GetArticlesByUserResp struct {
+	Response
+	Data GetArticleResponse `json:"data"` // 文章列表
+}
+
 type GetArticlesReq struct {
 	Type       string `form:"type,options=article|micro_post"` // 内容类型
 	Page       int32  `form:"page"`                            // 页码

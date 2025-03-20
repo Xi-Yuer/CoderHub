@@ -15,6 +15,7 @@ type ArticleRepository interface {
 	GetArticleByID(id int64) (*model.Articles, error)
 	GetArticlesByIDs(ids []int64) ([]*model.Articles, error)
 	ListRecommendedArticles(type_ string, categoryID int64, page, pageSize int64) ([]int64, error)
+	ListArticlesByAuthor(authorID int64, _type string, page, pageSize int64) ([]int64, int64, error)
 	BatchGetArticle(ids []int64) ([]*model.ArticlePreviewWithAuthInfo, error)
 	UpdateArticle(article *model.Articles) error
 	DeleteArticle(id int64) error
@@ -85,6 +86,24 @@ func (r *ArticleRepositoryImpl) ListRecommendedArticles(type_ string, categoryID
 		return nil, err
 	}
 	return ids, nil
+}
+func (r *ArticleRepositoryImpl) ListArticlesByAuthor(authorID int64, _type string, page, pageSize int64) ([]int64, int64, error) {
+	var ids []int64
+	var total int64
+	if err := r.DB.Table("articles").
+		Where("author_id = ? AND type = ?", authorID, _type).
+		Count(&total).Error; err != nil {
+		return nil, 0, err
+	}
+	if err := r.DB.Table("articles").
+		Where("author_id = ? AND type = ?", authorID, _type).
+		Order("created_at DESC").
+		Limit(int(pageSize)).
+		Offset(int((page-1)*pageSize)).
+		Pluck("id", &ids).Error; err != nil {
+		return nil, 0, err
+	}
+	return ids, total, nil
 }
 
 func (r *ArticleRepositoryImpl) BatchGetArticle(ids []int64) ([]*model.ArticlePreviewWithAuthInfo, error) {
