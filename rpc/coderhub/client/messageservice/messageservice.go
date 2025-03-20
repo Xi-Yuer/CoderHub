@@ -2,7 +2,7 @@
 // goctl 1.7.3
 // Source: coderhub.proto
 
-package questionservice
+package messageservice
 
 import (
 	"context"
@@ -198,80 +198,34 @@ type (
 	UserInfo                            = coderhub.UserInfo
 	WorkExp                             = coderhub.WorkExp
 
-	QuestionService interface {
-		// 创建题库
-		CreateQuestionBank(ctx context.Context, in *CreateQuestionBankRequest, opts ...grpc.CallOption) (*CreateQuestionBankResponse, error)
-		// 获取题库详情
-		GetQuestionBank(ctx context.Context, in *GetQuestionBankRequest, opts ...grpc.CallOption) (*GetQuestionBankResponse, error)
-		// 删除题库
-		DeleteQuestionBank(ctx context.Context, in *DeleteQuestionBankRequest, opts ...grpc.CallOption) (*DeleteQuestionBankResponse, error)
-		// 创建题目
-		CreateQuestion(ctx context.Context, in *CreateQuestionRequest, opts ...grpc.CallOption) (*CreateQuestionResponse, error)
-		// 删除题目
-		DeleteQuestion(ctx context.Context, in *DeleteQuestionRequest, opts ...grpc.CallOption) (*DeleteQuestionResponse, error)
-		// 获取题库列表
-		GetQuestionBankList(ctx context.Context, in *GetQuestionBankListRequest, opts ...grpc.CallOption) (*GetQuestionBankListResponse, error)
-		// 获取题库下的所有题目目录
-		GetQuestionTree(ctx context.Context, in *GetQuestionTreeRequest, opts ...grpc.CallOption) (*GetQuestionTreeResponse, error)
-		// 获取题目详情
-		GetQuestion(ctx context.Context, in *GetQuestionRequest, opts ...grpc.CallOption) (*GetQuestionResponse, error)
+	MessageService interface {
+		CreateMessage(ctx context.Context, in *CreateMessageRequest, opts ...grpc.CallOption) (*CreateMessageResponse, error)
+		DeleteMessage(ctx context.Context, in *DeleteMessageRequest, opts ...grpc.CallOption) (*DeleteMessageResponse, error)
+		GetMessageList(ctx context.Context, in *GetMessageListRequest, opts ...grpc.CallOption) (*GetMessageListResponse, error)
 	}
 
-	defaultQuestionService struct {
+	defaultMessageService struct {
 		cli zrpc.Client
 	}
 )
 
-func NewQuestionService(cli zrpc.Client) QuestionService {
-	return &defaultQuestionService{
+func NewMessageService(cli zrpc.Client) MessageService {
+	return &defaultMessageService{
 		cli: cli,
 	}
 }
 
-// 创建题库
-func (m *defaultQuestionService) CreateQuestionBank(ctx context.Context, in *CreateQuestionBankRequest, opts ...grpc.CallOption) (*CreateQuestionBankResponse, error) {
-	client := coderhub.NewQuestionServiceClient(m.cli.Conn())
-	return client.CreateQuestionBank(ctx, in, opts...)
+func (m *defaultMessageService) CreateMessage(ctx context.Context, in *CreateMessageRequest, opts ...grpc.CallOption) (*CreateMessageResponse, error) {
+	client := coderhub.NewMessageServiceClient(m.cli.Conn())
+	return client.CreateMessage(ctx, in, opts...)
 }
 
-// 获取题库详情
-func (m *defaultQuestionService) GetQuestionBank(ctx context.Context, in *GetQuestionBankRequest, opts ...grpc.CallOption) (*GetQuestionBankResponse, error) {
-	client := coderhub.NewQuestionServiceClient(m.cli.Conn())
-	return client.GetQuestionBank(ctx, in, opts...)
+func (m *defaultMessageService) DeleteMessage(ctx context.Context, in *DeleteMessageRequest, opts ...grpc.CallOption) (*DeleteMessageResponse, error) {
+	client := coderhub.NewMessageServiceClient(m.cli.Conn())
+	return client.DeleteMessage(ctx, in, opts...)
 }
 
-// 删除题库
-func (m *defaultQuestionService) DeleteQuestionBank(ctx context.Context, in *DeleteQuestionBankRequest, opts ...grpc.CallOption) (*DeleteQuestionBankResponse, error) {
-	client := coderhub.NewQuestionServiceClient(m.cli.Conn())
-	return client.DeleteQuestionBank(ctx, in, opts...)
-}
-
-// 创建题目
-func (m *defaultQuestionService) CreateQuestion(ctx context.Context, in *CreateQuestionRequest, opts ...grpc.CallOption) (*CreateQuestionResponse, error) {
-	client := coderhub.NewQuestionServiceClient(m.cli.Conn())
-	return client.CreateQuestion(ctx, in, opts...)
-}
-
-// 删除题目
-func (m *defaultQuestionService) DeleteQuestion(ctx context.Context, in *DeleteQuestionRequest, opts ...grpc.CallOption) (*DeleteQuestionResponse, error) {
-	client := coderhub.NewQuestionServiceClient(m.cli.Conn())
-	return client.DeleteQuestion(ctx, in, opts...)
-}
-
-// 获取题库列表
-func (m *defaultQuestionService) GetQuestionBankList(ctx context.Context, in *GetQuestionBankListRequest, opts ...grpc.CallOption) (*GetQuestionBankListResponse, error) {
-	client := coderhub.NewQuestionServiceClient(m.cli.Conn())
-	return client.GetQuestionBankList(ctx, in, opts...)
-}
-
-// 获取题库下的所有题目目录
-func (m *defaultQuestionService) GetQuestionTree(ctx context.Context, in *GetQuestionTreeRequest, opts ...grpc.CallOption) (*GetQuestionTreeResponse, error) {
-	client := coderhub.NewQuestionServiceClient(m.cli.Conn())
-	return client.GetQuestionTree(ctx, in, opts...)
-}
-
-// 获取题目详情
-func (m *defaultQuestionService) GetQuestion(ctx context.Context, in *GetQuestionRequest, opts ...grpc.CallOption) (*GetQuestionResponse, error) {
-	client := coderhub.NewQuestionServiceClient(m.cli.Conn())
-	return client.GetQuestion(ctx, in, opts...)
+func (m *defaultMessageService) GetMessageList(ctx context.Context, in *GetMessageListRequest, opts ...grpc.CallOption) (*GetMessageListResponse, error) {
+	client := coderhub.NewMessageServiceClient(m.cli.Conn())
+	return client.GetMessageList(ctx, in, opts...)
 }

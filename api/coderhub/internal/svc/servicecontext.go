@@ -23,6 +23,7 @@ type ServiceContext struct {
 	QuestionBankCategoryService coderhub.QuestionBankCategoryServiceClient
 	SchoolExpService            coderhub.SchoolExpServiceClient
 	WorkExpService              coderhub.WorkExpServiceClient
+	MessageService              coderhub.MessageServiceClient
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -43,5 +44,6 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		QuestionBankCategoryService: coderhub.NewQuestionBankCategoryServiceClient(zrpc.MustNewClient(c.QuestionBankCategoryService).Conn()),
 		SchoolExpService:            coderhub.NewSchoolExpServiceClient(zrpc.MustNewClient(c.SchoolExpService).Conn()),
 		WorkExpService:              coderhub.NewWorkExpServiceClient(zrpc.MustNewClient(c.WorkExpService).Conn()),
+		MessageService:              coderhub.NewMessageServiceClient(zrpc.MustNewClient(c.MessageService).Conn()),
 	}
 }

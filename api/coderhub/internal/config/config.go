@@ -26,4 +26,5 @@ type Config struct {
 	QuestionBankCategoryService zrpc.RpcClientConf
 	SchoolExpService            zrpc.RpcClientConf
 	WorkExpService              zrpc.RpcClientConf
+	MessageService              zrpc.RpcClientConf
 }

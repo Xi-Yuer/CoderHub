@@ -1277,3 +1277,55 @@ service WorkExpService {
   rpc DeleteWorkExp(DeleteWorkExpRequest) returns (DeleteWorkExpResponse) {}
   rpc GetWorkExpList(GetWorkExpListRequest) returns (GetWorkExpListResponse) {}
 }
+
+message CreateMessageRequest {
+  int64 senderId = 1;
+  int64 receiverId = 2;
+  int32 type = 3;
+  int64 entityId = 4;
+  string content = 5;
+}
+
+message CreateMessageResponse {
+  int64 id = 1;
+}
+
+message DeleteMessageRequest {
+  int64 id = 1;
+  int64 userId = 2;
+}
+
+message DeleteMessageResponse {
+  bool success = 1;
+}
+
+message GetMessageListRequest {
+  int64 userId = 1;
+  int32 type = 2;
+  int32 page = 3;
+  int32 pageSize = 4;
+}
+message MessageListItem {
+  int64 id = 1;
+  int64 senderId = 2;
+  int64 receiverId = 3;
+  int32 type = 4;
+  int64 entityId = 5;
+  string content = 6;
+  int64 createTime = 7;
+  bool isRead = 8;
+  bool isDelete = 9;
+}
+
+message GetMessageListResponse {
+  repeated MessageListItem list = 1;
+  int32 total = 2;
+}
+
+service MessageService {
+  rpc CreateMessage(CreateMessageRequest) returns (CreateMessageResponse);
+  rpc DeleteMessage(DeleteMessageRequest) returns (DeleteMessageResponse);
+  rpc GetMessageList(GetMessageListRequest) returns (GetMessageListResponse);
+}
+
+

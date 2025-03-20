@@ -409,6 +409,7 @@ type (
         // 更新评论点赞数请求
 	UpdateCommentLikeCountReq {
 		CommentId string `json:"comment_id"` // 评论ID
+        Trigger bool `json:"trigger"`        // 操作类型, true:点赞, false:取消点赞
 	}
         // 更新评论点赞数响应
 	UpdateCommentLikeCountResp {
@@ -508,7 +509,8 @@ type (
 		Data bool `json:"data"` // 是否删除成功
 	}
 	UpdateLikeCountReq {
-		Id string `json:"id"` // 文章 ID
+        Id string `json:"id"`         // 文章 ID
+        Trigger bool `json:"trigger"` // 操作类型, true:点赞, false:取消点赞
 	}
 	UpdateLikeCountResp {
 		Response
@@ -966,6 +968,39 @@ type (
 		Response
 		Data *WorkExpList `json:"data"`
 	}
+    DeleteMessage {
+        ID string `path:"id"`
+        RequestUserId string `header:"request-user-id"`
+    }
+    DeleteMessageResp {
+        Response
+        Data bool `json:"data"`
+    }
+    GetMessageListReq {
+        Page int64 `form:"page"`
+        PageSize int64 `form:"page_size"`
+        Type int64 `form:"type"`
+        RequestUserId string `header:"request-user-id"`
+    }
+    Message {
+        ID string `json:"id"`
+        SenderID string `json:"senderID"`
+        ReceiverID string `json:"receiverID"`
+        Type int64 `json:"type"`
+        EntityID string `json:"entityID"`
+        Content string `json:"content"`
+        SenderInfo *UserInfo `json:"senderInfo"`
+        CreatedAt int64 `json:"createdAt"`
+        UpdatedAt int64 `json:"updatedAt"`
+    }
+    MessageList {
+        List []*Message `json:"list"`
+        Total int64 `json:"total"`
+    }
+    GetMessageListResp {
+        Response
+        Data *MessageList `json:"data"`
+    }
 )
 
 @server (
@@ -1563,5 +1598,24 @@ service CodeHubAPI {
 	)
 	@handler ListWorkExp
 	get /list (GetWorkExpListReq) returns (GetWorkExpListResp)
+}
+
+@server(
+    jwt: Auth
+    prefix: /api/message
+    group: message_auth
+)
+service CodeHubAPI {
+    @doc(
+        summary: "获取消息列表"
+    )
+    @handler ListMessage
+    get /list (GetMessageListReq) returns (GetMessageListResp)
+
+    @doc(
+        summary: "删除消息"
+    )
+    @handler DeleteMessage
+    delete /delete/:id (DeleteMessage) returns (DeleteMessageResp)
 }
 

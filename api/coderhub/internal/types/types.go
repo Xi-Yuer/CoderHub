@@ -295,6 +295,16 @@ type DeleteFavorResp struct {
 	Data bool `json:"data"`
 }
 
+type DeleteMessage struct {
+	ID            string `path:"id"`
+	RequestUserId string `header:"request-user-id"`
+}
+
+type DeleteMessageResp struct {
+	Response
+	Data bool `json:"data"`
+}
+
 type DeleteQuestionBankCategoryReq struct {
 	Id string `path:"id"`
 }
@@ -571,6 +581,18 @@ type GetFollowListResp struct {
 	Data FollowList `json:"data"` // 关注列表
 }
 
+type GetMessageListReq struct {
+	Page          int64  `form:"page"`
+	PageSize      int64  `form:"page_size"`
+	Type          int64  `form:"type"`
+	RequestUserId string `header:"request-user-id"`
+}
+
+type GetMessageListResp struct {
+	Response
+	Data *MessageList `json:"data"`
+}
+
 type GetQuestionBankCategoryListReq struct {
 }
 
@@ -741,6 +763,23 @@ type LoginResp struct {
 	Data string `json:"data"` // JWT token
 }
 
+type Message struct {
+	ID         string    `json:"id"`
+	SenderID   string    `json:"senderID"`
+	ReceiverID string    `json:"receiverID"`
+	Type       int64     `json:"type"`
+	EntityID   string    `json:"entityID"`
+	Content    string    `json:"content"`
+	SenderInfo *UserInfo `json:"senderInfo"`
+	CreatedAt  int64     `json:"createdAt"`
+	UpdatedAt  int64     `json:"updatedAt"`
+}
+
+type MessageList struct {
+	List  []*Message `json:"list"`
+	Total int64      `json:"total"`
+}
+
 type PageRequest struct {
 	Page     int32 `form:"page"`      // 页码
 	PageSize int32 `form:"page_size"` // 每页数量
@@ -908,6 +947,7 @@ type UpdateArticleResp struct {
 
 type UpdateCommentLikeCountReq struct {
 	CommentId string `json:"comment_id"` // 评论ID
+	Trigger   bool   `json:"trigger"`    // 操作类型, true:点赞, false:取消点赞
 }
 
 type UpdateCommentLikeCountResp struct {
@@ -928,7 +968,8 @@ type UpdateFavorFoldResp struct {
 }
 
 type UpdateLikeCountReq struct {
-	Id string `json:"id"` // 文章 ID
+	Id      string `json:"id"`      // 文章 ID
+	Trigger bool   `json:"trigger"` // 操作类型, true:点赞, false:取消点赞
 }
 
 type UpdateLikeCountResp struct {

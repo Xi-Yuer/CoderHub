@@ -88,6 +88,7 @@ func NewGorm() *gorm.DB {
 			&model.QuestionBankCategory{},
 			&model.SchoolExp{},
 			&model.WorkExp{},
+			&model.Message{},
 		); err != nil {
 			log.Fatalf("数据库迁移失败: %v", err)
 		}

@@ -80,3 +80,8 @@ WorkExpService:
     Hosts:
       - etcd:2379
     Key: coderhub.rpc
+MessageService:
+  Etcd:
+    Hosts:
+      - etcd:2379
+    Key: coderhub.rpc

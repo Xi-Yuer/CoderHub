@@ -20,6 +20,7 @@ import (
 	follow_auth "coderhub/api/coderhub/internal/handler/follow_auth"
 	follow_public "coderhub/api/coderhub/internal/handler/follow_public"
 	image_auth "coderhub/api/coderhub/internal/handler/image_auth"
+	message_auth "coderhub/api/coderhub/internal/handler/message_auth"
 	question_bank_category_auth "coderhub/api/coderhub/internal/handler/question_bank_category_auth"
 	question_bank_category_public "coderhub/api/coderhub/internal/handler/question_bank_category_public"
 	questions_auth "coderhub/api/coderhub/internal/handler/questions_auth"
@@ -356,6 +357,25 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 		},
 		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
 		rest.WithPrefix("/api/image"),
+	)
+
+	server.AddRoutes(
+		[]rest.Route{
+			{
+				// 删除消息
+				Method:  http.MethodDelete,
+				Path:    "/delete/:id",
+				Handler: message_auth.DeleteMessageHandler(serverCtx),
+			},
+			{
+				// 获取消息列表
+				Method:  http.MethodGet,
+				Path:    "/list",
+				Handler: message_auth.ListMessageHandler(serverCtx),
+			},
+		},
+		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
+		rest.WithPrefix("/api/message"),
 	)
 
 	server.AddRoutes(

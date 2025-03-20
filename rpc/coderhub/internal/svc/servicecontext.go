@@ -34,6 +34,7 @@ type ServiceContext struct {
 	QuestionBankCategoryRepository repository.QuestionBankCategoryRepository
 	SchoolExpRepository            repository.SchoolExpRepository
 	WorkExpRepository              repository.WorkExpRepository
+	MessageRepository              repository.MessageRepository
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -88,5 +89,6 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		QuestionBankCategoryRepository: repository.NewQuestionBankCategoryRepository(sql),
 		SchoolExpRepository:            repository.NewSchoolExpRepository(sql),
 		WorkExpRepository:              repository.NewWorkExpRepository(sql),
+		MessageRepository:              repository.NewMessageRepository(sql),
 	}
 }

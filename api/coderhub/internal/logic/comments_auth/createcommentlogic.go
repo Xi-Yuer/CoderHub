@@ -2,10 +2,12 @@ package comments_auth
 
 import (
 	"coderhub/conf"
+	"coderhub/model"
 	"coderhub/rpc/coderhub/client/commentservice"
 	"coderhub/rpc/coderhub/coderhub"
 	"coderhub/shared/utils"
 	"context"
+	"fmt"
 
 	"coderhub/api/coderhub/internal/svc"
 	"coderhub/api/coderhub/internal/types"
@@ -46,8 +48,69 @@ func (l *CreateCommentLogic) CreateComment(req *types.CreateCommentReq) (resp *t
 	if err != nil {
 		return l.errorResp(err)
 	}
-
+	err = l.SendMessage(l.ctx, comment, utils.String2Int(req.EntityID), userID, utils.String2Int(req.ReplyToUID))
+	if err != nil {
+		return l.errorResp(err)
+	}
 	return l.successResp(comment)
+}
+
+// SendMessage 发送评论消息
+func (l *CreateCommentLogic) SendMessage(ctx context.Context, comment *coderhub.CreateCommentResponse, entityId, userId, ReplyToUid int64) error {
+	// 发送评论用户的信息
+	userInfo, err := l.svcCtx.UserService.GetUserInfo(l.ctx, &coderhub.GetUserInfoRequest{
+		UserId:        comment.Comment.UserInfo.UserId,
+		RequestUserId: 0,
+	})
+	if err != nil {
+		fmt.Printf("获取用户信息失败：%s\n", err.Error())
+		return err
+	}
+	// 获取文章信息
+	article, err := l.svcCtx.ArticlesService.GetArticle(ctx, &coderhub.GetArticleRequest{
+		Id:     entityId,
+		UserId: 0,
+	})
+	if err != nil {
+		fmt.Printf("获取文章失败: %v", err)
+		return nil
+	}
+	// 发送评论通知
+	var title string
+	var _type string
+	if article.Article.Title != "" {
+		title = article.Article.Title
+		_type = "文章"
+	} else {
+		title = "沸点"
+		_type = ""
+	}
+	_, err = l.svcCtx.MessageService.CreateMessage(ctx, &coderhub.CreateMessageRequest{
+		SenderId:   userId,
+		ReceiverId: article.Article.AuthorId,
+		Type:       model.MessageComment,
+		EntityId:   article.Article.Id,
+		Content:    fmt.Sprintf("用户 <a className=\"font-bold inline-block mx-2\" href=\"/user/%s\" target=\"_blank\">%s</a> 评论了你的%s <a className=\"font-bold inline-block mx-2\" href=\"/post/%s\" target=\"_blank\">《%s》</a>", utils.Int2String(userInfo.UserId), userInfo.UserName, _type, utils.Int2String(article.Article.Id), title),
+	})
+	if err != nil {
+		fmt.Printf("发送评论通知失败：%s\n", err.Error())
+		return err
+	}
+	// 发送回复通知
+	if ReplyToUid != 0 {
+		_, err = l.svcCtx.MessageService.CreateMessage(ctx, &coderhub.CreateMessageRequest{
+			SenderId:   userId,
+			ReceiverId: ReplyToUid,
+			Type:       model.MessageComment,
+			EntityId:   entityId,
+			Content:    fmt.Sprintf("用户 <a className=\"font-bold inline-block mx-2\" href=\"/user/%s\" target=\"_blank\">%s</a> 回复了你的评论", utils.Int2String(userInfo.UserId), userInfo.UserName),
+		})
+		if err != nil {
+			fmt.Printf("发送评论通知失败：%s\n", err.Error())
+			return err
+		}
+	}
+	return nil
 }
 
 func (l *CreateCommentLogic) successResp(comment *commentservice.CreateCommentResponse) (*types.CreateCommentResp, error) {

@@ -49,6 +49,8 @@ type (
 	CreateFavorFoldResponse             = coderhub.CreateFavorFoldResponse
 	CreateFavorRequest                  = coderhub.CreateFavorRequest
 	CreateFavorResponse                 = coderhub.CreateFavorResponse
+	CreateMessageRequest                = coderhub.CreateMessageRequest
+	CreateMessageResponse               = coderhub.CreateMessageResponse
 	CreateQuestionBankCategoryRequest   = coderhub.CreateQuestionBankCategoryRequest
 	CreateQuestionBankCategoryResponse  = coderhub.CreateQuestionBankCategoryResponse
 	CreateQuestionBankRequest           = coderhub.CreateQuestionBankRequest
@@ -80,6 +82,8 @@ type (
 	DeleteFavorFoldResponse             = coderhub.DeleteFavorFoldResponse
 	DeleteFavorRequest                  = coderhub.DeleteFavorRequest
 	DeleteFavorResponse                 = coderhub.DeleteFavorResponse
+	DeleteMessageRequest                = coderhub.DeleteMessageRequest
+	DeleteMessageResponse               = coderhub.DeleteMessageResponse
 	DeleteQuestionBankCategoryRequest   = coderhub.DeleteQuestionBankCategoryRequest
 	DeleteQuestionBankCategoryResponse  = coderhub.DeleteQuestionBankCategoryResponse
 	DeleteQuestionBankRequest           = coderhub.DeleteQuestionBankRequest
@@ -127,6 +131,8 @@ type (
 	GetFavorListResponse                = coderhub.GetFavorListResponse
 	GetImagesByEntityRequest            = coderhub.GetImagesByEntityRequest
 	GetImagesByEntityResponse           = coderhub.GetImagesByEntityResponse
+	GetMessageListRequest               = coderhub.GetMessageListRequest
+	GetMessageListResponse              = coderhub.GetMessageListResponse
 	GetMutualFollowsReq                 = coderhub.GetMutualFollowsReq
 	GetMutualFollowsResp                = coderhub.GetMutualFollowsResp
 	GetQuestionBankCategoryListRequest  = coderhub.GetQuestionBankCategoryListRequest
@@ -162,6 +168,7 @@ type (
 	ListByUserResponse                  = coderhub.ListByUserResponse
 	ListRecommendedArticlesRequest      = coderhub.ListRecommendedArticlesRequest
 	ListRecommendedArticlesResponse     = coderhub.ListRecommendedArticlesResponse
+	MessageListItem                     = coderhub.MessageListItem
 	QuestionBank                        = coderhub.QuestionBank
 	QuestionBankCategory                = coderhub.QuestionBankCategory
 	QuestionTreeNode                    = coderhub.QuestionTreeNode
