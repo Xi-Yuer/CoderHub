@@ -48,7 +48,7 @@ func (l *CreateCommentLogic) CreateComment(req *types.CreateCommentReq) (resp *t
 	if err != nil {
 		return l.errorResp(err)
 	}
-	err = l.SendMessage(l.ctx, comment, utils.String2Int(req.EntityID), userID, utils.String2Int(req.ReplyToUID))
+	err = l.SendMessage(l.ctx, comment, utils.String2Int(req.EntityID), userID, utils.String2Int(req.ReplyToUID), req.Content, req.ParentId)
 	if err != nil {
 		return l.errorResp(err)
 	}
@@ -56,7 +56,7 @@ func (l *CreateCommentLogic) CreateComment(req *types.CreateCommentReq) (resp *t
 }
 
 // SendMessage 发送评论消息
-func (l *CreateCommentLogic) SendMessage(ctx context.Context, comment *coderhub.CreateCommentResponse, entityId, userId, ReplyToUid int64) error {
+func (l *CreateCommentLogic) SendMessage(ctx context.Context, comment *coderhub.CreateCommentResponse, entityId, userId, ReplyToUid int64, content string, parentId string) error {
 	// 发送评论用户的信息
 	userInfo, err := l.svcCtx.UserService.GetUserInfo(l.ctx, &coderhub.GetUserInfoRequest{
 		UserId:        comment.Comment.UserInfo.UserId,
@@ -71,39 +71,45 @@ func (l *CreateCommentLogic) SendMessage(ctx context.Context, comment *coderhub.
 		Id:     entityId,
 		UserId: 0,
 	})
-	if err != nil {
-		fmt.Printf("获取文章失败: %v", err)
-		return nil
+	if err == nil {
+		// 发送评论通知
+		var title string
+		var _type string
+		if article.Article.Title != "" {
+			title = article.Article.Title
+			_type = "文章"
+		} else {
+			title = "沸点"
+			_type = ""
+		}
+		_, err = l.svcCtx.MessageService.CreateMessage(ctx, &coderhub.CreateMessageRequest{
+			SenderId:   userId,
+			ReceiverId: article.Article.AuthorId,
+			Type:       model.MessageComment,
+			EntityId:   article.Article.Id,
+			Content:    fmt.Sprintf("用户 <a className=\"font-bold inline-block mx-2\" href=\"/user/%s\" target=\"_blank\">%s</a> 评论了你的%s <a className=\"font-bold inline-block mx-2\" href=\"/post/%s\" target=\"_blank\">《%s》</a>", utils.Int2String(userInfo.UserId), userInfo.UserName, _type, utils.Int2String(article.Article.Id), title),
+		})
+		if err != nil {
+			fmt.Printf("发送评论通知失败：%s\n", err.Error())
+			return err
+		}
 	}
-	// 发送评论通知
-	var title string
-	var _type string
-	if article.Article.Title != "" {
-		title = article.Article.Title
-		_type = "文章"
-	} else {
-		title = "沸点"
-		_type = ""
-	}
-	_, err = l.svcCtx.MessageService.CreateMessage(ctx, &coderhub.CreateMessageRequest{
-		SenderId:   userId,
-		ReceiverId: article.Article.AuthorId,
-		Type:       model.MessageComment,
-		EntityId:   article.Article.Id,
-		Content:    fmt.Sprintf("用户 <a className=\"font-bold inline-block mx-2\" href=\"/user/%s\" target=\"_blank\">%s</a> 评论了你的%s <a className=\"font-bold inline-block mx-2\" href=\"/post/%s\" target=\"_blank\">《%s》</a>", utils.Int2String(userInfo.UserId), userInfo.UserName, _type, utils.Int2String(article.Article.Id), title),
-	})
-	if err != nil {
-		fmt.Printf("发送评论通知失败：%s\n", err.Error())
-		return err
-	}
+
 	// 发送回复通知
 	if ReplyToUid != 0 {
+		comment, err := l.svcCtx.CommentService.GetComment(ctx, &coderhub.GetCommentRequest{
+			CommentId: utils.String2Int(parentId),
+			UserId:    0,
+		})
+		if err != nil {
+			return err
+		}
 		_, err = l.svcCtx.MessageService.CreateMessage(ctx, &coderhub.CreateMessageRequest{
 			SenderId:   userId,
 			ReceiverId: ReplyToUid,
 			Type:       model.MessageComment,
 			EntityId:   entityId,
-			Content:    fmt.Sprintf("用户 <a className=\"font-bold inline-block mx-2\" href=\"/user/%s\" target=\"_blank\">%s</a> 回复了你的评论", utils.Int2String(userInfo.UserId), userInfo.UserName),
+			Content:    fmt.Sprintf("用户 <a className=\"font-bold inline-block mx-2\" href=\"/user/%s\" target=\"_blank\">%s</a> 回复了你的评论：%s <br> <span class=\"text-gray-500 mt-4 text-sm inline-block\">%s</span>", utils.Int2String(userInfo.UserId), userInfo.UserName, content, comment.Comment.Content),
 		})
 		if err != nil {
 			fmt.Printf("发送评论通知失败：%s\n", err.Error())

@@ -373,6 +373,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Path:    "/list",
 				Handler: message_auth.ListMessageHandler(serverCtx),
 			},
+			{
+				// 获取是否有未读消息
+				Method:  http.MethodGet,
+				Path:    "/unread",
+				Handler: message_auth.GetUnReadMessageCountHandler(serverCtx),
+			},
 		},
 		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
 		rest.WithPrefix("/api/message"),

@@ -13,6 +13,7 @@ type MessageRepository interface {
 	GetMessage(ctx context.Context, message *model.Message) (*model.Message, error)
 	Delete(ctx context.Context, id int64) error
 	List(ctx context.Context, message *model.Message, page, pageSize int64) ([]*model.Message, int64, error)
+	GetUnReadMessageCount(ctx context.Context, receiverId int64) (int32, error)
 }
 
 type MessageRepositoryImpl struct {
@@ -70,12 +71,39 @@ func (r *MessageRepositoryImpl) List(ctx context.Context, message *model.Message
 	if total > 0 {
 		err = r.DB.WithContext(ctx).
 			Where(message).
+			Order("is_read ASC"). // 按未读优先排序
 			Limit(int(pageSize)).
 			Offset(int((page - 1) * pageSize)).
 			Find(&messages).Error
 		if err != nil {
 			return nil, 0, fmt.Errorf("failed to fetch messages: %w", err)
 		}
+
+		// 更新查询结果中的消息状态为已读
+		err = r.DB.WithContext(ctx).Model(&model.Message{}).
+			Where("id IN (?)", getMessageIDs(messages)).
+			Update("is_read", true).Error
+		if err != nil {
+			return nil, 0, fmt.Errorf("failed to mark messages as read: %w", err)
+		}
 	}
 	return messages, total, nil
+}
+
+func (r *MessageRepositoryImpl) GetUnReadMessageCount(ctx context.Context, receiverId int64) (int32, error) {
+	var count int64
+	err := r.DB.WithContext(ctx).Model(&model.Message{}).Where("receiver_id = ? AND is_read = ?", receiverId, false).Count(&count).Error
+	if err != nil {
+		return 0, fmt.Errorf("failed to count unread messages: %w", err)
+	}
+	return int32(count), nil
+}
+
+// getMessageIDs 提取消息 ID 列表
+func getMessageIDs(messages []*model.Message) []int64 {
+	ids := make([]int64, len(messages))
+	for i, msg := range messages {
+		ids[i] = int64(msg.ID)
+	}
+	return ids
 }

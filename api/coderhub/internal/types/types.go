@@ -678,6 +678,14 @@ type GetTagListResp struct {
 	Data *TagList `json:"data"`
 }
 
+type GetUnreadMessageReq struct {
+}
+
+type GetUnreadMessageResp struct {
+	Response
+	Data UnreadMessage `json:"data"`
+}
+
 type GetUserInfoReq struct {
 	Id            string `path:"id"` // 用户ID
 	RequestUserID string `header:"request-user-id,optional"`
@@ -926,6 +934,10 @@ type UnfollowUserReq struct {
 type UnfollowUserResp struct {
 	Response
 	Data bool `json:"data"` // 是否取消成功
+}
+
+type UnreadMessage struct {
+	Total int64 `json:"total"`
 }
 
 type UpdateArticleReq struct {

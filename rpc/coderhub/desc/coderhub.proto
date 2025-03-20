@@ -1322,10 +1322,18 @@ message GetMessageListResponse {
   int32 total = 2;
 }
 
+message GetUnReadMessageCountRequest {
+  int64 userId = 1;
+}
+message GetUnReadMessageCountResponse {
+  int32 count = 1;
+}
+
 service MessageService {
   rpc CreateMessage(CreateMessageRequest) returns (CreateMessageResponse);
   rpc DeleteMessage(DeleteMessageRequest) returns (DeleteMessageResponse);
   rpc GetMessageList(GetMessageListRequest) returns (GetMessageListResponse);
+  rpc GetUnReadMessageCount(GetUnReadMessageCountRequest) returns (GetUnReadMessageCountResponse);
 }
 
 

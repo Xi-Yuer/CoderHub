@@ -37,3 +37,8 @@ func (s *MessageServiceServer) GetMessageList(ctx context.Context, in *coderhub.
 	l := messageservicelogic.NewGetMessageListLogic(ctx, s.svcCtx)
 	return l.GetMessageList(in)
 }
+
+func (s *MessageServiceServer) GetUnReadMessageCount(ctx context.Context, in *coderhub.GetUnReadMessageCountRequest) (*coderhub.GetUnReadMessageCountResponse, error) {
+	l := messageservicelogic.NewGetUnReadMessageCountLogic(ctx, s.svcCtx)
+	return l.GetUnReadMessageCount(in)
+}

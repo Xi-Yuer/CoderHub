@@ -150,6 +150,8 @@ type (
 	GetSchoolExpListResponse            = coderhub.GetSchoolExpListResponse
 	GetSystemProviderTagListRequest     = coderhub.GetSystemProviderTagListRequest
 	GetSystemProviderTagListResponse    = coderhub.GetSystemProviderTagListResponse
+	GetUnReadMessageCountRequest        = coderhub.GetUnReadMessageCountRequest
+	GetUnReadMessageCountResponse       = coderhub.GetUnReadMessageCountResponse
 	GetUserFansReq                      = coderhub.GetUserFansReq
 	GetUserFansResp                     = coderhub.GetUserFansResp
 	GetUserFollowsReq                   = coderhub.GetUserFollowsReq

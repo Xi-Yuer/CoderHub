@@ -1001,6 +1001,15 @@ type (
         Response
         Data *MessageList `json:"data"`
     }
+    GetUnreadMessageReq{
+    }
+    UnreadMessage {
+        Total int64 `json:"total"`
+    }
+    GetUnreadMessageResp {
+        Response
+        Data UnreadMessage `json:"data"`
+    }
 )
 
 @server (
@@ -1617,5 +1626,11 @@ service CodeHubAPI {
     )
     @handler DeleteMessage
     delete /delete/:id (DeleteMessage) returns (DeleteMessageResp)
+
+    @doc(
+        summary: "获取是否有未读消息"
+    )
+    @handler GetUnReadMessageCount
+    get /unread (GetUnreadMessageReq) returns (GetUnreadMessageResp)
 }
 

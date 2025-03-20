@@ -4187,9 +4187,10 @@ var WorkExpService_ServiceDesc = grpc.ServiceDesc{
 }
 
 const (
-	MessageService_CreateMessage_FullMethodName  = "/coderhub.MessageService/CreateMessage"
-	MessageService_DeleteMessage_FullMethodName  = "/coderhub.MessageService/DeleteMessage"
-	MessageService_GetMessageList_FullMethodName = "/coderhub.MessageService/GetMessageList"
+	MessageService_CreateMessage_FullMethodName         = "/coderhub.MessageService/CreateMessage"
+	MessageService_DeleteMessage_FullMethodName         = "/coderhub.MessageService/DeleteMessage"
+	MessageService_GetMessageList_FullMethodName        = "/coderhub.MessageService/GetMessageList"
+	MessageService_GetUnReadMessageCount_FullMethodName = "/coderhub.MessageService/GetUnReadMessageCount"
 )
 
 // MessageServiceClient is the client API for MessageService service.
@@ -4199,6 +4200,7 @@ type MessageServiceClient interface {
 	CreateMessage(ctx context.Context, in *CreateMessageRequest, opts ...grpc.CallOption) (*CreateMessageResponse, error)
 	DeleteMessage(ctx context.Context, in *DeleteMessageRequest, opts ...grpc.CallOption) (*DeleteMessageResponse, error)
 	GetMessageList(ctx context.Context, in *GetMessageListRequest, opts ...grpc.CallOption) (*GetMessageListResponse, error)
+	GetUnReadMessageCount(ctx context.Context, in *GetUnReadMessageCountRequest, opts ...grpc.CallOption) (*GetUnReadMessageCountResponse, error)
 }
 
 type messageServiceClient struct {
@@ -4239,6 +4241,16 @@ func (c *messageServiceClient) GetMessageList(ctx context.Context, in *GetMessag
 	return out, nil
 }
 
+func (c *messageServiceClient) GetUnReadMessageCount(ctx context.Context, in *GetUnReadMessageCountRequest, opts ...grpc.CallOption) (*GetUnReadMessageCountResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetUnReadMessageCountResponse)
+	err := c.cc.Invoke(ctx, MessageService_GetUnReadMessageCount_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MessageServiceServer is the server API for MessageService service.
 // All implementations must embed UnimplementedMessageServiceServer
 // for forward compatibility.
@@ -4246,6 +4258,7 @@ type MessageServiceServer interface {
 	CreateMessage(context.Context, *CreateMessageRequest) (*CreateMessageResponse, error)
 	DeleteMessage(context.Context, *DeleteMessageRequest) (*DeleteMessageResponse, error)
 	GetMessageList(context.Context, *GetMessageListRequest) (*GetMessageListResponse, error)
+	GetUnReadMessageCount(context.Context, *GetUnReadMessageCountRequest) (*GetUnReadMessageCountResponse, error)
 	mustEmbedUnimplementedMessageServiceServer()
 }
 
@@ -4264,6 +4277,9 @@ func (UnimplementedMessageServiceServer) DeleteMessage(context.Context, *DeleteM
 }
 func (UnimplementedMessageServiceServer) GetMessageList(context.Context, *GetMessageListRequest) (*GetMessageListResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetMessageList not implemented")
+}
+func (UnimplementedMessageServiceServer) GetUnReadMessageCount(context.Context, *GetUnReadMessageCountRequest) (*GetUnReadMessageCountResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUnReadMessageCount not implemented")
 }
 func (UnimplementedMessageServiceServer) mustEmbedUnimplementedMessageServiceServer() {}
 func (UnimplementedMessageServiceServer) testEmbeddedByValue()                        {}
@@ -4340,6 +4356,24 @@ func _MessageService_GetMessageList_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _MessageService_GetUnReadMessageCount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetUnReadMessageCountRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MessageServiceServer).GetUnReadMessageCount(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: MessageService_GetUnReadMessageCount_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MessageServiceServer).GetUnReadMessageCount(ctx, req.(*GetUnReadMessageCountRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // MessageService_ServiceDesc is the grpc.ServiceDesc for MessageService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -4358,6 +4392,10 @@ var MessageService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetMessageList",
 			Handler:    _MessageService_GetMessageList_Handler,
+		},
+		{
+			MethodName: "GetUnReadMessageCount",
+			Handler:    _MessageService_GetUnReadMessageCount_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

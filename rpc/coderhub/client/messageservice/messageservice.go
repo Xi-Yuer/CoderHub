@@ -150,6 +150,8 @@ type (
 	GetSchoolExpListResponse            = coderhub.GetSchoolExpListResponse
 	GetSystemProviderTagListRequest     = coderhub.GetSystemProviderTagListRequest
 	GetSystemProviderTagListResponse    = coderhub.GetSystemProviderTagListResponse
+	GetUnReadMessageCountRequest        = coderhub.GetUnReadMessageCountRequest
+	GetUnReadMessageCountResponse       = coderhub.GetUnReadMessageCountResponse
 	GetUserFansReq                      = coderhub.GetUserFansReq
 	GetUserFansResp                     = coderhub.GetUserFansResp
 	GetUserFollowsReq                   = coderhub.GetUserFollowsReq
@@ -202,6 +204,7 @@ type (
 		CreateMessage(ctx context.Context, in *CreateMessageRequest, opts ...grpc.CallOption) (*CreateMessageResponse, error)
 		DeleteMessage(ctx context.Context, in *DeleteMessageRequest, opts ...grpc.CallOption) (*DeleteMessageResponse, error)
 		GetMessageList(ctx context.Context, in *GetMessageListRequest, opts ...grpc.CallOption) (*GetMessageListResponse, error)
+		GetUnReadMessageCount(ctx context.Context, in *GetUnReadMessageCountRequest, opts ...grpc.CallOption) (*GetUnReadMessageCountResponse, error)
 	}
 
 	defaultMessageService struct {
@@ -228,4 +231,9 @@ func (m *defaultMessageService) DeleteMessage(ctx context.Context, in *DeleteMes
 func (m *defaultMessageService) GetMessageList(ctx context.Context, in *GetMessageListRequest, opts ...grpc.CallOption) (*GetMessageListResponse, error) {
 	client := coderhub.NewMessageServiceClient(m.cli.Conn())
 	return client.GetMessageList(ctx, in, opts...)
+}
+
+func (m *defaultMessageService) GetUnReadMessageCount(ctx context.Context, in *GetUnReadMessageCountRequest, opts ...grpc.CallOption) (*GetUnReadMessageCountResponse, error) {
+	client := coderhub.NewMessageServiceClient(m.cli.Conn())
+	return client.GetUnReadMessageCount(ctx, in, opts...)
 }
