@@ -798,6 +798,7 @@ type Message struct {
 	Type       int64     `json:"type"`
 	EntityID   string    `json:"entityID"`
 	Content    string    `json:"content"`
+	IsRead     bool      `json:"isRead"`
 	SenderInfo *UserInfo `json:"senderInfo"`
 	CreatedAt  int64     `json:"createdAt"`
 	UpdatedAt  int64     `json:"updatedAt"`

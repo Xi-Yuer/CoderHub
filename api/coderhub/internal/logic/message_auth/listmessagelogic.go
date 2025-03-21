@@ -76,6 +76,7 @@ func (l *ListMessageLogic) ListMessage(req *types.GetMessageListReq) (resp *type
 			Type:       int64(v.Type),
 			EntityID:   utils.Int2String(v.EntityId),
 			Content:    v.Content,
+			IsRead:     v.IsRead,
 			SenderInfo: &types.UserInfo{
 				Id:          utils.Int2String(info.UserId),
 				Username:    info.UserName,
@@ -94,6 +95,7 @@ func (l *ListMessageLogic) ListMessage(req *types.GetMessageListReq) (resp *type
 				IsFollowed:  info.IsFollowed,
 			},
 			CreatedAt: v.CreateTime,
+			UpdatedAt: v.CreateTime,
 		})
 	}
 
