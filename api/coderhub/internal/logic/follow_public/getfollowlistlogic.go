@@ -29,9 +29,10 @@ func NewGetFollowListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Get
 
 func (l *GetFollowListLogic) GetFollowList(req *types.GetFollowListReq) (resp *types.GetFollowListResp, err error) {
 	userFollowsResp, err := l.svcCtx.UserFollowService.GetUserFollows(l.ctx, &coderhub.GetUserFollowsReq{
-		FollowerId: utils.String2Int(req.UserId),
-		Page:       int32(req.Page),
-		PageSize:   int32(req.PageSize),
+		FollowerId:    utils.String2Int(req.UserId),
+		RequestUserId: utils.String2Int(req.RequestUserID),
+		Page:          int32(req.Page),
+		PageSize:      int32(req.PageSize),
 	})
 	if err != nil {
 		return l.errorResp(err)
@@ -43,18 +44,19 @@ func (l *GetFollowListLogic) successResp(userFollowsResp *coderhub.GetUserFollow
 	userFollowsList := make([]types.UserInfo, 0, len(userFollowsResp.UserFollows))
 	for _, userFollow := range userFollowsResp.UserFollows {
 		userFollowsList = append(userFollowsList, types.UserInfo{
-			Id:       utils.Int2String(userFollow.UserId),
-			Username: userFollow.UserName,
-			Nickname: userFollow.NickName,
-			Email:    userFollow.Email,
-			Phone:    userFollow.Phone,
-			Avatar:   userFollow.Avatar,
-			Gender:   userFollow.Gender,
-			Age:      userFollow.Age,
-			Status:   userFollow.Status,
-			IsAdmin:  userFollow.IsAdmin,
-			CreateAt: userFollow.CreatedAt,
-			UpdateAt: userFollow.UpdatedAt,
+			Id:         utils.Int2String(userFollow.UserId),
+			Username:   userFollow.UserName,
+			Nickname:   userFollow.NickName,
+			Email:      userFollow.Email,
+			Phone:      userFollow.Phone,
+			Avatar:     userFollow.Avatar,
+			Gender:     userFollow.Gender,
+			Age:        userFollow.Age,
+			Status:     userFollow.Status,
+			IsFollowed: userFollow.IsFollowed,
+			IsAdmin:    userFollow.IsAdmin,
+			CreateAt:   userFollow.CreatedAt,
+			UpdateAt:   userFollow.UpdatedAt,
 		})
 	}
 	return &types.GetFollowListResp{

@@ -1,13 +1,12 @@
 package favorites_public
 
 import (
+	"coderhub/api/coderhub/internal/svc"
+	"coderhub/api/coderhub/internal/types"
 	"coderhub/conf"
 	"coderhub/rpc/coderhub/coderhub"
 	"coderhub/shared/utils"
 	"context"
-
-	"coderhub/api/coderhub/internal/svc"
-	"coderhub/api/coderhub/internal/types"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -39,9 +38,23 @@ func (l *ListFavoriteContentLogic) ListFavoriteContent(req *types.GetFavorListRe
 		return l.errorResp(err)
 	}
 
+	// 确保 list 不为 nil
+	if list == nil {
+		logx.Errorf("GetFavorList returned nil list")
+		return l.successResp(types.FavorList{Total: 0, List: []*types.Favor{}})
+	}
+
+	// 确保 list.Favors 不为 nil
+	if list.Favors == nil {
+		list.Favors = []*coderhub.Favor{}
+	}
+
 	response := make([]*types.Favor, 0, len(list.Favors))
 
 	for _, v := range list.Favors {
+		if v == nil || v.EntityValue == nil || v.EntityValue.User == nil {
+			continue
+		}
 		response = append(response, &types.Favor{
 			ID:          utils.Int2String(v.Id),
 			CreateUser:  utils.Int2String(v.UserId),
@@ -78,7 +91,6 @@ func (l *ListFavoriteContentLogic) ListFavoriteContent(req *types.GetFavorListRe
 		List:  response,
 	})
 }
-
 func (l *ListFavoriteContentLogic) successResp(list types.FavorList) (*types.GetFavorListResp, error) {
 	return &types.GetFavorListResp{
 		Response: types.Response{

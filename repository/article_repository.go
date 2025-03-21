@@ -91,12 +91,12 @@ func (r *ArticleRepositoryImpl) ListArticlesByAuthor(authorID int64, _type strin
 	var ids []int64
 	var total int64
 	if err := r.DB.Table("articles").
-		Where("author_id = ? AND type = ?", authorID, _type).
+		Where("author_id = ? AND type = ? AND deleted_at IS NULL", authorID, _type).
 		Count(&total).Error; err != nil {
 		return nil, 0, err
 	}
 	if err := r.DB.Table("articles").
-		Where("author_id = ? AND type = ?", authorID, _type).
+		Where("author_id = ? AND type = ? AND deleted_at IS NULL", authorID, _type).
 		Order("created_at DESC").
 		Limit(int(pageSize)).
 		Offset(int((page-1)*pageSize)).

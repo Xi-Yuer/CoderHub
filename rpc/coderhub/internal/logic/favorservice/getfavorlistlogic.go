@@ -5,7 +5,6 @@ import (
 	"coderhub/rpc/coderhub/coderhub"
 	"coderhub/rpc/coderhub/internal/svc"
 	"context"
-	"fmt"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -32,22 +31,27 @@ func (l *GetFavorListLogic) GetFavorList(in *coderhub.GetFavorListRequest) (*cod
 		EntityType:  in.EntityType,
 	}, int(in.Page), int(in.PageSize))
 	if err != nil {
+		logx.Errorf("获取收藏夹列表失败: %v", err)
 		return nil, err
 	}
 
 	// 实体id
-	ids := make([]int64, 0, len(list))
+	ids := make([]int64, len(list))
 	for _, v := range list {
 		ids = append(ids, v.EntityId)
 	}
 
+	logx.Infof("获取到的实体ID数量: %d", len(ids))
+
 	// 获取收藏夹内容
-	entityValue := make(map[int64]*coderhub.FavorPreview)
+	entityValue := make(map[int64]*coderhub.FavorPreview, len(list))
 
 	// 获取收藏夹内容详情
 	if in.EntityType == model.UserFavorRelationArticle {
 		articles, err := l.svcCtx.ArticleRepository.BatchGetArticle(ids)
+		logx.Infof("获取到的文章数量: %d", len(articles))
 		if err != nil {
+			logx.Errorf("获取文章详情失败: %v", err)
 			return nil, err
 		}
 		for _, v := range articles {
@@ -69,7 +73,9 @@ func (l *GetFavorListLogic) GetFavorList(in *coderhub.GetFavorListRequest) (*cod
 	// 获取收藏夹内容详情
 	if in.EntityType == model.UserFavorRelationQuestion {
 		banks, err := l.svcCtx.QuestionBankRepository.BatchGetQuestion(l.ctx, ids)
+		logx.Infof("获取到的题库数量: %d", len(banks))
 		if err != nil {
+			logx.Errorf("获取题库详情失败: %v", err)
 			return nil, err
 		}
 		for _, v := range banks {
@@ -88,11 +94,11 @@ func (l *GetFavorListLogic) GetFavorList(in *coderhub.GetFavorListRequest) (*cod
 		}
 	}
 
-	favors := make([]*coderhub.Favor, 0, len(list))
+	favors := make([]*coderhub.Favor, len(list))
 	for _, v := range list {
 		entity, ok := entityValue[v.EntityId]
 		if !ok || entity == nil {
-			break
+			continue
 		}
 		favor := &coderhub.Favor{
 			Id:            int64(v.ID),
@@ -105,7 +111,7 @@ func (l *GetFavorListLogic) GetFavorList(in *coderhub.GetFavorListRequest) (*cod
 		}
 		favors = append(favors, favor)
 	}
-	fmt.Println("len(favors)", len(favors))
+	logx.Infof("最终收藏夹数量: %d", len(favors))
 
 	return &coderhub.GetFavorListResponse{
 		Favors: favors,

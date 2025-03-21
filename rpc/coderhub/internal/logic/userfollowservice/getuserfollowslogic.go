@@ -45,22 +45,32 @@ func (l *GetUserFollowsLogic) GetUserFollows(in *coderhub.GetUserFollowsReq) (*c
 	if err != nil {
 		return nil, err
 	}
+
+	// 查询 userID 是否关注了 userIDs 这批用户
+	followedUserIDs, _ := l.svcCtx.UserFollowRepository.GetUserAndUserHasFollow(in.RequestUserId, userIDs)
+	// 把 followedUserIDs 转换为 map，提高查询效率
+	followedMap := make(map[int64]bool, len(followedUserIDs))
+	for _, id := range followedUserIDs {
+		followedMap[id] = true
+	}
+
 	// 转换为user_follow.UserInfo
 	userInfos := make([]*coderhub.UserInfo, 0, len(users.UserInfos))
 	for _, userInfo := range users.UserInfos {
 		userInfos = append(userInfos, &coderhub.UserInfo{
-			UserId:    userInfo.UserId,
-			UserName:  userInfo.UserName,
-			Avatar:    userInfo.Avatar,
-			Email:     userInfo.Email,
-			Gender:    0,
-			Age:       0,
-			Phone:     "",
-			NickName:  userInfo.NickName,
-			IsAdmin:   userInfo.IsAdmin,
-			Status:    userInfo.Status,
-			CreatedAt: userInfo.CreatedAt,
-			UpdatedAt: userInfo.UpdatedAt,
+			UserId:     userInfo.UserId,
+			UserName:   userInfo.UserName,
+			Avatar:     userInfo.Avatar,
+			Email:      userInfo.Email,
+			Gender:     userInfo.Gender,
+			Age:        userInfo.Age,
+			Phone:      userInfo.Phone,
+			IsFollowed: followedMap[userInfo.UserId], // 如果在 map 里，就是已关注,
+			NickName:   userInfo.NickName,
+			IsAdmin:    userInfo.IsAdmin,
+			Status:     userInfo.Status,
+			CreatedAt:  userInfo.CreatedAt,
+			UpdatedAt:  userInfo.UpdatedAt,
 		})
 	}
 	l.Logger.Info("userInfos_length", len(userInfos))

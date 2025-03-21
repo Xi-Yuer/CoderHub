@@ -29,9 +29,10 @@ func NewGetFansListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetFa
 
 func (l *GetFansListLogic) GetFansList(req *types.GetFansListReq) (resp *types.GetFansListResp, err error) {
 	userFansResp, err := l.svcCtx.UserFollowService.GetUserFans(l.ctx, &coderhub.GetUserFansReq{
-		FollowedId: utils.String2Int(req.UserId),
-		Page:       int32(req.Page),
-		PageSize:   int32(req.PageSize),
+		FollowedId:    utils.String2Int(req.UserId),
+		RequestUserId: utils.String2Int(req.RequestUserID),
+		Page:          int32(req.Page),
+		PageSize:      int32(req.PageSize),
 	})
 	if err != nil {
 		return l.errorResp(err)
@@ -44,18 +45,19 @@ func (l *GetFansListLogic) successResp(userFansResp *coderhub.GetUserFansResp) (
 	userFansList := make([]types.UserInfo, 0, len(userFansResp.UserFans))
 	for _, userFan := range userFansResp.UserFans {
 		userFansList = append(userFansList, types.UserInfo{
-			Id:       utils.Int2String(userFan.UserId),
-			Username: userFan.UserName,
-			Nickname: userFan.NickName,
-			Email:    userFan.Email,
-			Phone:    userFan.Phone,
-			Avatar:   userFan.Avatar,
-			Gender:   userFan.Gender,
-			Age:      userFan.Age,
-			Status:   userFan.Status,
-			IsAdmin:  userFan.IsAdmin,
-			CreateAt: userFan.CreatedAt,
-			UpdateAt: userFan.UpdatedAt,
+			Id:         utils.Int2String(userFan.UserId),
+			Username:   userFan.UserName,
+			Nickname:   userFan.NickName,
+			Email:      userFan.Email,
+			Phone:      userFan.Phone,
+			Avatar:     userFan.Avatar,
+			Gender:     userFan.Gender,
+			Age:        userFan.Age,
+			Status:     userFan.Status,
+			IsFollowed: userFan.IsFollowed,
+			IsAdmin:    userFan.IsAdmin,
+			CreateAt:   userFan.CreatedAt,
+			UpdateAt:   userFan.UpdatedAt,
 		})
 	}
 

@@ -553,9 +553,10 @@ type GetEmojiListResp struct {
 }
 
 type GetFansListReq struct {
-	UserId   string `form:"user_id"`   // 用户ID
-	Page     int64  `form:"page"`      // 页码
-	PageSize int64  `form:"page_size"` // 每页数量
+	UserId        string `form:"user_id"`                    // 用户ID
+	RequestUserID string `header:"request-user-id,optional"` // 请求用户ID
+	Page          int64  `form:"page"`                       // 页码
+	PageSize      int64  `form:"page_size"`                  // 每页数量
 }
 
 type GetFansListResp struct {
@@ -576,11 +577,11 @@ type GetFavorFoldListResp struct {
 }
 
 type GetFavorListReq struct {
-	UserId      string `json:"userId"`                               // 用户 ID
-	EntityType  string `json:"entity_type,options=article|question"` // 实体类型
-	FavorFoldId string `json:"favor_fold_id"`                        // 收藏夹 ID
-	Page        int32  `json:"page"`                                 // 页码
-	PageSize    int32  `json:"page_size"`                            // 每页数量
+	UserId      string `form:"userId"`                               // 用户 ID
+	EntityType  string `form:"entity_type,options=article|question"` // 实体类型
+	FavorFoldId string `form:"favor_fold_id"`                        // 收藏夹 ID
+	Page        int32  `form:"page"`                                 // 页码
+	PageSize    int32  `form:"page_size"`                            // 每页数量
 }
 
 type GetFavorListResp struct {
@@ -589,9 +590,10 @@ type GetFavorListResp struct {
 }
 
 type GetFollowListReq struct {
-	UserId   string `form:"user_id"`   // 用户ID
-	Page     int64  `form:"page"`      // 页码
-	PageSize int64  `form:"page_size"` // 每页数量
+	UserId        string `form:"user_id"`                    // 用户ID
+	RequestUserID string `header:"request-user-id,optional"` // 请求用户ID
+	Page          int64  `form:"page"`                       // 页码
+	PageSize      int64  `form:"page_size"`                  // 每页数量
 }
 
 type GetFollowListResp struct {
