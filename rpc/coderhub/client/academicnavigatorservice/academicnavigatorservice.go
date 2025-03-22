@@ -121,6 +121,8 @@ type (
 	GetCommentResponse                  = coderhub.GetCommentResponse
 	GetCommentsRequest                  = coderhub.GetCommentsRequest
 	GetCommentsResponse                 = coderhub.GetCommentsResponse
+	GetCreatorDashBoardRequest          = coderhub.GetCreatorDashBoardRequest
+	GetCreatorDashBoardResponse         = coderhub.GetCreatorDashBoardResponse
 	GetEmotionListRequest               = coderhub.GetEmotionListRequest
 	GetEmotionListResponse              = coderhub.GetEmotionListResponse
 	GetEntitiesByImageRequest           = coderhub.GetEntitiesByImageRequest

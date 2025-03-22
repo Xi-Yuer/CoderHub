@@ -13,6 +13,7 @@ import (
 	articles_public "coderhub/api/coderhub/internal/handler/articles_public"
 	coderhub "coderhub/api/coderhub/internal/handler/coderhub"
 	comments_auth "coderhub/api/coderhub/internal/handler/comments_auth"
+	creator_auth "coderhub/api/coderhub/internal/handler/creator_auth"
 	emotion_auth "coderhub/api/coderhub/internal/handler/emotion_auth"
 	emotion_public "coderhub/api/coderhub/internal/handler/emotion_public"
 	favorites_auth "coderhub/api/coderhub/internal/handler/favorites_auth"
@@ -209,6 +210,19 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 		},
 		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
 		rest.WithPrefix("/api/comments"),
+	)
+
+	server.AddRoutes(
+		[]rest.Route{
+			{
+				// 获取创作者相关数据信息
+				Method:  http.MethodGet,
+				Path:    "/data",
+				Handler: creator_auth.GetCreatorDataHandler(serverCtx),
+			},
+		},
+		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
+		rest.WithPrefix("/api/creator"),
 	)
 
 	server.AddRoutes(

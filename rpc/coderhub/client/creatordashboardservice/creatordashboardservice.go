@@ -2,7 +2,7 @@
 // goctl 1.7.3
 // Source: coderhub.proto
 
-package articletagservice
+package creatordashboardservice
 
 import (
 	"context"
@@ -203,46 +203,22 @@ type (
 	UserInfo                            = coderhub.UserInfo
 	WorkExp                             = coderhub.WorkExp
 
-	ArticleTagService interface {
-		CreateArticleTag(ctx context.Context, in *CreateArticleTagRequest, opts ...grpc.CallOption) (*CreateArticleTagResponse, error)
-		DeleteArticleTag(ctx context.Context, in *DeleteArticleTagRequest, opts ...grpc.CallOption) (*DeleteArticleTagResponse, error)
-		GetArticleTagList(ctx context.Context, in *GetArticleTagListRequest, opts ...grpc.CallOption) (*GetArticleTagListResponse, error)
-		GetSystemProviderTagList(ctx context.Context, in *GetSystemProviderTagListRequest, opts ...grpc.CallOption) (*GetSystemProviderTagListResponse, error)
-		UpdateArticleTagUsageCount(ctx context.Context, in *UpdateArticleTagUsageCountRequest, opts ...grpc.CallOption) (*UpdateArticleTagUsageCountResponse, error)
+	CreatorDashBoardService interface {
+		GetCreatorDashBoard(ctx context.Context, in *GetCreatorDashBoardRequest, opts ...grpc.CallOption) (*GetCreatorDashBoardResponse, error)
 	}
 
-	defaultArticleTagService struct {
+	defaultCreatorDashBoardService struct {
 		cli zrpc.Client
 	}
 )
 
-func NewArticleTagService(cli zrpc.Client) ArticleTagService {
-	return &defaultArticleTagService{
+func NewCreatorDashBoardService(cli zrpc.Client) CreatorDashBoardService {
+	return &defaultCreatorDashBoardService{
 		cli: cli,
 	}
 }
 
-func (m *defaultArticleTagService) CreateArticleTag(ctx context.Context, in *CreateArticleTagRequest, opts ...grpc.CallOption) (*CreateArticleTagResponse, error) {
-	client := coderhub.NewArticleTagServiceClient(m.cli.Conn())
-	return client.CreateArticleTag(ctx, in, opts...)
-}
-
-func (m *defaultArticleTagService) DeleteArticleTag(ctx context.Context, in *DeleteArticleTagRequest, opts ...grpc.CallOption) (*DeleteArticleTagResponse, error) {
-	client := coderhub.NewArticleTagServiceClient(m.cli.Conn())
-	return client.DeleteArticleTag(ctx, in, opts...)
-}
-
-func (m *defaultArticleTagService) GetArticleTagList(ctx context.Context, in *GetArticleTagListRequest, opts ...grpc.CallOption) (*GetArticleTagListResponse, error) {
-	client := coderhub.NewArticleTagServiceClient(m.cli.Conn())
-	return client.GetArticleTagList(ctx, in, opts...)
-}
-
-func (m *defaultArticleTagService) GetSystemProviderTagList(ctx context.Context, in *GetSystemProviderTagListRequest, opts ...grpc.CallOption) (*GetSystemProviderTagListResponse, error) {
-	client := coderhub.NewArticleTagServiceClient(m.cli.Conn())
-	return client.GetSystemProviderTagList(ctx, in, opts...)
-}
-
-func (m *defaultArticleTagService) UpdateArticleTagUsageCount(ctx context.Context, in *UpdateArticleTagUsageCountRequest, opts ...grpc.CallOption) (*UpdateArticleTagUsageCountResponse, error) {
-	client := coderhub.NewArticleTagServiceClient(m.cli.Conn())
-	return client.UpdateArticleTagUsageCount(ctx, in, opts...)
+func (m *defaultCreatorDashBoardService) GetCreatorDashBoard(ctx context.Context, in *GetCreatorDashBoardRequest, opts ...grpc.CallOption) (*GetCreatorDashBoardResponse, error) {
+	client := coderhub.NewCreatorDashBoardServiceClient(m.cli.Conn())
+	return client.GetCreatorDashBoard(ctx, in, opts...)
 }

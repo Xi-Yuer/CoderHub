@@ -19,6 +19,9 @@ type ArticleRepository interface {
 	BatchGetArticle(ids []int64) ([]*model.ArticlePreviewWithAuthInfo, error)
 	UpdateArticle(article *model.Articles) error
 	DeleteArticle(id int64) error
+	GetUserArticleCount(authorID int64) (int64, error)
+	GetUserMicroPostCount(authorID int64) (int64, error)
+	GetUserAllArticleIDS(authorID int64) ([]int64, error)
 }
 type ArticleRepositoryImpl struct {
 	DB       *gorm.DB
@@ -195,4 +198,27 @@ func (r *ArticleRepositoryImpl) setCache(key string, article *model.Articles) er
 
 func (r *ArticleRepositoryImpl) delCache(key string) error {
 	return r.Redis.Del(key)
+}
+
+func (r *ArticleRepositoryImpl) GetUserArticleCount(authorID int64) (int64, error) {
+	var count int64
+	if err := r.DB.Model(&model.Articles{}).Where("author_id = ? AND type = ? AND deleted_at IS NULL", authorID, model.ArticleType).Count(&count).Error; err != nil {
+		return 0, err
+	}
+	return count, nil
+}
+
+func (r *ArticleRepositoryImpl) GetUserMicroPostCount(authorID int64) (int64, error) {
+	var count int64
+	if err := r.DB.Model(&model.Articles{}).Where("author_id = ? AND type = ? AND deleted_at IS NULL", authorID, model.MicroPostType).Count(&count).Error; err != nil {
+		return 0, err
+	}
+	return count, nil
+}
+func (r *ArticleRepositoryImpl) GetUserAllArticleIDS(authorID int64) ([]int64, error) {
+	var ids []int64
+	if err := r.DB.Model(&model.Articles{}).Where("author_id = ?", authorID).Pluck("id", &ids).Error; err != nil {
+		return nil, err
+	}
+	return ids, nil
 }

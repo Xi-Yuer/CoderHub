@@ -15,6 +15,7 @@ type ArticlePVRepository interface {
 	CreateArticlePV(articlePV *model.ArticlePV) error
 	GetArticlePVByArticleID(articleID int64) (*model.ArticlePV, error)
 	GetArticlePVsByArticleIDs(articleIDs []int64) ([]*model.ArticlePV, error)
+	GetAllArticlePVByArticleIDs(articleIDs []int64) (int64, error)
 	SyncIncrementalPVToDB() error
 }
 
@@ -230,4 +231,23 @@ func (r *ArticlePVRepositoryImpl) SyncIncrementalPVToDB() error {
 	}
 
 	return nil
+}
+
+// GetAllArticlePVByArticleIDs 获取所有文章的PV数据
+func (r *ArticlePVRepositoryImpl) GetAllArticlePVByArticleIDs(articleIDs []int64) (int64, error) {
+	var totalPV int64
+	for _, articleID := range articleIDs {
+		countStr, err := r.Redis.HGet("article:pv", fmt.Sprintf("%d", articleID))
+		if err != nil {
+			return 0, err
+		}
+
+		count, err := strconv.ParseInt(countStr, 10, 64)
+		if err != nil {
+			return 0, err
+		}
+
+		totalPV += count
+	}
+	return totalPV, nil
 }

@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"time"
 
 	"gorm.io/gorm"
 )
@@ -14,6 +15,7 @@ type UserRepository interface {
 	CreateUser(user *model.User) error
 	GetUserByName(name string) (*model.User, error)
 	GetUserByID(id int64) (*model.User, error)
+	GetUserBirthday(id int64) (int64, error)
 	FindOneByEmail(email string) (*model.User, error)
 	BatchGetUserByID(ids []int64) ([]*model.User, error)
 	UpdateUser(user *model.User) error
@@ -239,6 +241,19 @@ func (r *UserRepositoryImpl) DeleteUser(id int64) error {
 
 		return nil
 	})
+}
+
+func (r *UserRepositoryImpl) GetUserBirthday(userID int64) (int64, error) {
+	var createdAt time.Time
+	now := time.Now()
+
+	// 查询用户注册时间
+	if err := r.DB.Table("users").Where("id = ?", userID).Pluck("created_at", &createdAt).Error; err != nil {
+		return 0, err
+	}
+
+	// 计算时间差（单位：秒）
+	return (now.Unix() - createdAt.Unix()) / 86400, nil
 }
 
 func (r *UserRepositoryImpl) getCache(key string) (*model.User, error) {

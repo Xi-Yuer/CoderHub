@@ -18,6 +18,8 @@ type UserFollowRepository interface {
 	BatchGetUserFollows(followerID int64, page int32, pageSize int32) ([]*model.UserFollow, error)
 	// GetUserFans 查询某用户的粉丝列表
 	GetUserFans(followedID int64, page int32, pageSize int32) ([]*model.UserFollow, error)
+	// GetUserFansCount 查询某用户的粉丝数量
+	GetUserFansCount(followedID int64) (int64, error)
 	// BatchGetUserFans 批量查询某用户的粉丝列表
 	BatchGetUserFans(followedID int64, page int32, pageSize int32) ([]*model.UserFollow, error)
 	// IsUserFollowed 判断两个用户是否存在关注关系
@@ -90,6 +92,13 @@ func (r *UserFollowRepositoryImpl) GetUserFans(followedID int64, page int32, pag
 		Find(&userFollows).Error
 
 	return userFollows, err
+}
+
+// GetUserFansCount 查询某用户的粉丝数量
+func (r *UserFollowRepositoryImpl) GetUserFansCount(followedID int64) (int64, error) {
+	var count int64
+	err := r.DB.Model(&model.UserFollow{}).Where("followed_id = ?", followedID).Count(&count).Error
+	return count, err
 }
 
 // BatchGetUserFans 批量查询某用户的粉丝列表

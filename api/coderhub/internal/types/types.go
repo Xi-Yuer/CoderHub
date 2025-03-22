@@ -240,6 +240,17 @@ type CreateWorkExpResp struct {
 	Data bool `json:"data"`
 }
 
+type CreatorDashboard struct {
+	ArticleCount      int64 `json:"articleCount"`
+	MicroPostCount    int64 `json:"microPostCount"`
+	LikeCount         int64 `json:"likeCount"`
+	CommentCount      int64 `json:"commentCount"`
+	ArticleFavorCount int64 `json:"articleFavorCount"`
+	FollowerCount     int64 `json:"followerCount"`
+	Birthday          int64 `json:"birthday"`
+	ArticlePV         int64 `json:"articlePV"`
+}
+
 type DeleteAcademicNavigatorReq struct {
 	Id string `path:"id"` // 学术导航 ID
 }
@@ -541,6 +552,14 @@ type GetCommentsReq struct {
 type GetCommentsResp struct {
 	Response
 	Data List `json:"data"` // 评论列表
+}
+
+type GetCreatorDashboardReq struct {
+}
+
+type GetCreatorDashboardResp struct {
+	Response
+	Data *CreatorDashboard `json:"data"`
 }
 
 type GetEmojiListReq struct {

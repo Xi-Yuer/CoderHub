@@ -1030,6 +1030,22 @@ type (
 		Response
 		Data UnreadMessage `json:"data"`
 	}
+    GetCreatorDashboardReq{
+    }
+    CreatorDashboard {
+        ArticleCount int64 `json:"articleCount"`
+        MicroPostCount int64 `json:"microPostCount"`
+        LikeCount int64 `json:"likeCount"`
+        CommentCount int64 `json:"commentCount"`
+        ArticleFavorCount int64 `json:"articleFavorCount"`
+        FollowerCount int64 `json:"followerCount"`
+        Birthday int64 `json:"birthday"`
+        ArticlePV int64 `json:"articlePV"`
+    }
+    GetCreatorDashboardResp {
+        Response
+        Data *CreatorDashboard `json:"data"`
+    }
 )
 
 @server (
@@ -1658,5 +1674,18 @@ service CodeHubAPI {
 	)
 	@handler GetUnReadMessageCount
 	get /unread (GetUnreadMessageReq) returns (GetUnreadMessageResp)
+}
+
+@server(
+    jwt: Auth
+    prefix: /api/creator
+    group: creator_auth
+)
+service CodeHubAPI {
+    @doc(
+        summary: "获取创作者相关数据信息"
+    )
+    @handler GetCreatorData
+    get /data (GetCreatorDashboardReq) returns (GetCreatorDashboardResp)
 }
 

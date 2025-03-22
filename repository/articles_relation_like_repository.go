@@ -14,6 +14,7 @@ type ArticlesRelationLikeRepository interface {
 	List(ctx context.Context, articleID int64) (int64, error)
 	BatchList(ctx context.Context, articleIDs []int64) (map[int64]int64, error)
 	BatchArticlesHasBeenUserLiked(ctx context.Context, articleIDs []int64, userID int64) (map[int64]bool, error)
+	GetArticleLikeCount(ctx context.Context, articleIDs []int64) (int64, error)
 }
 type articlesRelationLikeRepository struct {
 	DB    *gorm.DB
@@ -79,4 +80,10 @@ func (r *articlesRelationLikeRepository) BatchArticlesHasBeenUserLiked(ctx conte
 		articlesRelationLikeMap[articlesRelationLike.ArticleID] = true
 	}
 	return articlesRelationLikeMap, nil
+}
+
+func (r *articlesRelationLikeRepository) GetArticleLikeCount(ctx context.Context, articleIDs []int64) (int64, error) {
+	var count int64
+	err := r.DB.Model(&model.ArticlesRelationLike{}).Where("article_id IN (?)", articleIDs).Count(&count).Error
+	return count, err
 }

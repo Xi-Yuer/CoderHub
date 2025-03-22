@@ -27,4 +27,5 @@ type Config struct {
 	SchoolExpService            zrpc.RpcClientConf
 	WorkExpService              zrpc.RpcClientConf
 	MessageService              zrpc.RpcClientConf
+	CreatorDashBoardService     zrpc.RpcClientConf
 }

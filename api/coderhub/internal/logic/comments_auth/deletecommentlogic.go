@@ -31,9 +31,6 @@ func (l *DeleteCommentLogic) DeleteComment(req *types.DeleteCommentReq) (resp *t
 	// 权限校验
 	userID, err := utils.GetUserID(l.ctx)
 	if err != nil {
-		return nil, err
-	}
-	if err != nil {
 		return l.errorResp(err)
 	}
 

@@ -19,6 +19,7 @@ type CommentRepository interface {
 	ListByArticleID(ctx context.Context, articleID int64, page int64, pageSize int64) ([]model.Comment, int64, error)
 	ListReplies(ctx context.Context, rootID int64, page int64, pageSize int64) ([]model.Comment, int64, error)
 	CountByArticleID(ctx context.Context, articleID int64) (int64, error)
+	GetEntityCommentCount(ctx context.Context, entityIDs []int64) (int64, error)
 }
 
 var ErrConcurrentUpdate = errors.New("并发更新冲突，请重试")
@@ -148,6 +149,15 @@ func (r *commentRepository) UpdateByID(ctx context.Context, id int64, comment *m
 func (r *commentRepository) CountByArticleID(ctx context.Context, articleID int64) (int64, error) {
 	var count int64
 	if err := r.DB.WithContext(ctx).Model(&model.Comment{}).Where("entity_id = ?", articleID).Count(&count).Error; err != nil {
+		return 0, err
+	}
+	return count, nil
+}
+
+// GetEntityCommentCount 获取所有实体的评论数
+func (r *commentRepository) GetEntityCommentCount(ctx context.Context, entityIDs []int64) (int64, error) {
+	var count int64
+	if err := r.DB.WithContext(ctx).Model(&model.Comment{}).Where("entity_id IN ?", entityIDs).Count(&count).Error; err != nil {
 		return 0, err
 	}
 	return count, nil

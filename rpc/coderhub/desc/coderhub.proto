@@ -1348,4 +1348,21 @@ service MessageService {
   rpc GetUnReadMessageCount(GetUnReadMessageCountRequest) returns (GetUnReadMessageCountResponse);
 }
 
+message GetCreatorDashBoardRequest {
+  int64 userId = 1;
+}
+message GetCreatorDashBoardResponse {
+  int64 articleCount = 1;
+  int64 microPostCount = 2;
+  int64 likeCount = 3;
+  int64 commentCount = 4;
+  int64 followerCount = 5;
+  int64 articleViewCount = 6;
+  int64 articleFavoriteCount = 7;
+  int64 creatorBirthday = 8;
+}
+service CreatorDashBoardService {
+  rpc GetCreatorDashBoard(GetCreatorDashBoardRequest) returns (GetCreatorDashBoardResponse);
+}
+
 

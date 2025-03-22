@@ -10,6 +10,7 @@ import (
 	articleserviceServer "coderhub/rpc/coderhub/internal/server/articleservice"
 	articletagserviceServer "coderhub/rpc/coderhub/internal/server/articletagservice"
 	commentserviceServer "coderhub/rpc/coderhub/internal/server/commentservice"
+	creatorDashBoardService "coderhub/rpc/coderhub/internal/server/creatordashboardservice"
 	emotionserviceServer "coderhub/rpc/coderhub/internal/server/emotionservice"
 	favorfoldserviceServer "coderhub/rpc/coderhub/internal/server/favorfoldservice"
 	favorserviceServer "coderhub/rpc/coderhub/internal/server/favorservice"
@@ -57,6 +58,7 @@ func main() {
 		coderhub.RegisterSchoolExpServiceServer(grpcServer, schoolExpServer.NewSchoolExpServiceServer(ctx))
 		coderhub.RegisterWorkExpServiceServer(grpcServer, workExpServer.NewWorkExpServiceServer(ctx))
 		coderhub.RegisterMessageServiceServer(grpcServer, messageserviceServer.NewMessageServiceServer(ctx))
+		coderhub.RegisterCreatorDashBoardServiceServer(grpcServer, creatorDashBoardService.NewCreatorDashBoardServiceServer(ctx))
 
 		if c.Mode == service.DevMode || c.Mode == service.TestMode {
 			reflection.Register(grpcServer)
