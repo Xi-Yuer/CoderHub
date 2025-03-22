@@ -41,9 +41,9 @@ func (l *CreateCommentLogic) CreateComment(req *types.CreateCommentReq) (resp *t
 		ParentId:       utils.String2Int(req.ParentId),
 		RootId:         utils.String2Int(req.RootId),
 		UserId:         userID,
-		EntityAuthorId: utils.String2Int(req.EntityAuthorID),
 		ReplyToUid:     utils.String2Int(req.ReplyToUID),
 		ImageIds:       utils.StringArray2Int64Array(req.ImageIds),
+		EntityAuthorId: utils.String2Int(req.EntityAuthorID),
 	})
 	if err != nil {
 		return l.errorResp(err)
@@ -142,22 +142,40 @@ func (l *CreateCommentLogic) successResp(comment *commentservice.CreateCommentRe
 	var userInfo *types.UserInfo
 	if comment.Comment.ReplyToUserInfo != nil {
 		replyToUserInfo = &types.UserInfo{
-			Id:       utils.Int2String(comment.Comment.ReplyToUserInfo.UserId),
-			Username: comment.Comment.ReplyToUserInfo.UserName,
-			Nickname: comment.Comment.ReplyToUserInfo.NickName,
-			Email:    comment.Comment.ReplyToUserInfo.Email,
-			Phone:    comment.Comment.ReplyToUserInfo.Phone,
-			Avatar:   comment.Comment.ReplyToUserInfo.Avatar,
+			Id:          utils.Int2String(comment.Comment.ReplyToUserInfo.UserId),
+			Username:    comment.Comment.ReplyToUserInfo.UserName,
+			Nickname:    comment.Comment.ReplyToUserInfo.NickName,
+			Email:       comment.Comment.ReplyToUserInfo.Email,
+			Phone:       comment.Comment.ReplyToUserInfo.Phone,
+			Avatar:      comment.Comment.ReplyToUserInfo.Avatar,
+			Gender:      comment.Comment.ReplyToUserInfo.Gender,
+			Age:         comment.Comment.ReplyToUserInfo.Age,
+			Status:      comment.Comment.ReplyToUserInfo.Status,
+			IsAdmin:     comment.Comment.ReplyToUserInfo.IsAdmin,
+			CreateAt:    comment.Comment.ReplyToUserInfo.CreatedAt,
+			UpdateAt:    comment.Comment.ReplyToUserInfo.UpdatedAt,
+			FollowCount: comment.Comment.ReplyToUserInfo.FollowCount,
+			FansCount:   comment.Comment.ReplyToUserInfo.UserId,
+			IsFollowed:  comment.Comment.ReplyToUserInfo.IsFollowed,
 		}
 	}
 	if comment.Comment.UserInfo != nil {
 		userInfo = &types.UserInfo{
-			Id:       utils.Int2String(comment.Comment.UserInfo.UserId),
-			Username: comment.Comment.UserInfo.UserName,
-			Nickname: comment.Comment.UserInfo.NickName,
-			Email:    comment.Comment.UserInfo.Email,
-			Phone:    comment.Comment.UserInfo.Phone,
-			Avatar:   comment.Comment.UserInfo.Avatar,
+			Id:          utils.Int2String(comment.Comment.UserInfo.UserId),
+			Username:    comment.Comment.UserInfo.UserName,
+			Nickname:    comment.Comment.UserInfo.NickName,
+			Email:       comment.Comment.UserInfo.Email,
+			Phone:       comment.Comment.UserInfo.Phone,
+			Avatar:      comment.Comment.UserInfo.Avatar,
+			Gender:      comment.Comment.UserInfo.Gender,
+			Age:         comment.Comment.UserInfo.Age,
+			Status:      comment.Comment.UserInfo.Status,
+			IsAdmin:     comment.Comment.UserInfo.IsAdmin,
+			CreateAt:    comment.Comment.UserInfo.CreatedAt,
+			UpdateAt:    comment.Comment.UserInfo.UpdatedAt,
+			FollowCount: comment.Comment.UserInfo.FollowerCount,
+			FansCount:   comment.Comment.UserInfo.FollowCount,
+			IsFollowed:  comment.Comment.UserInfo.IsFollowed,
 		}
 	}
 	return &types.CreateCommentResp{

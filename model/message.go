@@ -15,8 +15,8 @@ type Message struct {
 		SenderID   int64
 		Type       int32
 		EntityID   int64
-		EntityType int32
-	} `gorm:"index:idx_receiver_id_entity_type_entity_id"`
+		Content    string
+	} `gorm:"uniqueIndex:idx_receiver_id_entity_id_content"`
 }
 
 const (

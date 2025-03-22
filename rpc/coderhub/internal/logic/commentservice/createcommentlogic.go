@@ -44,9 +44,19 @@ func (l *CreateCommentLogic) CreateComment(in *coderhub.CreateCommentRequest) (*
 
 	// 获取用户信息
 	userService := userservicelogic.NewGetUserInfoLogic(l.ctx, l.svcCtx)
+	// 评论的作者信息
 	user, err := userService.GetUserInfo(&coderhub.GetUserInfoRequest{UserId: in.UserId})
 	if err != nil {
 		return nil, err
+	}
+
+	// 评论的回复对象信息
+	var replyToUser *coderhub.UserInfo
+	if in.ReplyToUid != 0 {
+		replyToUser, err = userService.GetUserInfo(&coderhub.GetUserInfoRequest{UserId: in.ReplyToUid})
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	// 处理图片关联
@@ -112,19 +122,21 @@ func (l *CreateCommentLogic) CreateComment(in *coderhub.CreateCommentRequest) (*
 	// 返回评论响应
 	return &coderhub.CreateCommentResponse{
 		Comment: &coderhub.Comment{
-			Id:             commentModel.ID,
-			EntityId:       commentModel.EntityID,
-			Content:        commentModel.Content,
-			ParentId:       commentModel.ParentID,
-			RootId:         commentModel.RootID,
-			UserInfo:       user,
-			EntityAuthorId: commentModel.EntityAuthorID,
-			CreatedAt:      commentModel.CreatedAt.Unix(),
-			UpdatedAt:      commentModel.UpdatedAt.Unix(),
-			Replies:        nil,
-			RepliesCount:   0,
-			LikeCount:      0,
-			Images:         imagesModel,
+			Id:              commentModel.ID,
+			EntityId:        commentModel.EntityID,
+			Content:         commentModel.Content,
+			ParentId:        commentModel.ParentID,
+			RootId:          commentModel.RootID,
+			UserInfo:        user,
+			ReplyToUserInfo: replyToUser,
+			CreatedAt:       commentModel.CreatedAt.Unix(),
+			UpdatedAt:       commentModel.UpdatedAt.Unix(),
+			Replies:         nil,
+			RepliesCount:    0,
+			LikeCount:       0,
+			Images:          imagesModel,
+			IsLiked:         false,
+			EntityAuthorId:  commentModel.EntityAuthorID,
 		},
 	}, nil
 }

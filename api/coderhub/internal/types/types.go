@@ -54,12 +54,13 @@ type Article struct {
 }
 
 type ArticleExtra struct {
-	ID           string `json:"id"`
-	ViewCount    int64  `json:"view_count"`
-	LikeCount    int64  `json:"like_count"`
-	CommentCount int64  `json:"comment_count"`
-	IsLiked      bool   `json:"is_liked"`
-	IsFavorited  bool   `json:"is_favorited"`
+	ID            string `json:"id"`
+	ViewCount     int64  `json:"view_count"`
+	LikeCount     int64  `json:"like_count"`
+	CommentCount  int64  `json:"comment_count"`
+	IsLiked       bool   `json:"is_liked"`
+	IsFavorited   bool   `json:"is_favorited"`
+	FavoriteCount int32  `json:"favorite_count"`
 }
 
 type CancelLikeAcademicNavigatorReq struct {
@@ -1049,21 +1050,22 @@ type UploadResponse struct {
 }
 
 type UserInfo struct {
-	Id          string `json:"id"`                 // 用户ID
-	Username    string `json:"username"`           // 用户名
-	Nickname    string `json:"nickname"`           // 昵称
-	Email       string `json:"email"`              // 邮箱
-	Phone       string `json:"phone"`              // 手机号
-	Avatar      string `json:"avatar"`             // 头像
-	Gender      int32  `json:"gender,options=0|1"` // 性别 0:未知 1:男 2:女
-	Age         int32  `json:"age,range=[0:120]"`  // 年龄
-	Status      bool   `json:"status"`             // 状态 true:正常 false:禁用
-	IsAdmin     bool   `json:"is_admin"`           // 角色 0:普通用户 1:管理员
-	CreateAt    int64  `json:"create_at"`          // 创建时间
-	UpdateAt    int64  `json:"update_at"`          // 更新时间
-	FollowCount int64  `json:"follow_count"`       // 关注数量
-	FansCount   int64  `json:"fans_count"`         // 粉丝数量
-	IsFollowed  bool   `json:"is_followed"`        // 是否已关注
+	Id           string `json:"id"`                 // 用户ID
+	Username     string `json:"username"`           // 用户名
+	Nickname     string `json:"nickname"`           // 昵称
+	Email        string `json:"email"`              // 邮箱
+	Phone        string `json:"phone"`              // 手机号
+	Avatar       string `json:"avatar"`             // 头像
+	Gender       int32  `json:"gender,options=0|1"` // 性别 0:未知 1:男 2:女
+	Age          int32  `json:"age,range=[0:120]"`  // 年龄
+	Status       bool   `json:"status"`             // 状态 true:正常 false:禁用
+	IsAdmin      bool   `json:"is_admin"`           // 角色 0:普通用户 1:管理员
+	CreateAt     int64  `json:"create_at"`          // 创建时间
+	UpdateAt     int64  `json:"update_at"`          // 更新时间
+	FollowCount  int64  `json:"follow_count"`       // 关注数量
+	FansCount    int64  `json:"fans_count"`         // 粉丝数量
+	IsFollowed   bool   `json:"is_followed"`        // 是否已关注
+	ArticleCount int64  `json:"article_count"`      // 文章数量
 }
 
 type UserList struct {

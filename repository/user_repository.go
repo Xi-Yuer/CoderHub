@@ -60,6 +60,33 @@ func (r *UserRepositoryImpl) GetUserByName(name string) (*model.User, error) {
 		}
 		return nil, err
 	}
+	// 查询用户粉丝数量
+	var followerCount int64
+	if err := r.DB.Table("user_follows").Where("followed_id = ?", user.ID).Count(&followerCount).Error; err != nil {
+		return nil, err
+	}
+
+	// 查询用户关注数量
+	var followCount int64
+	if err := r.DB.Table("user_follows").Where("follower_id = ?", user.ID).Count(&followCount).Error; err != nil {
+		return nil, err
+	}
+
+	// 查询用户文章数量
+	var articleCount int64
+	if err := r.DB.Model(&model.Articles{}).
+		Where("author_id = ? AND deleted_at IS NULL AND status = ?", user.ID, "published").
+		Count(&articleCount).Error; err != nil {
+		return nil, err
+	}
+
+	fmt.Println("用户粉丝数量==>", followerCount)
+	fmt.Println("用户关注数量==>", followCount)
+	fmt.Println("用户文章数量==>", articleCount)
+
+	user.FollowerCount = followerCount
+	user.FollowCount = followCount
+	user.ArticleCount = articleCount
 
 	// 异步设置缓存
 	go func() {
@@ -90,21 +117,31 @@ func (r *UserRepositoryImpl) GetUserByID(id int64) (*model.User, error) {
 
 	// 查询用户粉丝数量
 	var followerCount int64
-	if err := r.DB.Model(&model.UserFollow{}).Where("followed_id = ?", id).Count(&followerCount).Error; err != nil {
+	if err := r.DB.Table("user_follows").Where("followed_id = ?", id).Count(&followerCount).Error; err != nil {
 		return nil, err
 	}
 
 	// 查询用户关注数量
 	var followCount int64
-	if err := r.DB.Model(&model.UserFollow{}).Where("follower_id = ?", id).Count(&followCount).Error; err != nil {
+	if err := r.DB.Table("user_follows").Where("follower_id = ?", id).Count(&followCount).Error; err != nil {
+		return nil, err
+	}
+
+	// 查询用户文章数量
+	var articleCount int64
+	if err := r.DB.Model(&model.Articles{}).
+		Where("author_id = ? AND deleted_at IS NULL AND status = ?", id, "published").
+		Count(&articleCount).Error; err != nil {
 		return nil, err
 	}
 
 	fmt.Println("用户粉丝数量==>", followerCount)
 	fmt.Println("用户关注数量==>", followCount)
+	fmt.Println("用户文章数量==>", articleCount)
 
 	user.FollowerCount = followerCount
 	user.FollowCount = followCount
+	user.ArticleCount = articleCount
 
 	// 异步设置缓存
 	go func() {

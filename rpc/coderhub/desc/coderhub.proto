@@ -39,6 +39,7 @@ message UserInfo {
   int64 follow_count = 14;
   int64 follower_count = 15;
   bool  is_followed = 16;
+  int32 article_count = 17;
 }
 
 message UpdateUserInfoRequest {
@@ -326,6 +327,7 @@ message ArticleAdditionalInfo {
   int64 comment_count = 4;          // 评论数
   bool is_licked = 5;               // 当前用户是否已点赞
   bool is_favorite = 6;             // 当前用户是否已收藏
+  int32 favorite_count = 7;          // 收藏数
 }
 
 // 请求文章详情

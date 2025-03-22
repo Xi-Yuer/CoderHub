@@ -58,16 +58,22 @@ func (l *GetUserFansLogic) GetUserFans(in *coderhub.GetUserFansReq) (*coderhub.G
 	userInfos := make([]*coderhub.UserInfo, 0, len(users.UserInfos))
 	for _, userInfo := range users.UserInfos {
 		userInfos = append(userInfos, &coderhub.UserInfo{
-			UserId:     userInfo.UserId,
-			UserName:   userInfo.UserName,
-			Avatar:     userInfo.Avatar,
-			Email:      userInfo.Email,
-			NickName:   userInfo.NickName,
-			IsAdmin:    userInfo.IsAdmin,
-			Status:     userInfo.Status,
-			IsFollowed: followedMap[userInfo.UserId], // 如果在 map 里，就是已关注,
-			CreatedAt:  userInfo.CreatedAt,
-			UpdatedAt:  userInfo.UpdatedAt,
+			UserId:        userInfo.UserId,
+			UserName:      userInfo.UserName,
+			Avatar:        userInfo.Avatar,
+			Email:         userInfo.Email,
+			Gender:        userInfo.Gender,
+			Age:           userInfo.Age,
+			Phone:         userInfo.Phone,
+			NickName:      userInfo.NickName,
+			IsAdmin:       userInfo.IsAdmin,
+			Status:        userInfo.Status,
+			CreatedAt:     userInfo.CreatedAt,
+			UpdatedAt:     userInfo.UpdatedAt,
+			FollowCount:   userInfo.FollowerCount,
+			FollowerCount: userInfo.FollowCount,
+			IsFollowed:    followedMap[userInfo.UserId], // 如果在 map 里，就是已关注,
+			ArticleCount:  userInfo.ArticleCount,
 		})
 	}
 

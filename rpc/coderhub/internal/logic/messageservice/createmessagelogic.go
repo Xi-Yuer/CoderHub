@@ -28,19 +28,9 @@ func (l *CreateMessageLogic) CreateMessage(in *coderhub.CreateMessageRequest) (*
 			Id: 0,
 		}, nil
 	}
-	message, _ := l.svcCtx.MessageRepository.GetMessage(l.ctx, &model.Message{
-		SenderID:   in.SenderId,
-		ReceiverID: in.ReceiverId,
-		Type:       in.Type,
-		EntityID:   in.EntityId,
-	})
-	if message != nil {
-		return &coderhub.CreateMessageResponse{
-			Id: int64(message.ID),
-		}, nil
-	}
 
-	err := l.svcCtx.MessageRepository.Create(l.ctx, &model.Message{
+	// 不关心消息是否创建成功
+	_ = l.svcCtx.MessageRepository.Create(l.ctx, &model.Message{
 		SenderID:   in.SenderId,
 		ReceiverID: in.ReceiverId,
 		Type:       in.Type,
@@ -48,9 +38,6 @@ func (l *CreateMessageLogic) CreateMessage(in *coderhub.CreateMessageRequest) (*
 		Content:    in.Content,
 		IsRead:     false,
 	})
-	if err != nil {
-		return nil, err
-	}
 
 	return &coderhub.CreateMessageResponse{
 		Id: 0,

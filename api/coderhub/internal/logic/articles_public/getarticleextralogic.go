@@ -45,12 +45,13 @@ func (l *GetArticleExtraLogic) successResp(data *coderhub.ArticleAdditionalInfo)
 			Message: conf.HttpMessage.MsgOK,
 		},
 		Data: &types.ArticleExtra{
-			ID:           utils.Int2String(data.Id),
-			ViewCount:    data.ViewCount,
-			LikeCount:    data.LikeCount,
-			CommentCount: data.CommentCount,
-			IsLiked:      data.IsLicked,
-			IsFavorited:  data.IsFavorite,
+			ID:            utils.Int2String(data.Id),
+			ViewCount:     data.ViewCount,
+			LikeCount:     data.LikeCount,
+			CommentCount:  data.CommentCount,
+			IsLiked:       data.IsLicked,
+			IsFavorited:   data.IsFavorite,
+			FavoriteCount: data.FavoriteCount,
 		},
 	}, nil
 }

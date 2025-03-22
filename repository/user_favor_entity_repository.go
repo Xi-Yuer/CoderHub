@@ -10,6 +10,7 @@ import (
 
 type UserFavorEntityRepository interface {
 	Create(ctx context.Context, userFavorEntity *model.UserFavor) error
+	GetEntityFavorCount(ctx context.Context, entityID int64, entityType string) (int64, error)
 	Delete(ctx context.Context, userFavorEntity *model.UserFavor) error
 	GetList(ctx context.Context, userFavorEntity *model.UserFavor, page, pageSize int) ([]*model.UserFavor, int64, error)
 	BatchGetUserFavorEntity(ctx context.Context, entityIDs []int64, userID int64) (map[int64]bool, error)
@@ -45,6 +46,12 @@ func (r *UserFavorEntityRepositoryImpl) Delete(ctx context.Context, userFavorEnt
 		}
 		return r.DB.WithContext(ctx).Where("user_id = ? AND entity_id = ? AND entity_type = ?", userFavorEntity.UserId, userFavorEntity.EntityId, userFavorEntity.EntityType).Delete(userFavorEntity).Error
 	})
+}
+
+func (r *UserFavorEntityRepositoryImpl) GetEntityFavorCount(ctx context.Context, entityID int64, entityType string) (int64, error) {
+	var count int64
+	err := r.DB.WithContext(ctx).Model(&model.UserFavor{}).Where("entity_id = ? AND entity_type = ?", entityID, entityType).Count(&count).Error
+	return count, err
 }
 
 // GetList 获取收藏夹内容

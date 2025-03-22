@@ -41,6 +41,7 @@ func (l *GetUserInfoLogic) GetUserInfo(in *coderhub.GetUserInfoRequest) (*coderh
 	fmt.Printf("isUserFollowed: %v\n", isUserFollowed)
 	fmt.Printf("RequestUserId: %v\n", in.RequestUserId)
 	fmt.Printf("User.ID: %v\n", User.ID)
+	fmt.Printf("User: %v\n", User)
 
 	return &coderhub.UserInfo{
 		UserId:        User.ID,
@@ -58,6 +59,7 @@ func (l *GetUserInfoLogic) GetUserInfo(in *coderhub.GetUserInfoRequest) (*coderh
 		UpdatedAt:     User.UpdatedAt.Unix(),
 		FollowCount:   User.FollowCount,
 		FollowerCount: User.FollowerCount,
+		ArticleCount:  int32(User.ArticleCount),
 		IsFollowed:    isUserFollowed,
 	}, nil
 }

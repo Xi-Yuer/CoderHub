@@ -33,24 +33,29 @@ func (l *GetUserInfoByTokenLogic) GetUserInfoByToken() (resp *types.GetUserInfoR
 		return l.errorResp(err)
 	}
 	user, err := l.svcCtx.UserService.GetUserInfo(utils.SetUserMetaData(l.ctx), &coderhub.GetUserInfoRequest{
-		UserId: userID,
+		UserId:        userID,
+		RequestUserId: userID,
 	})
 	if err != nil {
 		return l.errorResp(err)
 	}
 	return l.successResp(&types.UserInfo{
-		Id:       utils.Int2String(user.UserId),
-		Username: user.UserName,
-		Nickname: user.NickName,
-		Email:    user.Email,
-		Phone:    user.Phone,
-		Avatar:   user.Avatar,
-		Gender:   user.Gender,
-		Age:      user.Age,
-		Status:   user.Status,
-		IsAdmin:  user.IsAdmin,
-		CreateAt: user.CreatedAt,
-		UpdateAt: user.UpdatedAt,
+		Id:           utils.Int2String(user.UserId),
+		Username:     user.UserName,
+		Nickname:     user.NickName,
+		Email:        user.Email,
+		Phone:        user.Phone,
+		Avatar:       user.Avatar,
+		Gender:       user.Gender,
+		Age:          user.Age,
+		Status:       user.Status,
+		IsAdmin:      user.IsAdmin,
+		CreateAt:     user.CreatedAt,
+		UpdateAt:     user.UpdatedAt,
+		FollowCount:  user.FollowerCount,
+		FansCount:    user.FollowCount,
+		IsFollowed:   user.IsFollowed,
+		ArticleCount: int64(user.ArticleCount),
 	})
 }
 

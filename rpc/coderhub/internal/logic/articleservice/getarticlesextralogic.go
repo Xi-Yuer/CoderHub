@@ -46,6 +46,9 @@ func (l *GetArticlesExtraLogic) GetArticlesExtra(in *coderhub.GetArticleRequest)
 		return nil, fmt.Errorf("获取文章评论数失败: %v", err)
 	}
 
+	// 获取文章收藏数量
+	favoriteCount, err := l.svcCtx.UserFavorEntityRepository.GetEntityFavorCount(l.ctx, in.Id, "article")
+
 	// 获取文章是否被用户点赞
 	isUserLiked, err := l.svcCtx.ArticlesRelationLikeRepository.BatchArticlesHasBeenUserLiked(l.ctx, []int64{in.Id}, in.UserId)
 
@@ -53,11 +56,12 @@ func (l *GetArticlesExtraLogic) GetArticlesExtra(in *coderhub.GetArticleRequest)
 	isUserFavorite, err := l.svcCtx.UserFavorEntityRepository.BatchGetUserFavorEntity(l.ctx, []int64{in.Id}, in.UserId)
 
 	return &coderhub.ArticleAdditionalInfo{
-		Id:           in.Id,
-		ViewCount:    articlePV.Count,
-		LikeCount:    likeCount,
-		CommentCount: commentCount,
-		IsLicked:     isUserLiked[in.Id],
-		IsFavorite:   isUserFavorite[in.Id],
+		Id:            in.Id,
+		ViewCount:     articlePV.Count,
+		LikeCount:     likeCount,
+		CommentCount:  commentCount,
+		IsLicked:      isUserLiked[in.Id],
+		IsFavorite:    isUserFavorite[in.Id],
+		FavoriteCount: int32(favoriteCount),
 	}, nil
 }
