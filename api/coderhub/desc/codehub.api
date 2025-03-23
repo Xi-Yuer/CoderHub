@@ -1046,6 +1046,32 @@ type (
         Response
         Data *CreatorDashboard `json:"data"`
     }
+    GetPositionListReq{
+    }
+    Position {
+        Name string `json:"name"`
+        SubName string `json:"subName"`
+        Description string `json:"description"`
+        Experience string `json:"experience"`
+        Location string `json:"location"`
+        Requirement *string `json:"requirement"`
+        Url string `json:"url"`
+    }
+    PositionList {
+        Name string `json:"name"`
+        Jobs []*Position `json:"jobs"`
+    }
+    GetPositionList {
+        List []*PositionList `json:"list"`
+    }
+    GetPositionListRes {
+        Date string `json:"date"`
+        List []PositionList `json:"list"`
+    }
+    GetPositionListResp {
+        Response
+        Data GetPositionListRes `json:"data"`
+    }
 )
 
 @server (
@@ -1687,5 +1713,17 @@ service CodeHubAPI {
     )
     @handler GetCreatorData
     get /data (GetCreatorDashboardReq) returns (GetCreatorDashboardResp)
+}
+
+@server(
+    prefix: /api/position
+    group: position_public
+)
+service CodeHubAPI {
+    @doc(
+        summary: "获取职位列表"
+    )
+    @handler ListPosition
+    get /list (GetPositionListReq) returns (GetPositionListResp)
 }
 

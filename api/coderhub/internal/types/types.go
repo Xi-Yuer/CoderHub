@@ -633,6 +633,23 @@ type GetMessageListResp struct {
 	Data *MessageList `json:"data"`
 }
 
+type GetPositionList struct {
+	List []*PositionList `json:"list"`
+}
+
+type GetPositionListReq struct {
+}
+
+type GetPositionListRes struct {
+	Date string         `json:"date"`
+	List []PositionList `json:"list"`
+}
+
+type GetPositionListResp struct {
+	Response
+	Data GetPositionListRes `json:"data"`
+}
+
 type GetQuestionBankCategoryListReq struct {
 }
 
@@ -838,6 +855,21 @@ type PageResponse struct {
 	Total    int64 `json:"total"`     // 总数
 	Page     int32 `json:"page"`      // 当前页码
 	PageSize int32 `json:"page_size"` // 每页数量
+}
+
+type Position struct {
+	Name        string  `json:"name"`
+	SubName     string  `json:"subName"`
+	Description string  `json:"description"`
+	Experience  string  `json:"experience"`
+	Location    string  `json:"location"`
+	Requirement *string `json:"requirement"`
+	Url         string  `json:"url"`
+}
+
+type PositionList struct {
+	Name string      `json:"name"`
+	Jobs []*Position `json:"jobs"`
 }
 
 type PostAcademicNavigatorLikeReq struct {
