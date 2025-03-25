@@ -27,7 +27,7 @@ COPY --from=builder /app/bin/cmd /app/bin/cmd
 COPY --from=builder /app/rpc/coderhub/etc /app/bin/etc
 
 # 暴露服务的端口
-EXPOSE 8888
+EXPOSE 8080
 
 # 定义容器启动时运行的命令
 CMD ["/app/bin/cmd", "-f", "/app/bin/etc/coderhub.yaml"]
