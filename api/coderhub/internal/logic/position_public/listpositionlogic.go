@@ -4,6 +4,7 @@ import (
 	"coderhub/api/coderhub/internal/svc"
 	"coderhub/api/coderhub/internal/types"
 	"coderhub/conf"
+	"coderhub/shared/storage"
 	"context"
 	"encoding/json"
 	"io"
@@ -27,7 +28,32 @@ func NewListPositionLogic(ctx context.Context, svcCtx *svc.ServiceContext) *List
 	}
 }
 
+var positionCacheKey = "position_cache"
+
 func (l *ListPositionLogic) ListPosition(req *types.GetPositionListReq) (resp *types.GetPositionListResp, err error) {
+	redisDB, err := storage.NewRedisDB(storage.DefaultConfig())
+	if err != nil {
+		return &types.GetPositionListResp{
+			Response: types.Response{
+				Code:    conf.HttpCode.HttpStatusOK,
+				Message: "redis初始化失败",
+			},
+			Data: types.GetPositionListRes{},
+		}, nil
+	}
+
+	if data, err := redisDB.Get(positionCacheKey); err == nil {
+		var res types.GetPositionListRes
+		if err := json.Unmarshal([]byte(data), &res); err == nil {
+			return &types.GetPositionListResp{
+				Response: types.Response{
+					Code:    conf.HttpCode.HttpStatusOK,
+					Message: conf.HttpMessage.MsgOK,
+				},
+				Data: res,
+			}, nil
+		}
+	}
 	// 发送 HTTP GET 请求
 	httpResp, err := http.Get("https://aab0.github.io/data/new.json")
 	if err != nil {
@@ -61,6 +87,19 @@ func (l *ListPositionLogic) ListPosition(req *types.GetPositionListReq) (resp *t
 			Response: types.Response{
 				Code:    conf.HttpCode.HttpStatusOK,
 				Message: "解析 JSON 失败",
+			},
+			Data: types.GetPositionListRes{},
+		}, nil
+	}
+	marshal, err := json.Marshal(data)
+	if err != nil {
+		return nil, err
+	}
+	if err := redisDB.Set(positionCacheKey, string(marshal)); err != nil {
+		return &types.GetPositionListResp{
+			Response: types.Response{
+				Code:    conf.HttpCode.HttpStatusOK,
+				Message: "redis设置失败",
 			},
 			Data: types.GetPositionListRes{},
 		}, nil
