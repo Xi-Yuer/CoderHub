@@ -1,13 +1,11 @@
 package main
 
 import (
-	"flag"
-	"fmt"
-
 	"coderhub/api/coderhub/internal/config"
 	"coderhub/api/coderhub/internal/handler"
 	"coderhub/api/coderhub/internal/svc"
-
+	"flag"
+	"fmt"
 	"github.com/zeromicro/go-zero/core/conf"
 	"github.com/zeromicro/go-zero/rest"
 )
@@ -20,7 +18,10 @@ func main() {
 	var c config.Config
 	conf.MustLoad(*configFile, &c)
 
-	server := rest.MustNewServer(c.RestConf)
+	server := rest.MustNewServer(
+		c.RestConf,
+		rest.WithCors("*"),
+	)
 	defer server.Stop()
 
 	ctx := svc.NewServiceContext(c)
