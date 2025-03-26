@@ -20,7 +20,7 @@ func main() {
 
 	server := rest.MustNewServer(
 		c.RestConf,
-		rest.WithCors("*"),
+		//rest.WithCors("*"),
 	)
 	defer server.Stop()
 
