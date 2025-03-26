@@ -5,6 +5,7 @@ Etcd:
     - etcd:2379
   Key: coderhub.rpc
 Minio:
+  BASEURL: 47.109.99.211:9000
   Endpoint: minio:9000
   AccessKey: minioadmin
   SecretKey: minioadmin

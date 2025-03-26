@@ -8,6 +8,7 @@ type Config struct {
 }
 
 type MinioConfig struct {
+	BASEURL         string
 	Endpoint        string
 	AccessKey       string
 	SecretKey       string

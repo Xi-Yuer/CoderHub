@@ -18,6 +18,7 @@ import (
 
 type Minio struct {
 	Client    *minio.Client
+	BASEURL   string
 	Bucket    string
 	Region    string
 	Endpoint  string
@@ -26,8 +27,9 @@ type Minio struct {
 	UseSSL    bool
 }
 
-func NewMinio(endpoint, accessKey, secretKey, bucket, region string, useSSL bool) *Minio {
+func NewMinio(baseUrl, endpoint, accessKey, secretKey, bucket, region string, useSSL bool) *Minio {
 	return &Minio{
+		BASEURL:   baseUrl,
 		Endpoint:  endpoint,
 		AccessKey: accessKey,
 		SecretKey: secretKey,
@@ -309,5 +311,5 @@ func (m *Minio) UploadFileWithInfo(bucketName, objectName string, reader io.Read
 
 // GetPublicURL 获取永久公开访问的URL
 func (m *Minio) GetPublicURL(objectName string) string {
-	return fmt.Sprintf("http://minio:9000/%s/%s", m.Bucket, objectName)
+	return fmt.Sprintf("http://%s/%s/%s", m.BASEURL, m.Bucket, objectName)
 }

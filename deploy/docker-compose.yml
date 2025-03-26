@@ -10,8 +10,8 @@ services:
     networks:
       - coderhub-network
     volumes:
-      - type: volume
-        source: mysql-data
+      - type: bind
+        source: ./data/mysql
         target: /var/lib/mysql
 
   redis:
@@ -22,29 +22,40 @@ services:
     networks:
       - coderhub-network
     volumes:
-      - redis-data:/data
+      - type: bind
+        source: ./data/redis
+        target: /data
 
   etcd:
     image: quay.io/coreos/etcd:v3.5.0
     container_name: etcd
     networks:
       - coderhub-network
-    command:
-      [
-        "etcd",
-        "--name", "etcd0",
-        "--advertise-client-urls", "http://etcd:2379",   # 使用服务名称
-        "--listen-client-urls", "http://0.0.0.0:2379",   # 监听来自所有地址的连接
-        "--initial-advertise-peer-urls", "http://etcd:2380",
-        "--listen-peer-urls", "http://0.0.0.0:2380",
-        "--initial-cluster", "etcd0=http://etcd:2380"
-      ]
+    command: [
+      "etcd",
+      "--name",
+      "etcd0",
+      "--advertise-client-urls",
+      "http://etcd:2379", # 使用服务名称
+      "--listen-client-urls",
+      "http://0.0.0.0:2379", # 监听来自所有地址的连接
+      "--initial-advertise-peer-urls",
+      "http://etcd:2380",
+      "--listen-peer-urls",
+      "http://0.0.0.0:2380",
+      "--initial-cluster",
+      "etcd0=http://etcd:2380",
+    ]
     healthcheck:
       test: [ "CMD", "etcdctl", "cluster-health" ]
       interval: 30s
       retries: 5
       start_period: 30s
       timeout: 10s
+    volumes:
+      - type: bind
+        source: ./data/etcd
+        target: /etcd-data
 
   nginx:
     image: nginx:latest
@@ -55,8 +66,6 @@ services:
       service:
         condition: service_healthy
       api:
-        condition: service_healthy
-      web:
         condition: service_healthy
     networks:
       - coderhub-network
@@ -77,8 +86,12 @@ services:
       MINIO_ROOT_USER: "minioadmin" # 设置管理员用户名
       MINIO_ROOT_PASSWORD: "minioadmin" # 设置管理员密码（生产环境请使用强密码）
     volumes:
-      - minio-data:/data # 使用 Docker 卷来持久化数据
-      - ./minio/config:/root/.minio # 持久化 MinIO 配置
+      - type: bind
+        source: ./data/minio
+        target: /data
+      - type: bind
+        source: ./data/minio-config
+        target: /root/.minio
     command: server /data --console-address ":9001"
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:9000/minio/health/live" ]
@@ -89,10 +102,8 @@ services:
       - coderhub-network
   #  Api 服务
   api:
-    build:
-      context: ..
-      dockerfile: ./api/coderhub/Dockerfile
-    container_name: coderhub-api
+    image: 2214380963/api:latest
+    container_name: api
     depends_on:
       - etcd
       - mysql
@@ -108,12 +119,9 @@ services:
       timeout: 10s
     restart: always
 
-  # RPC 服务
   service:
-    build:
-      context: ..
-      dockerfile: ./rpc/coderhub/Dockerfile
-    container_name: coderhub-service
+    image: 2214380963/service:latest
+    container_name: service
     depends_on:
       - mysql
       - redis
@@ -136,12 +144,8 @@ services:
       MYSQL_PORT: 3306
 
   web:
-    build:
-      context: ..
-      dockerfile: /Users/xiyuer/Desktop/code/coderhubui/Dockerfile
+    image: 2214380963/coderhub-web:latest
     container_name: web
-    ports:
-      - "3000"
     depends_on:
       - api
       - service
@@ -162,9 +166,3 @@ services:
 networks:
   coderhub-network:
     driver: bridge # 使用默认的 Docker bridge 网络驱动
-
-volumes:
-  etcd-data:
-  mysql-data:
-  redis-data:
-  minio-data:

@@ -39,6 +39,7 @@ type ServiceContext struct {
 
 func NewServiceContext(c config.Config) *ServiceContext {
 	minioClient := storage.NewMinio(
+		c.Minio.BASEURL,
 		c.Minio.Endpoint,
 		c.Minio.AccessKey,
 		c.Minio.SecretKey,

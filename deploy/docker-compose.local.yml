@@ -10,57 +10,9 @@ services:
     networks:
       - coderhub-network
     volumes:
-      - type: volume
-        source: mysql-data
+      - type: bind
+        source: ./data/mysql
         target: /var/lib/mysql
-  elasticsearch:
-    image: elasticsearch:8.11.3
-    container_name: elasticsearch
-    environment:
-      - node.name=elasticsearch
-      - cluster.name=es-docker-cluster
-      - discovery.type=single-node
-      - bootstrap.memory_lock=true
-      - xpack.security.enabled=false
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-      - ELASTIC_PASSWORD=2214380963Wx!! # 设置明确的密码
-    depends_on:
-      - mysql
-    volumes:
-      - type: volume
-        source: es-data
-        target: /usr/share/elasticsearch/data
-    ports:
-      - "9200:9200"
-    networks:
-      - coderhub-network
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
-
-  logstash:
-    image: docker.elastic.co/logstash/logstash:8.11.3-arm64
-    platform: linux/arm64
-    container_name: logstash
-    depends_on:
-      - elasticsearch
-      - mysql
-    environment:
-      - XPACK_MONITORING_ENABLED=false
-      - "LS_JAVA_OPTS=-Xms512m -Xmx512m"
-    volumes:
-      - type: bind
-        source: ./logstash/config/logstash.yml
-        target: /usr/share/logstash/config/logstash.yml
-      - type: bind
-        source: ./logstash/pipeline
-        target: /usr/share/logstash/pipeline
-      - type: bind
-        source: ./logstash/lib/mysql-connector-java-8.0.28.jar
-        target: /usr/share/logstash/mysql-connector-java-8.0.28.jar
-    networks:
-      - coderhub-network
 
   redis:
     image: redis:latest
@@ -70,7 +22,9 @@ services:
     networks:
       - coderhub-network
     volumes:
-      - redis-data:/data
+      - type: bind
+        source: ./data/redis
+        target: /data
 
   etcd:
     image: quay.io/coreos/etcd:v3.5.0
@@ -80,19 +34,23 @@ services:
     command:
       [
         "etcd",
-        "--name",
-        "etcd0",
-        "--advertise-client-urls",
-        "http://0.0.0.0:2379",
-        "--listen-client-urls",
-        "http://0.0.0.0:2379",
-        "--initial-advertise-peer-urls",
-        "http://0.0.0.0:2380",
-        "--listen-peer-urls",
-        "http://0.0.0.0:2380",
-        "--initial-cluster",
-        "etcd0=http://0.0.0.0:2380",
+        "--name", "etcd0",
+        "--advertise-client-urls", "http://etcd:2379",   # 使用服务名称
+        "--listen-client-urls", "http://0.0.0.0:2379",   # 监听来自所有地址的连接
+        "--initial-advertise-peer-urls", "http://etcd:2380",
+        "--listen-peer-urls", "http://0.0.0.0:2380",
+        "--initial-cluster", "etcd0=http://etcd:2380"
       ]
+    healthcheck:
+      test: [ "CMD", "etcdctl", "cluster-health" ]
+      interval: 30s
+      retries: 5
+      start_period: 30s
+      timeout: 10s
+    volumes:
+      - type: bind
+        source: ./data/etcd
+        target: /etcd-data
 
   nginx:
     image: nginx:latest
@@ -104,6 +62,8 @@ services:
         condition: service_healthy
       api:
         condition: service_healthy
+      web:
+        condition: service_healthy
     networks:
       - coderhub-network
     volumes:
@@ -112,6 +72,7 @@ services:
         target: /etc/nginx/nginx.conf
         read_only: true
         consistency: consistent
+
   minio:
     image: quay.io/minio/minio:latest
     container_name: minio
@@ -122,8 +83,12 @@ services:
       MINIO_ROOT_USER: "minioadmin" # 设置管理员用户名
       MINIO_ROOT_PASSWORD: "minioadmin" # 设置管理员密码（生产环境请使用强密码）
     volumes:
-      - minio-data:/data # 使用 Docker 卷来持久化数据
-      - ./minio/config:/root/.minio # 持久化 MinIO 配置
+      - type: bind
+        source: ./data/minio
+        target: /data
+      - type: bind
+        source: ./data/minio-config
+        target: /root/.minio
     command: server /data --console-address ":9001"
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:9000/minio/health/live" ]
@@ -132,9 +97,12 @@ services:
       retries: 3
     networks:
       - coderhub-network
+  
   #  Api 服务
   api:
-    image: 2214380963/api:latest
+    build:
+      context: ..
+      dockerfile: ./api/coderhub/Dockerfile
     container_name: api
     depends_on:
       - etcd
@@ -151,8 +119,11 @@ services:
       timeout: 10s
     restart: always
 
+  # RPC 服务
   service:
-    image: 2214380963/service:latest
+    build:
+      context: ..
+      dockerfile: ./rpc/coderhub/Dockerfile
     container_name: service
     depends_on:
       - mysql
@@ -161,7 +132,7 @@ services:
     networks:
       - coderhub-network
     healthcheck:
-      test: [ "CMD", "nc", "-z", "localhost", "8888" ] # 使用netcat检查端口是否开放
+      test: [ "CMD", "nc", "-z", "localhost", "8080" ] # 使用netcat检查端口是否开放
       interval: 10s
       retries: 10
       start_period: 30s
@@ -176,13 +147,17 @@ services:
       MYSQL_PORT: 3306
 
   web:
-    image: 2214380963/coderhub-web:latest
+    image: web:latest
     container_name: web
     depends_on:
       - api
       - service
     networks:
       - coderhub-network
+    environment:
+      - NEXT_PUBLIC_LOCAL_BASE_URL=http://nginx
+      - NEXT_PUBLIC_CLIENT_BASE_URL=http://nginx
+      - NEXT_PUBLIC_SERVER_API_BASE_URL=http://nginx/api
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:3000" ]
       interval: 10s
@@ -194,10 +169,3 @@ services:
 networks:
   coderhub-network:
     driver: bridge # 使用默认的 Docker bridge 网络驱动
-
-volumes:
-  etcd-data:
-  mysql-data:
-  redis-data:
-  es-data:
-  minio-data:
