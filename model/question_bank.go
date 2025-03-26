@@ -21,12 +21,11 @@ type QuestionBank struct {
 // Question 题目模型
 type Question struct {
 	gorm.Model
-	BankID       int64        `json:"bank_id" gorm:"type:bigint;index;comment:题库ID"`
-	Title        string       `json:"title" gorm:"type:varchar(255);not null;comment:题目标题"`
-	Content      string       `json:"content" gorm:"type:text;not null;comment:题目内容"`
-	CreateUser   int64        `json:"create_user" gorm:"type:bigint;not null;comment:创建人"`
-	Difficulty   string       `json:"difficulty" gorm:"type:enum('default','easy','medium','hard');comment:题库难度"`
-	QuestionBank QuestionBank `gorm:"foreignKey:BankID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" json:"question_bank,omitempty"`
+	BankID     int64  `json:"bank_id" gorm:"type:bigint;index;comment:题库ID"`
+	Title      string `json:"title" gorm:"type:varchar(255);not null;comment:题目标题"`
+	Content    string `json:"content" gorm:"type:text;not null;comment:题目内容"`
+	CreateUser int64  `json:"create_user" gorm:"type:bigint;not null;comment:创建人"`
+	Difficulty string `json:"difficulty" gorm:"type:enum('default','easy','medium','hard');comment:题库难度"`
 }
 
 type QuestionBanksPreviewWithCreateUser struct {
