@@ -51,7 +51,9 @@ message UpdateUserInfoRequest {
   string phone = 6;
 }
 
-message UpdateUserInfoResponse {bool success = 1;}
+message UpdateUserInfoResponse {
+  UserInfo user_info = 1;
+}
 
 message UploadAvatarRequest {
   int64 user_id = 1;

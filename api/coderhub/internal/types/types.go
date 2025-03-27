@@ -1092,7 +1092,7 @@ type UpdateUserInfoReq struct {
 
 type UpdateUserInfoResp struct {
 	Response
-	Data bool `json:"data"` // 是否更新成功
+	Data *UserInfo `json:"data"` // 用户信息
 }
 
 type UploadResponse struct {

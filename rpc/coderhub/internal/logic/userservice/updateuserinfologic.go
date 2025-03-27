@@ -62,7 +62,28 @@ func (l *UpdateUserInfoLogic) UpdateUserInfo(in *coderhub.UpdateUserInfoRequest)
 		return nil, err
 	}
 
+	user, err := l.svcCtx.UserRepository.GetUserByID(oldUser.ID)
+	if err != nil {
+		return nil, err
+	}
+
 	return &coderhub.UpdateUserInfoResponse{
-		Success: true,
+		UserInfo: &coderhub.UserInfo{
+			UserId:        user.ID,
+			UserName:      user.UserName,
+			Avatar:        user.Avatar.String,
+			Email:         user.Email.String,
+			Gender:        user.Gender,
+			Age:           user.Age,
+			Phone:         user.Phone.String,
+			NickName:      user.NickName.String,
+			IsAdmin:       user.IsAdmin,
+			Status:        user.Status,
+			CreatedAt:     user.CreatedAt.Unix(),
+			UpdatedAt:     user.UpdatedAt.Unix(),
+			FollowCount:   user.FollowCount,
+			FollowerCount: user.FollowerCount,
+			IsFollowed:    user.IsFollowed,
+		},
 	}, nil
 }

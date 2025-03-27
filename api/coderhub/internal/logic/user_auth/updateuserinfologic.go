@@ -34,7 +34,7 @@ func (l *UpdateUserInfoLogic) UpdateUserInfo(req *types.UpdateUserInfoReq) (resp
 		return l.errorResp(err)
 	}
 
-	_, err = l.svcCtx.UserService.UpdateUserInfo(utils.SetUserMetaData(l.ctx), &coderhub.UpdateUserInfoRequest{
+	user, err := l.svcCtx.UserService.UpdateUserInfo(utils.SetUserMetaData(l.ctx), &coderhub.UpdateUserInfoRequest{
 		UserId:   userID,
 		Email:    req.Email,
 		Nickname: req.Nickname,
@@ -45,7 +45,7 @@ func (l *UpdateUserInfoLogic) UpdateUserInfo(req *types.UpdateUserInfoReq) (resp
 	if err != nil {
 		return nil, err
 	}
-	return l.successResp()
+	return l.successResp(user)
 }
 
 func (l *UpdateUserInfoLogic) errorResp(err error) (*types.UpdateUserInfoResp, error) {
@@ -54,16 +54,29 @@ func (l *UpdateUserInfoLogic) errorResp(err error) (*types.UpdateUserInfoResp, e
 			Code:    conf.HttpCode.HttpBadRequest,
 			Message: err.Error(),
 		},
-		Data: false,
+		Data: nil,
 	}, nil
 }
 
-func (l *UpdateUserInfoLogic) successResp() (*types.UpdateUserInfoResp, error) {
+func (l *UpdateUserInfoLogic) successResp(data *coderhub.UpdateUserInfoResponse) (*types.UpdateUserInfoResp, error) {
 	return &types.UpdateUserInfoResp{
 		Response: types.Response{
 			Code:    conf.HttpCode.HttpStatusOK,
 			Message: conf.HttpMessage.MsgOK,
 		},
-		Data: true,
+		Data: &types.UserInfo{
+			Id:       utils.Int2String(data.UserInfo.UserId),
+			Username: data.UserInfo.UserName,
+			Nickname: data.UserInfo.NickName,
+			Email:    data.UserInfo.Email,
+			Phone:    data.UserInfo.Phone,
+			Avatar:   data.UserInfo.Avatar,
+			Gender:   data.UserInfo.Gender,
+			Age:      data.UserInfo.Age,
+			Status:   data.UserInfo.Status,
+			IsAdmin:  data.UserInfo.IsAdmin,
+			CreateAt: data.UserInfo.CreatedAt,
+			UpdateAt: data.UserInfo.UpdatedAt,
+		},
 	}, nil
 }
