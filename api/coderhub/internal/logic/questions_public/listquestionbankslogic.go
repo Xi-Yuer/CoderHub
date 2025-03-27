@@ -37,15 +37,17 @@ func (l *ListQuestionBanksLogic) ListQuestionBanks(req *types.GetQuestionBankLis
 		return l.errorResp(err)
 	}
 
+	// 确保 list 不是 nil
+	if list == nil || list.Banks == nil {
+		return l.successResp(nil, 0)
+	}
+
 	banks := make([]*types.QuestionBank, 0, len(list.Banks))
 	for _, bank := range list.Banks {
-		banks = append(banks, &types.QuestionBank{
-			Id:          utils.Int2String(bank.Id),
-			Name:        bank.Name,
-			Description: bank.Description,
-			Difficulty:  bank.Difficulty,
-			Tags:        bank.Tags,
-			CoverImage: &types.ImageInfo{
+		// 确保 CoverImage 不是 nil
+		var coverImage *types.ImageInfo
+		if bank.CoverImage != nil {
+			coverImage = &types.ImageInfo{
 				ImageId:      utils.Int2String(bank.CoverImage.ImageId),
 				BucketName:   bank.CoverImage.BucketName,
 				ObjectName:   bank.CoverImage.ObjectName,
@@ -58,8 +60,13 @@ func (l *ListQuestionBanksLogic) ListQuestionBanks(req *types.GetQuestionBankLis
 				UploadIp:     bank.CoverImage.UploadIp,
 				UserId:       utils.Int2String(bank.CoverImage.UserId),
 				CreatedAt:    bank.CoverImage.CreatedAt,
-			},
-			CreateUser: &types.UserInfo{
+			}
+		}
+
+		// 确保 CreateUser 不是 nil
+		var createUser *types.UserInfo
+		if bank.CreateUser != nil {
+			createUser = &types.UserInfo{
 				Id:       utils.Int2String(bank.CreateUser.UserId),
 				Username: bank.CreateUser.UserName,
 				Nickname: bank.CreateUser.NickName,
@@ -72,14 +79,24 @@ func (l *ListQuestionBanksLogic) ListQuestionBanks(req *types.GetQuestionBankLis
 				IsAdmin:  bank.CreateUser.IsAdmin,
 				CreateAt: bank.CreateUser.CreatedAt,
 				UpdateAt: bank.CreateUser.UpdatedAt,
-			},
-			CreatedAt: bank.CreateTime,
-			UpdatedAt: bank.UpdateTime,
+			}
+		}
+
+		banks = append(banks, &types.QuestionBank{
+			Id:          utils.Int2String(bank.Id),
+			Name:        bank.Name,
+			Description: bank.Description,
+			Difficulty:  bank.Difficulty,
+			Tags:        bank.Tags,
+			CoverImage:  coverImage, // 可能为 nil，但不会 panic
+			CreateUser:  createUser, // 可能为 nil，但不会 panic
+			CreatedAt:   bank.CreateTime,
+			UpdatedAt:   bank.UpdateTime,
 		})
 	}
+
 	return l.successResp(banks, list.Total)
 }
-
 func (l *ListQuestionBanksLogic) errorResp(err error) (*types.GetQuestionBankListResp, error) {
 	return &types.GetQuestionBankListResp{
 		Response: types.Response{

@@ -39,7 +39,7 @@ func (l *ListArticlesLogic) ListArticles(in *coderhub.GetArticlesRequest) (*code
 		return nil, fmt.Errorf("获取文章失败: %v", err)
 	}
 	if len(articles) == 0 {
-		return nil, fmt.Errorf("文章不存在")
+		return &coderhub.GetArticlesResponse{Articles: nil}, nil
 	}
 
 	// 使用 Goroutines 并行查询
