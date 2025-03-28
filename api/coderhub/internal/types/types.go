@@ -942,10 +942,10 @@ type RegisterResp struct {
 }
 
 type ResetPasswordByLinkReq struct {
-	Email           string `form:"email" validate:"required,email"`
-	Password        string `form:"password" validate:"required,min=8,max=32"`
-	ConfirmPassword string `form:"confirmPassword" validate:"required,eqfield=Password"`
-	Token           string `form:"token" validate:"required"`
+	Email           string `json:"email" validate:"required,email"`
+	Password        string `json:"password" validate:"required,min=8,max=32"`
+	ConfirmPassword string `json:"confirmPassword" validate:"required,eqfield=Password"`
+	Token           string `json:"token" validate:"required"`
 }
 
 type ResetPasswordByLinkResp struct {

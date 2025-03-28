@@ -47,7 +47,7 @@ func (l *ResetPasswordLogic) ResetPassword(in *coderhub.ResetPasswordRequest) (*
 	if err != nil {
 		return nil, err
 	}
-	link := fmt.Sprintf("http://localhost/reset-password?email=%s&token=%d", userInfo.Email.String, token)
+	link := fmt.Sprintf("%s/forgot?email=%s&token=%d", l.svcCtx.Config.WebSite, userInfo.Email.String, token)
 	// 3. 发送重置密码链接
 	err = l.svcCtx.GoMail.SendWithHTML(userInfo.Email.String, "邮箱密码重置确认", link)
 	if err != nil {

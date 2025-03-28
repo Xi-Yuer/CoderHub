@@ -198,7 +198,7 @@ func (r *UserRepositoryImpl) UpdateUser(user *model.User) error {
 func (r *UserRepositoryImpl) ResetPassword(email string, password string) error {
 	// 获取旧数据用于清理缓存
 	var oldUser model.User
-	if err := r.DB.First(&oldUser, email).Error; err != nil {
+	if err := r.DB.Where("email = ?", email).First(&oldUser).Error; err != nil {
 		return fmt.Errorf("获取用户失败: %w", err)
 	}
 	// 清理所有相关缓存

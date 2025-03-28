@@ -311,5 +311,5 @@ func (m *Minio) UploadFileWithInfo(bucketName, objectName string, reader io.Read
 
 // GetPublicURL 获取永久公开访问的URL
 func (m *Minio) GetPublicURL(objectName string) string {
-	return fmt.Sprintf("http://%s/%s/%s", m.BASEURL, m.Bucket, objectName)
+	return fmt.Sprintf("%s/%s/%s", m.BASEURL, m.Bucket, objectName)
 }

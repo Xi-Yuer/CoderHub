@@ -18,7 +18,7 @@ type SendResetPasswordLinkLogic struct {
 	svcCtx *svc.ServiceContext
 }
 
-// 发送重置密码链接
+// NewSendResetPasswordLinkLogic 发送重置密码链接
 func NewSendResetPasswordLinkLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SendResetPasswordLinkLogic {
 	return &SendResetPasswordLinkLogic{
 		Logger: logx.WithContext(ctx),

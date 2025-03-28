@@ -5,8 +5,8 @@ Etcd:
     - etcd:2379
   Key: coderhub.rpc
 Minio:
-  #  BASEURL: 47.109.99.211:9000 # 生产环境
-  BASEURL: localhost:9000 # 测试环境
+  #  BASEURL: http://47.109.99.211:9000 # 生产环境
+  BASEURL: http://localhost:9000 # 测试环境
   Endpoint: minio:9000
   AccessKey: minioadmin
   SecretKey: minioadmin
@@ -15,3 +15,4 @@ Minio:
   ThumbnailBucket: coderhub-thumbnail
   ThumbnailWidth: 200
   UseSSL: false
+WebSite: http://localhost:3000

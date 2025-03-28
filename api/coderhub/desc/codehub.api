@@ -129,10 +129,10 @@ type (
 	}
 	// 通过链接重置密码
 	ResetPasswordByLinkReq {
-		Email           string `form:"email" validate:"required,email"`
-		Password        string `form:"password" validate:"required,min=8,max=32"`
-		ConfirmPassword string `form:"confirmPassword" validate:"required,eqfield=Password"`
-		Token           string `form:"token" validate:"required"`
+		Email string `json:"email" validate:"required,email"`
+		Password string `json:"password" validate:"required,min=8,max=32"`
+		ConfirmPassword string `json:"confirmPassword" validate:"required,eqfield=Password"`
+		Token string `json:"token" validate:"required"`
 	}
 	// 通过链接重置密码响应
 	ResetPasswordByLinkResp {

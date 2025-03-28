@@ -4,7 +4,8 @@ import "github.com/zeromicro/go-zero/zrpc"
 
 type Config struct {
 	zrpc.RpcServerConf
-	Minio MinioConfig
+	WebSite string
+	Minio   MinioConfig
 }
 
 type MinioConfig struct {
