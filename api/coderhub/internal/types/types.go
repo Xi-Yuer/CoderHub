@@ -976,7 +976,7 @@ type SchoolExpList struct {
 }
 
 type SendResetPasswordLinkReq struct {
-	Email string `form:"email"` // 邮箱
+	Email string `json:"email"` // 邮箱
 }
 
 type SendResetPasswordLinkResp struct {

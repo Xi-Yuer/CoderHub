@@ -2610,9 +2610,6 @@
         ],
         "tags": [
           "user_public"
-        ],
-        "consumes": [
-          "multipart/form-data"
         ]
       }
     },
