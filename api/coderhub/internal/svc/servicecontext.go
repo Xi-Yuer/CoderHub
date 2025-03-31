@@ -2,8 +2,10 @@ package svc
 
 import (
 	"coderhub/api/coderhub/internal/config"
+	"coderhub/pkg/ws"
 	"coderhub/rpc/coderhub/coderhub"
 	"github.com/zeromicro/go-zero/zrpc"
+	"time"
 )
 
 type ServiceContext struct {
@@ -25,9 +27,15 @@ type ServiceContext struct {
 	WorkExpService              coderhub.WorkExpServiceClient
 	MessageService              coderhub.MessageServiceClient
 	CreatorDashBoardService     coderhub.CreatorDashBoardServiceClient
+	WsHub                       *ws.Hub
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
+	hub := ws.NewHub()
+	// 启动 Hub 的核心管理逻辑
+	go hub.Run()
+	// 启动 WebSocket 连接的心跳检测
+	go hub.StartHeartbeat(30*time.Second, 60*time.Second)
 	return &ServiceContext{
 		Config:                      c,
 		UserService:                 coderhub.NewUserServiceClient(zrpc.MustNewClient(c.UserService).Conn()),
@@ -47,5 +55,6 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		WorkExpService:              coderhub.NewWorkExpServiceClient(zrpc.MustNewClient(c.WorkExpService).Conn()),
 		MessageService:              coderhub.NewMessageServiceClient(zrpc.MustNewClient(c.MessageService).Conn()),
 		CreatorDashBoardService:     coderhub.NewCreatorDashBoardServiceClient(zrpc.MustNewClient(c.CreatorDashBoardService).Conn()),
+		WsHub:                       hub,
 	}
 }

@@ -2817,6 +2817,21 @@
           }
         ]
       }
+    },
+    "/api/ws/": {
+      "get": {
+        "summary": "创建WebSocket连接",
+        "operationId": "CreateWebSocketConnection",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {}
+          }
+        },
+        "tags": [
+          "ws_auth"
+        ]
+      }
     }
   },
   "definitions": {
@@ -7211,6 +7226,10 @@
         "list"
       ]
     },
+    "WebSocketResponse": {
+      "type": "object",
+      "title": "WebSocketResponse"
+    },
     "WorkExp": {
       "type": "object",
       "properties": {
@@ -7275,6 +7294,22 @@
       "required": [
         "total",
         "list"
+      ]
+    },
+    "WsRequest": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "data": {
+          "type": "string"
+        }
+      },
+      "title": "WsRequest",
+      "required": [
+        "type",
+        "data"
       ]
     }
   },

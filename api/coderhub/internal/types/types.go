@@ -1124,6 +1124,9 @@ type UserList struct {
 	List  []UserInfo `json:"list"`  // 用户列表
 }
 
+type WebSocketResponse struct {
+}
+
 type WorkExp struct {
 	ID        string `json:"id"`
 	WorkExp   string `json:"workExp"`
@@ -1139,4 +1142,9 @@ type WorkExp struct {
 type WorkExpList struct {
 	Total int64      `json:"total"`
 	List  []*WorkExp `json:"list"`
+}
+
+type WsRequest struct {
+	Type string `json:"type"`
+	Data string `json:"data"`
 }

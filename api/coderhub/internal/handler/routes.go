@@ -35,6 +35,7 @@ import (
 	user_public "coderhub/api/coderhub/internal/handler/user_public"
 	work_exp_auth "coderhub/api/coderhub/internal/handler/work_exp_auth"
 	work_exp_public "coderhub/api/coderhub/internal/handler/work_exp_public"
+	ws_auth "coderhub/api/coderhub/internal/handler/ws_auth"
 	"coderhub/api/coderhub/internal/svc"
 
 	"github.com/zeromicro/go-zero/rest"
@@ -685,5 +686,17 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			},
 		},
 		rest.WithPrefix("/api/work_exp"),
+	)
+
+	server.AddRoutes(
+		[]rest.Route{
+			{
+				// 创建WebSocket连接
+				Method:  http.MethodGet,
+				Path:    "/",
+				Handler: ws_auth.CreateWebSocketConnectionHandler(serverCtx),
+			},
+		},
+		rest.WithPrefix("/api/ws"),
 	)
 }

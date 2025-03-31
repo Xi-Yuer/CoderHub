@@ -1072,6 +1072,12 @@ type (
 		Response
 		Data GetPositionListRes `json:"data"`
 	}
+	WsRequest {
+		Type string `json:"type"`
+		Data string `json:"data"`
+	}
+	WebSocketResponse {
+	}
 )
 
 @server (
@@ -1725,5 +1731,17 @@ service CodeHubAPI {
 	)
 	@handler ListPosition
 	get /list (GetPositionListReq) returns (GetPositionListResp)
+}
+
+@server(
+	prefix: /api/ws
+	group: ws_auth
+)
+service CodeHubAPI {
+	@doc(
+		summary: "创建WebSocket连接"
+	)
+	@handler CreateWebSocketConnection
+	get / (WebSocketResponse)
 }
 
