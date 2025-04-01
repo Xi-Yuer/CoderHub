@@ -35,9 +35,11 @@ type PrivateMessage struct {
 
 // UserSession 用户会话实体（用于查询用户的会话信息）
 type UserSession struct {
-	UserID        uint64 `gorm:"primaryKey;column:user_id;comment:用户ID" json:"user_id"`
-	PeerID        uint64 `gorm:"primaryKey;column:peer_id;comment:对方用户ID" json:"peer_id"`
-	LastMessageID uint64 `gorm:"column:last_message_id;comment:最后一条消息ID" json:"last_message_id"`
-	UnreadCount   int    `gorm:"column:unread_count;default:0;comment:未读消息数量" json:"unread_count"`
-	UpdatedAt     int64  `gorm:"column:updated_at;comment:最后更新时间戳（毫秒）" json:"updated_at"`
+	SessionID          string `gorm:"primaryKey;column:session_id;comment:会话ID" json:"session_id"`
+	UserID             string `gorm:"column:user_id;comment:用户ID;index:idx_user_peer,unique" json:"user_id"`
+	PeerID             string `gorm:"column:peer_id;comment:对方用户ID;index:idx_user_peer,unique" json:"peer_id"`
+	LastMessageID      string `gorm:"column:last_message_id;comment:最后一条消息ID" json:"last_message_id"`
+	UnreadMessageCount int    `gorm:"column:unread_message_count;default:0;comment:未读消息数量" json:"unread_message_count"`
+	UnreadCount        int    `gorm:"column:unread_count;default:0;comment:未读消息数量" json:"unread_count"`
+	UpdatedAt          int64  `gorm:"column:updated_at;comment:最后更新时间戳（毫秒）" json:"updated_at"`
 }

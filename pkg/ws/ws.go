@@ -101,7 +101,8 @@ func (h *Hub) handleUnregister(conn *Connection) {
 
 // sendOfflineMessages 发送用户的离线消息
 func (h *Hub) sendOfflineMessages(conn *Connection, userID string) {
-	offlineMessages, err := h.PrivateMessageRepository.GetOfflineMessages(context.Background(), userID)
+	// TODO:当用户前端点击会话之后，需要修改会话的未读消息数量为 0，这里需要在前端进行处理
+	offlineMessages, err := h.PrivateMessageRepository.GetOfflineMessages(context.Background(), conn.UserID)
 	if err != nil {
 		logx.Errorf("Failed to get offline messages for user %s: %v", userID, err)
 		return
@@ -123,6 +124,48 @@ func (h *Hub) sendMessage(msg model.PrivateMessage) {
 	h.mu.Lock()
 	target, ok := h.Connections[msg.ReceiverID]
 	h.mu.Unlock()
+
+	// 检查会话是否存在
+	session, err := h.UserSessionRepository.GetUserSession(context.Background(), &model.UserSession{
+		SessionID: msg.SessionID,
+		UserID:    msg.SenderID,
+		PeerID:    msg.ReceiverID,
+	})
+	if err != nil {
+		logx.Errorf("Failed to get user session: %v", err)
+	}
+	if session == nil {
+		// 会话信息不存在，返回错误
+		// TODO:这里前端在发送消息时应该先创建会话，然后再发送消息，这里应该是前端的问题，应该先创建会话，然后再发送消息
+		// 创建会话需要同时创建两个会话信息，一个是发送者的会话信息，一个是接收者的会话信息
+		logx.Errorf("User session not found for sender %s and receiver %s", msg.SenderID, msg.ReceiverID)
+		return
+	} else {
+		// 更新发送者会话信息
+		session.LastMessageID = msg.MessageID
+		session.UpdatedAt = time.Now().UnixMilli()
+		if err := h.UserSessionRepository.UpdateUserSession(context.Background(), session); err != nil {
+			logx.Errorf("Failed to update sender's user session: %v", err)
+		}
+		// 更新接收者会话信息
+		receiverSession, err := h.UserSessionRepository.GetUserSession(context.Background(), &model.UserSession{
+			UserID: msg.ReceiverID,
+			PeerID: msg.SenderID,
+		})
+		if err != nil {
+			logx.Errorf("Failed to get receiver's user session: %v", err)
+		} else {
+			receiverSession.LastMessageID = msg.MessageID
+			if !ok { // 接收者不在线，未读消息数量加 1
+				receiverSession.UnreadMessageCount++
+			}
+			receiverSession.UpdatedAt = time.Now().UnixMilli()
+			if err := h.UserSessionRepository.UpdateUserSession(context.Background(), receiverSession); err != nil {
+				logx.Errorf("Failed to update receiver's user session: %v", err)
+			}
+		}
+	}
+
 	if ok {
 		if err := h.sendAndSaveMessage(target, msg); err != nil {
 			logx.Errorf("Failed to send and save message: %v", err)
