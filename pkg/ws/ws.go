@@ -1,21 +1,28 @@
 package ws
 
 import (
+	"coderhub/model"
+	"coderhub/repository"
+	"coderhub/shared/storage"
+	"context"
 	"encoding/json"
-	"github.com/gorilla/websocket"
-	"github.com/zeromicro/go-zero/core/logx"
 	"net/http"
+	"strconv"
 	"sync"
 	"time"
+
+	"github.com/gorilla/websocket"
+	"github.com/zeromicro/go-zero/core/logx"
 )
 
-// Upgrader is used to upgrade the HTTP connection to a WebSocket connection
+// Upgrader 用于将 HTTP 连接升级为 WebSocket 连接
 var Upgrader = websocket.Upgrader{
 	CheckOrigin: func(r *http.Request) bool {
 		return true
 	},
 }
 
+// Connection 表示一个 WebSocket 连接
 type Connection struct {
 	Conn         *websocket.Conn
 	UserID       string
@@ -23,94 +30,223 @@ type Connection struct {
 	mu           sync.Mutex
 }
 
+// Message 表示一条私聊消息
 type Message struct {
 	SenderID   string `json:"sender_id"`
 	ReceiverID string `json:"receiver_id"`
 	Content    string `json:"content"`
 }
 
+// Hub 管理所有的 WebSocket 连接和消息
 type Hub struct {
-	Connections map[string]*Connection // 通过 UserID 存储连接
-	Register    chan *Connection       // 注册新连接
-	Unregister  chan *Connection       // 注销连接
-	Messages    chan Message           // 存储私聊消息
-	mu          sync.Mutex
+	Connections              map[string]*Connection // 通过 UserID 存储连接
+	Register                 chan *Connection       // 注册新连接
+	Unregister               chan *Connection       // 注销连接
+	Messages                 chan Message           // 存储私聊消息
+	mu                       sync.Mutex
+	PrivateMessageRepository repository.PrivateMessageRepository
+	UserSessionRepository    repository.UserSessionRepository
 }
 
-func NewHub() *Hub {
-	return &Hub{
-		Connections: make(map[string]*Connection),
-		Register:    make(chan *Connection, 10),
-		Unregister:  make(chan *Connection),
-		Messages:    make(chan Message, 10),
+// NewHub 创建一个新的 Hub 实例
+func NewHub() (*Hub, error) {
+	redisDB, err := storage.NewRedisDB(storage.DefaultConfig())
+	if err != nil {
+		return nil, err
 	}
+	sql := storage.NewGorm()
+	return &Hub{
+		Connections:              make(map[string]*Connection),
+		Register:                 make(chan *Connection, 10),
+		Unregister:               make(chan *Connection),
+		Messages:                 make(chan Message, 10),
+		PrivateMessageRepository: repository.NewPrivateMessageRepository(sql, redisDB),
+		UserSessionRepository:    repository.NewUserSessionRepository(sql),
+	}, nil
 }
 
+// Run 启动 Hub 并处理连接注册、注销和消息发送
 func (h *Hub) Run() {
 	for {
 		select {
 		case conn := <-h.Register:
-			h.mu.Lock()
-			h.Connections[conn.UserID] = conn
-			h.mu.Unlock()
+			h.handleRegister(conn)
 		case conn := <-h.Unregister:
-			h.mu.Lock()
-			if _, ok := h.Connections[conn.UserID]; ok {
-				delete(h.Connections, conn.UserID)
-				_ = conn.Conn.Close()
-			}
-			h.mu.Unlock()
+			h.handleUnregister(conn)
 		case msg := <-h.Messages:
 			h.sendMessage(msg)
 		}
 	}
 }
 
+// handleRegister 处理新连接的注册
+func (h *Hub) handleRegister(conn *Connection) {
+	h.mu.Lock()
+	h.Connections[conn.UserID] = conn
+	h.mu.Unlock()
+
+	userID, err := parseUserID(conn.UserID)
+	if err != nil {
+		logx.Errorf("Failed to parse user ID %s: %v", conn.UserID, err)
+		return
+	}
+
+	if err := h.PrivateMessageRepository.MarkUserOnline(context.Background(), userID); err != nil {
+		logx.Errorf("Failed to mark user %d online: %v", userID, err)
+		return
+	}
+
+	h.sendOfflineMessages(conn, userID)
+}
+
+// handleUnregister 处理连接的注销
+func (h *Hub) handleUnregister(conn *Connection) {
+	h.mu.Lock()
+	if _, ok := h.Connections[conn.UserID]; ok {
+		delete(h.Connections, conn.UserID)
+		_ = conn.Conn.Close()
+	}
+	h.mu.Unlock()
+
+	userID, err := parseUserID(conn.UserID)
+	if err != nil {
+		logx.Errorf("Failed to parse user ID %s: %v", conn.UserID, err)
+		return
+	}
+
+	if err := h.PrivateMessageRepository.MarkUserOffline(context.Background(), userID); err != nil {
+		logx.Errorf("Failed to mark user %d offline: %v", userID, err)
+	}
+}
+
+// sendOfflineMessages 发送用户的离线消息
+func (h *Hub) sendOfflineMessages(conn *Connection, userID uint64) {
+	offlineMessages, err := h.PrivateMessageRepository.GetOfflineMessages(context.Background(), userID)
+	if err != nil {
+		logx.Errorf("Failed to get offline messages for user %d: %v", userID, err)
+		return
+	}
+	for _, msg := range offlineMessages {
+		msgBytes, err := json.Marshal(msg)
+		if err == nil {
+			conn.Write(msgBytes)
+		}
+		msg.Status = "read"
+		if err := h.PrivateMessageRepository.UpdatePrivateMessage(context.Background(), msg); err != nil {
+			logx.Errorf("Failed to update message status: %v", err)
+		}
+	}
+}
+
+// sendMessage 发送消息并处理消息持久化
 func (h *Hub) sendMessage(msg Message) {
 	h.mu.Lock()
 	target, ok := h.Connections[msg.ReceiverID]
 	h.mu.Unlock()
 	if ok {
-		msgBytes, err := json.Marshal(msg)
-		if err == nil {
-			target.Write(msgBytes)
+		if err := h.sendAndSaveMessage(target, msg); err != nil {
+			logx.Errorf("Failed to send and save message: %v", err)
 		}
 	} else {
 		logx.Infof("User %s is not online", msg.ReceiverID)
+		if err := h.saveMessage(msg); err != nil {
+			logx.Errorf("Failed to save offline message: %v", err)
+		}
+	}
+	if msg.Content == "pong" {
+		h.handlePongMessage(msg.SenderID)
+	}
+}
+
+// sendAndSaveMessage 发送消息并保存到数据库
+func (h *Hub) sendAndSaveMessage(target *Connection, msg Message) error {
+	msgBytes, err := json.Marshal(msg)
+	if err != nil {
+		return err
+	}
+	target.Write(msgBytes)
+	return h.saveMessage(msg)
+}
+
+// saveMessage 保存消息到数据库
+func (h *Hub) saveMessage(msg Message) error {
+	senderID, err := parseUserID(msg.SenderID)
+	if err != nil {
+		return err
+	}
+	receiverID, err := parseUserID(msg.ReceiverID)
+	if err != nil {
+		return err
+	}
+	message := &model.PrivateMessage{
+		SenderID:    senderID,
+		ReceiverID:  receiverID,
+		Content:     msg.Content,
+		ContentType: "text",
+		Status:      "sent",
+		Timestamp:   time.Now().UnixMilli(),
+	}
+	return h.PrivateMessageRepository.Create(context.Background(), message)
+}
+
+// handlePongMessage 处理 pong 消息
+func (h *Hub) handlePongMessage(senderID string) {
+	h.mu.Lock()
+	conn, ok := h.Connections[senderID]
+	h.mu.Unlock()
+	if ok {
+		conn.HandlePong()
 	}
 }
 
 // StartHeartbeat 服务器定期发送 Ping
+// interval 是发送 Ping 的时间间隔
+// timeout 是超时时间，如果在超时时间内没有收到 Pong，将关闭连接
 func (h *Hub) StartHeartbeat(interval time.Duration, timeout time.Duration) {
-	ticker := time.NewTicker(interval) // 每 30 秒触发一次
+	ticker := time.NewTicker(interval)
 	defer ticker.Stop()
 	for range ticker.C {
-		h.mu.Lock()
-		now := time.Now().Unix()
-		for userID, conn := range h.Connections {
-			// 超过 60 秒没收到 Pong，关闭连接
-			if now-conn.LastPingTime > int64(timeout.Seconds()) {
-				logx.Infof("User %s disconnected due to timeout", userID)
-				delete(h.Connections, userID)
-				_ = conn.Conn.Close()
-			} else {
-				// 发送 Ping
-				err := conn.Conn.WriteMessage(websocket.PingMessage, nil)
-				if err != nil {
-					logx.Errorf("Failed to send ping to %s: %v", userID, err)
-					delete(h.Connections, userID)
-					_ = conn.Conn.Close()
-				}
-			}
-		}
-		h.mu.Unlock()
+		h.checkAndSendPing(timeout)
 	}
 }
+
+// checkAndSendPing 检查并发送 Ping 消息
+func (h *Hub) checkAndSendPing(timeout time.Duration) {
+	h.mu.Lock()
+	defer h.mu.Unlock()
+	now := time.Now().Unix()
+	for userID, conn := range h.Connections {
+		if now-conn.LastPingTime > int64(timeout.Seconds()) {
+			logx.Infof("User %s disconnected due to timeout", userID)
+			delete(h.Connections, userID)
+			_ = conn.Conn.Close()
+		} else {
+			if err := conn.Conn.WriteMessage(websocket.PingMessage, nil); err != nil {
+				logx.Errorf("Failed to send ping to %s: %v", userID, err)
+				delete(h.Connections, userID)
+				_ = conn.Conn.Close()
+			}
+		}
+	}
+}
+
+// Write 向连接写入消息
 func (c *Connection) Write(message []byte) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
-	err := c.Conn.WriteMessage(websocket.TextMessage, message)
-	if err != nil {
+	if err := c.Conn.WriteMessage(websocket.TextMessage, message); err != nil {
 		logx.Errorf("Error writing message: %v", err)
 	}
+}
+
+// HandlePong 处理 pong 消息，将用户的最后一次 ping 时间更新为当前时间
+func (c *Connection) HandlePong() {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	c.LastPingTime = time.Now().Unix()
+}
+
+// parseUserID 解析用户 ID
+func parseUserID(id string) (uint64, error) {
+	return strconv.ParseUint(id, 10, 64)
 }

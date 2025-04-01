@@ -1,6 +1,9 @@
 package utils
 
-import "github.com/dgrijalva/jwt-go"
+import (
+	"github.com/dgrijalva/jwt-go"
+	"strconv"
+)
 
 // ParseUserIDFromToken 从 JWT token 中解析用户 ID
 func ParseUserIDFromToken(tokenStr string, secretKey string) (string, error) {
@@ -12,11 +15,14 @@ func ParseUserIDFromToken(tokenStr string, secretKey string) (string, error) {
 	}
 
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-		userID, ok := claims["user_id"].(string)
-		if !ok {
-			return "", err
+		// 尝试从 RegisteredClaims 的 ID 字段获取用户 ID
+		if idStr, ok := claims["jti"].(string); ok {
+			return idStr, nil
 		}
-		return userID, nil
+		// 如果没有找到，再尝试从自定义的 UserID 字段获取
+		if userID, ok := claims["UserID"].(float64); ok {
+			return strconv.FormatInt(int64(userID), 10), nil
+		}
 	}
 
 	return "", err

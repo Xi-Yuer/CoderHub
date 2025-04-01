@@ -4,10 +4,13 @@ import (
 	"coderhub/api/coderhub/internal/svc"
 	"coderhub/api/coderhub/internal/types"
 	"coderhub/pkg/ws"
+	"coderhub/shared/utils"
 	"context"
-	"github.com/zeromicro/go-zero/rest/httpx"
+	"fmt"
 	"net/http"
 	"time"
+
+	"github.com/zeromicro/go-zero/rest/httpx"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -36,15 +39,22 @@ func (l *CreateWebSocketConnectionLogic) CreateWebSocketConnection(w http.Respon
 	}
 	// 获取用户身份信息 (从 JWT 解析 UserID)
 	userToken := r.URL.Query().Get("token")
+	fmt.Println("UserToken:", userToken)
 	if userToken == "" {
 		_ = conn.Close()
 		return err
 	}
+	userID, err := utils.ParseUserIDFromToken(userToken, l.svcCtx.Config.Auth.AccessSecret)
+	if err != nil {
+		return err
+	}
+
+	fmt.Println("UserID:", userID)
 
 	// 创建 WebSocket 连接实例
 	connection := &ws.Connection{
 		Conn:         conn,
-		UserID:       userToken,
+		UserID:       userID,
 		LastPingTime: time.Now().Unix(), // 初始化最后 ping 时间
 	}
 

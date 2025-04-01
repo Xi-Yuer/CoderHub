@@ -4,8 +4,9 @@ import (
 	"coderhub/api/coderhub/internal/config"
 	"coderhub/pkg/ws"
 	"coderhub/rpc/coderhub/coderhub"
-	"github.com/zeromicro/go-zero/zrpc"
 	"time"
+
+	"github.com/zeromicro/go-zero/zrpc"
 )
 
 type ServiceContext struct {
@@ -31,11 +32,15 @@ type ServiceContext struct {
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
-	hub := ws.NewHub()
+	hub, err := ws.NewHub()
+	if err != nil {
+		panic(err)
+	}
 	// 启动 Hub 的核心管理逻辑
 	go hub.Run()
 	// 启动 WebSocket 连接的心跳检测
 	go hub.StartHeartbeat(30*time.Second, 60*time.Second)
+
 	return &ServiceContext{
 		Config:                      c,
 		UserService:                 coderhub.NewUserServiceClient(zrpc.MustNewClient(c.UserService).Conn()),

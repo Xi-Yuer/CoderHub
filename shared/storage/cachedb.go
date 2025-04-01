@@ -40,6 +40,9 @@ type RedisDB interface {
 	SMembers(key string) ([]string, error)
 	SAdd(key string, members ...interface{}) error
 	SRem(key string, members ...interface{}) error
+	LRange(key string, start, stop int64) ([]string, error)
+	RPush(key string, values ...interface{}) error
+	LRem(key string, count int64, value interface{}) error
 }
 
 // DefaultConfig 默认配置
@@ -177,4 +180,18 @@ func (r *RedisDBImpl) SAdd(key string, members ...interface{}) error {
 
 func (r *RedisDBImpl) SRem(key string, members ...interface{}) error {
 	return r.Client.SRem(context.Background(), key, members...).Err()
+}
+
+func (r *RedisDBImpl) LRange(key string, start, stop int64) ([]string, error) {
+	ctx := context.Background()
+	return r.Client.LRange(ctx, key, start, stop).Result()
+}
+
+func (r *RedisDBImpl) RPush(key string, values ...interface{}) error {
+	ctx := context.Background()
+	return r.Client.RPush(ctx, key, values...).Err()
+}
+func (r *RedisDBImpl) LRem(key string, count int64, value interface{}) error {
+	ctx := context.Background()
+	return r.Client.LRem(ctx, key, count, value).Err()
 }
