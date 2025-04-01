@@ -7,7 +7,6 @@ import (
 	"context"
 	"encoding/json"
 	"net/http"
-	"strconv"
 	"sync"
 	"time"
 
@@ -30,19 +29,12 @@ type Connection struct {
 	mu           sync.Mutex
 }
 
-// Message 表示一条私聊消息
-type Message struct {
-	SenderID   string `json:"sender_id"`
-	ReceiverID string `json:"receiver_id"`
-	Content    string `json:"content"`
-}
-
 // Hub 管理所有的 WebSocket 连接和消息
 type Hub struct {
-	Connections              map[string]*Connection // 通过 UserID 存储连接
-	Register                 chan *Connection       // 注册新连接
-	Unregister               chan *Connection       // 注销连接
-	Messages                 chan Message           // 存储私聊消息
+	Connections              map[string]*Connection    // 通过 UserID 存储连接
+	Register                 chan *Connection          // 注册新连接
+	Unregister               chan *Connection          // 注销连接
+	Messages                 chan model.PrivateMessage // 存储私聊消息
 	mu                       sync.Mutex
 	PrivateMessageRepository repository.PrivateMessageRepository
 	UserSessionRepository    repository.UserSessionRepository
@@ -59,7 +51,7 @@ func NewHub() (*Hub, error) {
 		Connections:              make(map[string]*Connection),
 		Register:                 make(chan *Connection, 10),
 		Unregister:               make(chan *Connection),
-		Messages:                 make(chan Message, 10),
+		Messages:                 make(chan model.PrivateMessage, 10),
 		PrivateMessageRepository: repository.NewPrivateMessageRepository(sql, redisDB),
 		UserSessionRepository:    repository.NewUserSessionRepository(sql),
 	}, nil
@@ -85,18 +77,12 @@ func (h *Hub) handleRegister(conn *Connection) {
 	h.Connections[conn.UserID] = conn
 	h.mu.Unlock()
 
-	userID, err := parseUserID(conn.UserID)
-	if err != nil {
-		logx.Errorf("Failed to parse user ID %s: %v", conn.UserID, err)
+	if err := h.PrivateMessageRepository.MarkUserOnline(context.Background(), conn.UserID); err != nil {
+		logx.Errorf("Failed to mark user %s online: %v", conn.UserID, err)
 		return
 	}
 
-	if err := h.PrivateMessageRepository.MarkUserOnline(context.Background(), userID); err != nil {
-		logx.Errorf("Failed to mark user %d online: %v", userID, err)
-		return
-	}
-
-	h.sendOfflineMessages(conn, userID)
+	h.sendOfflineMessages(conn, conn.UserID)
 }
 
 // handleUnregister 处理连接的注销
@@ -108,22 +94,16 @@ func (h *Hub) handleUnregister(conn *Connection) {
 	}
 	h.mu.Unlock()
 
-	userID, err := parseUserID(conn.UserID)
-	if err != nil {
-		logx.Errorf("Failed to parse user ID %s: %v", conn.UserID, err)
-		return
-	}
-
-	if err := h.PrivateMessageRepository.MarkUserOffline(context.Background(), userID); err != nil {
-		logx.Errorf("Failed to mark user %d offline: %v", userID, err)
+	if err := h.PrivateMessageRepository.MarkUserOffline(context.Background(), conn.UserID); err != nil {
+		logx.Errorf("Failed to mark user %s offline: %v", conn.UserID, err)
 	}
 }
 
 // sendOfflineMessages 发送用户的离线消息
-func (h *Hub) sendOfflineMessages(conn *Connection, userID uint64) {
+func (h *Hub) sendOfflineMessages(conn *Connection, userID string) {
 	offlineMessages, err := h.PrivateMessageRepository.GetOfflineMessages(context.Background(), userID)
 	if err != nil {
-		logx.Errorf("Failed to get offline messages for user %d: %v", userID, err)
+		logx.Errorf("Failed to get offline messages for user %s: %v", userID, err)
 		return
 	}
 	for _, msg := range offlineMessages {
@@ -139,7 +119,7 @@ func (h *Hub) sendOfflineMessages(conn *Connection, userID uint64) {
 }
 
 // sendMessage 发送消息并处理消息持久化
-func (h *Hub) sendMessage(msg Message) {
+func (h *Hub) sendMessage(msg model.PrivateMessage) {
 	h.mu.Lock()
 	target, ok := h.Connections[msg.ReceiverID]
 	h.mu.Unlock()
@@ -159,7 +139,7 @@ func (h *Hub) sendMessage(msg Message) {
 }
 
 // sendAndSaveMessage 发送消息并保存到数据库
-func (h *Hub) sendAndSaveMessage(target *Connection, msg Message) error {
+func (h *Hub) sendAndSaveMessage(target *Connection, msg model.PrivateMessage) error {
 	msgBytes, err := json.Marshal(msg)
 	if err != nil {
 		return err
@@ -169,22 +149,20 @@ func (h *Hub) sendAndSaveMessage(target *Connection, msg Message) error {
 }
 
 // saveMessage 保存消息到数据库
-func (h *Hub) saveMessage(msg Message) error {
-	senderID, err := parseUserID(msg.SenderID)
-	if err != nil {
-		return err
-	}
-	receiverID, err := parseUserID(msg.ReceiverID)
-	if err != nil {
-		return err
-	}
+func (h *Hub) saveMessage(msg model.PrivateMessage) error {
 	message := &model.PrivateMessage{
-		SenderID:    senderID,
-		ReceiverID:  receiverID,
+		MessageID:   msg.MessageID,
+		SessionID:   msg.SessionID,
+		SenderID:    msg.SenderID,
+		ReceiverID:  msg.ReceiverID,
 		Content:     msg.Content,
-		ContentType: "text",
-		Status:      "sent",
-		Timestamp:   time.Now().UnixMilli(),
+		ContentType: msg.ContentType,
+		Status:      msg.Status,
+		Timestamp:   msg.Timestamp,
+		IsRecalled:  msg.IsRecalled,
+		CreatedAt:   msg.CreatedAt,
+		UpdatedAt:   msg.UpdatedAt,
+		DeletedAt:   msg.DeletedAt,
 	}
 	return h.PrivateMessageRepository.Create(context.Background(), message)
 }
@@ -244,9 +222,4 @@ func (c *Connection) HandlePong() {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 	c.LastPingTime = time.Now().Unix()
-}
-
-// parseUserID 解析用户 ID
-func parseUserID(id string) (uint64, error) {
-	return strconv.ParseUint(id, 10, 64)
 }

@@ -35,11 +35,11 @@ type PrivateMessageRepository interface {
 	// UpdatePrivateMessage 更新私聊消息
 	UpdatePrivateMessage(ctx context.Context, message *model.PrivateMessage) error
 	// GetOfflineMessages 获取用户的离线消息
-	GetOfflineMessages(ctx context.Context, userID uint64) ([]*model.PrivateMessage, error)
+	GetOfflineMessages(ctx context.Context, userID string) ([]*model.PrivateMessage, error)
 	// MarkUserOnline 标记用户上线
-	MarkUserOnline(ctx context.Context, userID uint64) error
+	MarkUserOnline(ctx context.Context, userID string) error
 	// MarkUserOffline 标记用户离线
-	MarkUserOffline(ctx context.Context, userID uint64) error
+	MarkUserOffline(ctx context.Context, userID string) error
 }
 
 // PrivateMessageRepositoryImpl 私聊消息仓库实现
@@ -59,14 +59,14 @@ func (p *PrivateMessageRepositoryImpl) Create(ctx context.Context, message *mode
 		return err
 	}
 	// 检查接收者是否在线，如果不在线则将消息保存到 Redis
-	onlineKey := fmt.Sprintf("user_online:%d", message.ReceiverID)
+	onlineKey := fmt.Sprintf("user_online:%s", message.ReceiverID)
 	isOnline, err := p.Redis.Exists(onlineKey)
 	if err != nil {
 		return err
 	}
 	if !isOnline {
-		offlineKey := fmt.Sprintf("offline_messages:%d", message.ReceiverID)
-		if err := p.Redis.RPush(offlineKey, strconv.FormatUint(message.MessageID, 10)); err != nil {
+		offlineKey := fmt.Sprintf("offline_messages:%s", message.ReceiverID)
+		if err := p.Redis.RPush(offlineKey, message.MessageID); err != nil {
 			return err
 		}
 	}
@@ -95,8 +95,8 @@ func (p *PrivateMessageRepositoryImpl) UpdatePrivateMessage(ctx context.Context,
 }
 
 // GetOfflineMessages 获取用户的离线消息
-func (p *PrivateMessageRepositoryImpl) GetOfflineMessages(ctx context.Context, userID uint64) ([]*model.PrivateMessage, error) {
-	key := fmt.Sprintf("offline_messages:%d", userID)
+func (p *PrivateMessageRepositoryImpl) GetOfflineMessages(ctx context.Context, userID string) ([]*model.PrivateMessage, error) {
+	key := fmt.Sprintf("offline_messages:%s", userID)
 	messageIDs, err := p.Redis.LRange(key, 0, -1)
 	if err != nil {
 		return nil, err
@@ -124,9 +124,9 @@ func (p *PrivateMessageRepositoryImpl) GetOfflineMessages(ctx context.Context, u
 }
 
 // MarkUserOnline 标记用户上线
-func (p *PrivateMessageRepositoryImpl) MarkUserOnline(ctx context.Context, userID uint64) error {
+func (p *PrivateMessageRepositoryImpl) MarkUserOnline(ctx context.Context, userID string) error {
 	// 标记用户为在线
-	err := p.Redis.Set(fmt.Sprintf("user_online:%d", userID), "1")
+	err := p.Redis.Set(fmt.Sprintf("user_online:%s", userID), "1")
 	if err != nil {
 		return err
 	}
@@ -134,9 +134,9 @@ func (p *PrivateMessageRepositoryImpl) MarkUserOnline(ctx context.Context, userI
 }
 
 // MarkUserOffline 标记用户离线
-func (p *PrivateMessageRepositoryImpl) MarkUserOffline(ctx context.Context, userID uint64) error {
+func (p *PrivateMessageRepositoryImpl) MarkUserOffline(ctx context.Context, userID string) error {
 	// 标记用户为离线
-	err := p.Redis.Del(fmt.Sprintf("user_online:%d", userID))
+	err := p.Redis.Del(fmt.Sprintf("user_online:%s", userID))
 	if err != nil {
 		return err
 	}

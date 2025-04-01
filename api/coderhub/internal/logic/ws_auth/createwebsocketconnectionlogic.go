@@ -3,9 +3,11 @@ package ws_auth
 import (
 	"coderhub/api/coderhub/internal/svc"
 	"coderhub/api/coderhub/internal/types"
+	"coderhub/model"
 	"coderhub/pkg/ws"
 	"coderhub/shared/utils"
 	"context"
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"time"
@@ -60,6 +62,49 @@ func (l *CreateWebSocketConnectionLogic) CreateWebSocketConnection(w http.Respon
 
 	// 注册到 WebSocket Hub
 	l.svcCtx.WsHub.Register <- connection
+
+	// 启动一个 goroutine 监听客户端消息
+	go func() {
+		defer func() {
+			l.svcCtx.WsHub.Unregister <- connection
+			_ = conn.Close()
+		}()
+		for {
+			_, msg, err := conn.ReadMessage()
+			if err != nil {
+				logx.Errorf("Failed to read message: %v", err)
+				break
+			}
+			// 处理接收到的消息
+			// 这里可以根据需要处理消息，例如解析消息内容
+			logx.Infof("Received message: %s", msg)
+			var message model.PrivateMessage
+			err = json.Unmarshal(msg, &message)
+			if err != nil {
+				logx.Errorf("Failed to unmarshal message: %v", err)
+				continue
+			}
+			fmt.Println("SessionID:", message.SessionID)
+			fmt.Println("ReceiverID:", message.ReceiverID)
+			fmt.Println("Content:", message.Content)
+			// 数据校验
+			if message.SessionID == "" || message.ReceiverID == "" || message.Content == "" {
+				logx.Errorf("Invalid message: %v", err)
+				continue
+			}
+			// 发送消息到 Hub
+			l.svcCtx.WsHub.Messages <- model.PrivateMessage{
+				MessageID:   utils.Int2String(utils.GenID()),
+				SessionID:   message.SessionID,
+				SenderID:    connection.UserID,
+				ReceiverID:  message.ReceiverID,
+				Content:     message.Content,
+				ContentType: message.ContentType,
+				Status:      model.Sent,
+				Timestamp:   time.Now().Unix(),
+			}
+		}
+	}()
 
 	return nil
 }
