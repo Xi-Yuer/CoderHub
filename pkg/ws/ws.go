@@ -114,9 +114,3 @@ func (c *Connection) Write(message []byte) {
 		logx.Errorf("Error writing message: %v", err)
 	}
 }
-
-/**
-hub := NewHub()
-go hub.Run()
-go hub.StartHeartbeat(30*time.Second, 60*time.Second)
-*/
