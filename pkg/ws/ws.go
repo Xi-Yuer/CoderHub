@@ -77,6 +77,13 @@ func (h *Hub) handleRegister(conn *Connection) {
 	h.Connections[conn.UserID] = conn
 	h.mu.Unlock()
 
+	// 设置 WebSocket pong 处理器
+	conn.Conn.SetPongHandler(func(appData string) error {
+		conn.HandlePong()
+		return nil
+	})
+
+	// 标记用户为在线
 	if err := h.PrivateMessageRepository.MarkUserOnline(context.Background(), conn.UserID); err != nil {
 		logx.Errorf("Failed to mark user %s online: %v", conn.UserID, err)
 		return
@@ -221,8 +228,6 @@ func (h *Hub) handlePongMessage(senderID string) {
 }
 
 // StartHeartbeat 服务器定期发送 Ping
-// interval 是发送 Ping 的时间间隔
-// timeout 是超时时间，如果在超时时间内没有收到 Pong，将关闭连接
 func (h *Hub) StartHeartbeat(interval time.Duration, timeout time.Duration) {
 	ticker := time.NewTicker(interval)
 	defer ticker.Stop()
@@ -231,7 +236,7 @@ func (h *Hub) StartHeartbeat(interval time.Duration, timeout time.Duration) {
 	}
 }
 
-// checkAndSendPing 检查并发送 Ping 消息
+// checkAndSendPing 发送 Ping 并检查超时
 func (h *Hub) checkAndSendPing(timeout time.Duration) {
 	h.mu.Lock()
 	defer h.mu.Unlock()
@@ -265,4 +270,5 @@ func (c *Connection) HandlePong() {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 	c.LastPingTime = time.Now().Unix()
+	logx.Infof("Received pong from user %s", c.UserID)
 }
