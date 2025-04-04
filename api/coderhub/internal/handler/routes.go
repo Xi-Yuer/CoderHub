@@ -29,6 +29,7 @@ import (
 	questions_public "coderhub/api/coderhub/internal/handler/questions_public"
 	school_exp_auth "coderhub/api/coderhub/internal/handler/school_exp_auth"
 	school_exp_public "coderhub/api/coderhub/internal/handler/school_exp_public"
+	session_auth "coderhub/api/coderhub/internal/handler/session_auth"
 	tag_auth "coderhub/api/coderhub/internal/handler/tag_auth"
 	tag_public "coderhub/api/coderhub/internal/handler/tag_public"
 	user_auth "coderhub/api/coderhub/internal/handler/user_auth"
@@ -539,6 +540,31 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			},
 		},
 		rest.WithPrefix("/api/school_exp"),
+	)
+
+	server.AddRoutes(
+		[]rest.Route{
+			{
+				// 创建一个会话
+				Method:  http.MethodPost,
+				Path:    "/create",
+				Handler: session_auth.CreateSessionHandler(serverCtx),
+			},
+			{
+				// 删除会话
+				Method:  http.MethodDelete,
+				Path:    "/delete/:id",
+				Handler: session_auth.DeleteSessionHandler(serverCtx),
+			},
+			{
+				// 获取会话列表
+				Method:  http.MethodGet,
+				Path:    "/list",
+				Handler: session_auth.ListSessionHandler(serverCtx),
+			},
+		},
+		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
+		rest.WithPrefix("/api/session"),
 	)
 
 	server.AddRoutes(

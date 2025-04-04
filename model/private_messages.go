@@ -36,10 +36,13 @@ type PrivateMessage struct {
 // UserSession 用户会话实体（用于查询用户的会话信息）
 type UserSession struct {
 	SessionID          string `gorm:"primaryKey;column:session_id;comment:会话ID" json:"session_id"`
+	SessionName        string `gorm:"column:session_name;comment:会话名称" json:"session_name"`
 	UserID             string `gorm:"column:user_id;comment:用户ID;index:idx_user_peer,unique" json:"user_id"`
 	PeerID             string `gorm:"column:peer_id;comment:对方用户ID;index:idx_user_peer,unique" json:"peer_id"`
 	LastMessageID      string `gorm:"column:last_message_id;comment:最后一条消息ID" json:"last_message_id"`
+	LastMessageContent string `gorm:"column:last_message_content;comment:最后一条消息内容" json:"last_message_content"`
 	UnreadMessageCount int    `gorm:"column:unread_message_count;default:0;comment:未读消息数量" json:"unread_message_count"`
 	UnreadCount        int    `gorm:"column:unread_count;default:0;comment:未读消息数量" json:"unread_count"`
+	CreatedAt          int64  `gorm:"column:created_at;comment:创建时间戳（毫秒）" json:"created_at"`
 	UpdatedAt          int64  `gorm:"column:updated_at;comment:最后更新时间戳（毫秒）" json:"updated_at"`
 }

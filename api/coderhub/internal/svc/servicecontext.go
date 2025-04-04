@@ -3,7 +3,9 @@ package svc
 import (
 	"coderhub/api/coderhub/internal/config"
 	"coderhub/pkg/ws"
+	"coderhub/repository"
 	"coderhub/rpc/coderhub/coderhub"
+	"coderhub/shared/storage"
 	"time"
 
 	"github.com/zeromicro/go-zero/zrpc"
@@ -28,6 +30,8 @@ type ServiceContext struct {
 	WorkExpService              coderhub.WorkExpServiceClient
 	MessageService              coderhub.MessageServiceClient
 	CreatorDashBoardService     coderhub.CreatorDashBoardServiceClient
+	UserSessionRepository       repository.UserSessionRepository
+	UserRepository              repository.UserRepository
 	WsHub                       *ws.Hub
 }
 
@@ -40,7 +44,11 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	go hub.Run()
 	// 启动 WebSocket 连接的心跳检测
 	go hub.StartHeartbeat(30*time.Second, 60*time.Second)
-
+	sql := storage.NewGorm()
+	rdb, err := storage.NewRedisDB(storage.DefaultConfig())
+	if err != nil {
+		panic(err)
+	}
 	return &ServiceContext{
 		Config:                      c,
 		UserService:                 coderhub.NewUserServiceClient(zrpc.MustNewClient(c.UserService).Conn()),
@@ -60,6 +68,8 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		WorkExpService:              coderhub.NewWorkExpServiceClient(zrpc.MustNewClient(c.WorkExpService).Conn()),
 		MessageService:              coderhub.NewMessageServiceClient(zrpc.MustNewClient(c.MessageService).Conn()),
 		CreatorDashBoardService:     coderhub.NewCreatorDashBoardServiceClient(zrpc.MustNewClient(c.CreatorDashBoardService).Conn()),
+		UserSessionRepository:       repository.NewUserSessionRepository(sql),
+		UserRepository:              repository.NewUserRepositoryImpl(sql, rdb),
 		WsHub:                       hub,
 	}
 }

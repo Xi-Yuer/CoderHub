@@ -214,6 +214,15 @@ type CreateSchoolExpResp struct {
 	Data bool `json:"data"`
 }
 
+type CreateSessionReq struct {
+	PeerID string `json:"peerID"`
+}
+
+type CreateSessionResp struct {
+	Response
+	Data Session `json:"data"`
+}
+
 type CreateTagReq struct {
 	Name             string `json:"name"`               // 标签名称
 	Description      string `json:"description"`        // 标签描述
@@ -358,6 +367,15 @@ type DeleteSchoolExpReq struct {
 }
 
 type DeleteSchoolExpResp struct {
+	Response
+	Data bool `json:"data"`
+}
+
+type DeleteSessionReq struct {
+	ID string `path:"id"`
+}
+
+type DeleteSessionResp struct {
 	Response
 	Data bool `json:"data"`
 }
@@ -725,6 +743,18 @@ type GetSchoolExpListResp struct {
 	Data *SchoolExpList `json:"data"`
 }
 
+type GetSessionListReq struct {
+	SessionName string `form:"sessionName,optional"`
+	UserID      string `form:"userID"`
+	Page        int64  `form:"page"`
+	PageSize    int64  `form:"page_size"`
+}
+
+type GetSessionListResp struct {
+	Response
+	Data *SessionList `json:"data"`
+}
+
 type GetTagListReq struct {
 	Page     int32 `form:"page"`      // 页码
 	PageSize int32 `form:"page_size"` // 每页数量
@@ -881,6 +911,20 @@ type PostAcademicNavigatorLikeResp struct {
 	Data bool `json:"data"` // 是否点赞成功
 }
 
+type PrivateMessage struct {
+	MessageID   string `json:"messageId"`
+	SessionID   string `json:"sessionId"`
+	SenderID    string `json:"senderId"`
+	ReceiverID  string `json:"receiverId"`
+	Content     string `json:"content"`
+	ContentType string `json:"contentType"`
+	Status      string `json:"status"`
+	Timestamp   int64  `json:"timestamp"`
+	IsRecalled  bool   `json:"isRecalled"`
+	CreatedAt   int64  `json:"createdAt"`
+	UpdatedAt   int64  `json:"updatedAt"`
+}
+
 type Question struct {
 	Id        string `json:"id"`
 	Title     string `json:"title"`
@@ -982,6 +1026,21 @@ type SendResetPasswordLinkReq struct {
 type SendResetPasswordLinkResp struct {
 	Response
 	Data bool `json:"data"` // 是否发送成功
+}
+
+type Session struct {
+	ID                 string `json:"id"`
+	SessionName        string `json:"sessionName"`
+	UserID             string `json:"userID"`
+	PeerID             string `json:"peerID"`
+	LastMessageID      string `json:"lastMessageID"`
+	LastMessageContent string `json:"lastMessageContent"`
+	UnreadMessageCount int64  `json:"unreadMessageCount"`
+}
+
+type SessionList struct {
+	List  []*Session `json:"list"`
+	Total int64      `json:"total"`
 }
 
 type Tag struct {
