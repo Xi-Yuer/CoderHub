@@ -7347,8 +7347,7 @@
       },
       "title": "UpdateChatSessionReq",
       "required": [
-        "sessionId",
-        "sessionName"
+        "sessionId"
       ]
     },
     "UpdateChatSessionResp": {

@@ -54,21 +54,22 @@ func (u *UserSessionRepositoryImpl) GetUserSession(ctx context.Context, userSess
 	return &session, nil
 }
 func (u *UserSessionRepositoryImpl) UpdateUserSession(ctx context.Context, userSession *model.UserSession) (*model.UserSession, error) {
-	var session *model.UserSession
-	err := u.DB.WithContext(ctx).Model(&model.UserSession{}).Where("session_id = ?", userSession.SessionID).Find(session).Error
+	var session model.UserSession
+	err := u.DB.WithContext(ctx).Model(&model.UserSession{}).Where("session_id = ?", userSession.SessionID).First(&session).Error
 	if err != nil {
 		return nil, err
 	}
 	if userSession.SessionName != "" {
 		session.SessionName = userSession.SessionName
 	}
-	err = u.DB.WithContext(ctx).Model(&session).Updates(userSession).Error
+	err = u.DB.WithContext(ctx).Model(&session).Updates(*userSession).Error
 	if err != nil {
 		return nil, err
 	}
 
-	return session, nil
+	return &session, nil
 }
+
 func (u *UserSessionRepositoryImpl) GetUserSessions(ctx context.Context, userID uint64, page, pageSize int64, sessionName string) ([]*model.UserSession, int64, error) {
 	var sessions []*model.UserSession
 	fmt.Println("GetUserSessions.Page:", page)

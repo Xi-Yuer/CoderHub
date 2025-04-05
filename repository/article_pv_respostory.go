@@ -112,8 +112,8 @@ func (r *ArticlePVRepositoryImpl) CreateArticlePV(articlePV *model.ArticlePV) er
 func (r *ArticlePVRepositoryImpl) GetArticlePVByArticleID(articleID int64) (*model.ArticlePV, error) {
 	count, err := r.Redis.HGet("article:pv", fmt.Sprintf("%d", articleID))
 	if err == nil && count != "" {
-		countInt, err := strconv.ParseInt(count, 10, 64)
-		if err == nil {
+		countInt, err1 := strconv.ParseInt(count, 10, 64)
+		if err1 == nil {
 			return &model.ArticlePV{ArticleID: articleID, Count: countInt}, nil
 		}
 	}

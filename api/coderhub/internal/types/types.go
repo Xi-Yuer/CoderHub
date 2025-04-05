@@ -1113,7 +1113,7 @@ type UpdateArticleResp struct {
 
 type UpdateChatSessionReq struct {
 	SessionID   string `json:"sessionId"`
-	SessionName string `json:"sessionName"`
+	SessionName string `json:"sessionName,optional"`
 }
 
 type UpdateChatSessionResp struct {
