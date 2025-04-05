@@ -72,6 +72,11 @@ type CancelLikeAcademicNavigatorResp struct {
 	Data bool `json:"data"` // 是否取消点赞成功
 }
 
+type ChatMessageList struct {
+	List  []*PrivateMessage `json:"list"`
+	Total int64             `json:"total"`
+}
+
 type ChatWithAIReq struct {
 	Content string `json:"content"` // 内容
 }
@@ -541,6 +546,18 @@ type GetArticlesResp struct {
 	Data []*GetArticle `json:"data"` // 文章列表
 }
 
+type GetChatMessageListReq struct {
+	Page       int64  `form:"page"`
+	PageSize   int64  `form:"page_size"`
+	SenderID   string `form:"sender_id"`
+	ReceiverID string `form:"receiver_id"`
+}
+
+type GetChatMessageListResp struct {
+	Response
+	Data *GetMessageListResp `json:"data"`
+}
+
 type GetCommentRepliesReq struct {
 	CommentId string `path:"comment_id"` // 评论ID
 	Page      int32  `form:"page"`       // 页码
@@ -666,6 +683,11 @@ type GetPositionListRes struct {
 type GetPositionListResp struct {
 	Response
 	Data GetPositionListRes `json:"data"`
+}
+
+type GetPrivateChatMessageListResp struct {
+	Response
+	Data *ChatMessageList `json:"data"`
 }
 
 type GetQuestionBankCategoryListReq struct {
@@ -912,17 +934,17 @@ type PostAcademicNavigatorLikeResp struct {
 }
 
 type PrivateMessage struct {
-	MessageID   string `json:"messageId"`
-	SessionID   string `json:"sessionId"`
-	SenderID    string `json:"senderId"`
-	ReceiverID  string `json:"receiverId"`
+	MessageID   string `json:"message_id"`
+	SessionID   string `json:"session_id"`
+	SenderID    string `json:"sender_id"`
+	ReceiverID  string `json:"receiver_id"`
 	Content     string `json:"content"`
-	ContentType string `json:"contentType"`
+	ContentType string `json:"content_type"`
 	Status      string `json:"status"`
 	Timestamp   int64  `json:"timestamp"`
-	IsRecalled  bool   `json:"isRecalled"`
-	CreatedAt   int64  `json:"createdAt"`
-	UpdatedAt   int64  `json:"updatedAt"`
+	IsRecalled  bool   `json:"is_recalled"`
+	CreatedAt   int64  `json:"created_at"`
+	UpdatedAt   int64  `json:"updated_at"`
 }
 
 type Question struct {
@@ -1087,6 +1109,16 @@ type UpdateArticleReq struct {
 type UpdateArticleResp struct {
 	Response
 	Data bool `json:"data"` // 是否更新成功
+}
+
+type UpdateChatSessionReq struct {
+	SessionID   string `json:"sessionId"`
+	SessionName string `json:"sessionName"`
+}
+
+type UpdateChatSessionResp struct {
+	Response
+	Data *Session `json:"data"`
 }
 
 type UpdateCommentLikeCountReq struct {

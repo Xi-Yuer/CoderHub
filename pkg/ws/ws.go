@@ -143,8 +143,6 @@ func (h *Hub) sendMessage(msg model.PrivateMessage) {
 	}
 	if session == nil {
 		// 会话信息不存在，返回错误
-		// TODO:这里前端在发送消息时应该先创建会话，然后再发送消息，这里应该是前端的问题，应该先创建会话，然后再发送消息
-		// 创建会话需要同时创建两个会话信息，一个是发送者的会话信息，一个是接收者的会话信息
 		logx.Errorf("User session not found for sender %s and receiver %s", msg.SenderID, msg.ReceiverID)
 		return
 	} else {
@@ -152,7 +150,7 @@ func (h *Hub) sendMessage(msg model.PrivateMessage) {
 		session.LastMessageID = msg.MessageID
 		session.LastMessageContent = msg.Content
 		session.UpdatedAt = time.Now().UnixMilli()
-		if err := h.UserSessionRepository.UpdateUserSession(context.Background(), session); err != nil {
+		if _, err := h.UserSessionRepository.UpdateUserSession(context.Background(), session); err != nil {
 			logx.Errorf("Failed to update sender's user session: %v", err)
 		}
 		// 更新接收者会话信息
@@ -169,7 +167,7 @@ func (h *Hub) sendMessage(msg model.PrivateMessage) {
 				receiverSession.UnreadMessageCount++
 			}
 			receiverSession.UpdatedAt = time.Now().UnixMilli()
-			if err := h.UserSessionRepository.UpdateUserSession(context.Background(), receiverSession); err != nil {
+			if _, err := h.UserSessionRepository.UpdateUserSession(context.Background(), receiverSession); err != nil {
 				logx.Errorf("Failed to update receiver's user session: %v", err)
 			}
 		}
@@ -210,11 +208,7 @@ func (h *Hub) saveMessage(msg model.PrivateMessage) error {
 		Content:     msg.Content,
 		ContentType: msg.ContentType,
 		Status:      msg.Status,
-		Timestamp:   msg.Timestamp,
 		IsRecalled:  msg.IsRecalled,
-		CreatedAt:   msg.CreatedAt,
-		UpdatedAt:   msg.UpdatedAt,
-		DeletedAt:   msg.DeletedAt,
 	}
 	return h.PrivateMessageRepository.Create(context.Background(), message)
 }

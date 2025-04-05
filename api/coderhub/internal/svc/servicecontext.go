@@ -31,6 +31,7 @@ type ServiceContext struct {
 	MessageService              coderhub.MessageServiceClient
 	CreatorDashBoardService     coderhub.CreatorDashBoardServiceClient
 	UserSessionRepository       repository.UserSessionRepository
+	PrivateMessageRepository    repository.PrivateMessageRepository
 	UserRepository              repository.UserRepository
 	WsHub                       *ws.Hub
 }
@@ -68,6 +69,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		WorkExpService:              coderhub.NewWorkExpServiceClient(zrpc.MustNewClient(c.WorkExpService).Conn()),
 		MessageService:              coderhub.NewMessageServiceClient(zrpc.MustNewClient(c.MessageService).Conn()),
 		CreatorDashBoardService:     coderhub.NewCreatorDashBoardServiceClient(zrpc.MustNewClient(c.CreatorDashBoardService).Conn()),
+		PrivateMessageRepository:    repository.NewPrivateMessageRepository(sql, rdb),
 		UserSessionRepository:       repository.NewUserSessionRepository(sql),
 		UserRepository:              repository.NewUserRepositoryImpl(sql, rdb),
 		WsHub:                       hub,

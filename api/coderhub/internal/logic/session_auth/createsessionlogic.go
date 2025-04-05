@@ -51,13 +51,10 @@ func (l *CreateSessionLogic) CreateSession(req *types.CreateSessionReq) (resp *t
 
 	// 创建会话
 	// 查询会话是否存在
-	userSession, err := l.svcCtx.UserSessionRepository.GetUserSession(l.ctx, &model.UserSession{
+	userSession, _ := l.svcCtx.UserSessionRepository.GetUserSession(l.ctx, &model.UserSession{
 		UserID: utils.Int2String(UserID),
 		PeerID: req.PeerID,
 	})
-	if err != nil {
-		return l.errorResp(err)
-	}
 
 	if userSession != nil {
 		return l.successResp(types.Session{

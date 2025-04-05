@@ -3,6 +3,7 @@ package repository
 import (
 	"coderhub/model"
 	"coderhub/shared/storage"
+	"coderhub/shared/utils"
 	"context"
 	"fmt"
 	"strconv"
@@ -32,6 +33,8 @@ type PrivateMessageRepository interface {
 	Create(ctx context.Context, message *model.PrivateMessage) error
 	// GetPrivateMessage 获取私聊消息
 	GetPrivateMessage(ctx context.Context, message *model.PrivateMessage, page int64, pageSize int64) ([]*model.PrivateMessage, int64, error)
+	// GetPrivateSessionHistoryMessage 获取会话中的所有聊天记录，分页查询，加载更多是加载双方的历史消息记录,这里不能使用 session_id 来查询，因为 session_id 是由两个用户的 ID 拼接而成的，所以需要使用 sender_id 和 receiver_id 来查询
+	GetPrivateSessionHistoryMessage(ctx context.Context, senderID string, receiverID string, page int64, pageSize int64) ([]*model.PrivateMessage, int64, error)
 	// UpdatePrivateMessage 更新私聊消息
 	UpdatePrivateMessage(ctx context.Context, message *model.PrivateMessage) error
 	// GetOfflineMessages 获取用户的离线消息
@@ -84,6 +87,63 @@ func (p *PrivateMessageRepositoryImpl) GetPrivateMessage(ctx context.Context, me
 		return nil, 0, err
 	}
 	return messages, total, nil
+}
+
+// GetPrivateSessionHistoryMessage 获取会话中的所有聊天记录，分页查询，加载更多是加载双方的历史消息记录
+func (p *PrivateMessageRepositoryImpl) GetPrivateSessionHistoryMessage(ctx context.Context, senderID string, receiverID string, page int64, pageSize int64) ([]*model.PrivateMessage, int64, error) {
+	var messages []*PrivateMessage
+	var total int64
+
+	// 将 string 类型的 senderID 和 receiverID 转换为 uint64 类型
+	senderIDUint64, err := strconv.ParseUint(senderID, 10, 64)
+	if err != nil {
+		return nil, 0, err
+	}
+	receiverIDUint64, err := strconv.ParseUint(receiverID, 10, 64)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	// 构建查询条件
+	query := p.DB.WithContext(ctx).Model(&PrivateMessage{}).
+		Where("(sender_id =? AND receiver_id =?) OR (sender_id =? AND receiver_id =?)", senderIDUint64, receiverIDUint64, receiverIDUint64, senderIDUint64)
+
+	// 统计消息总数
+	if err := query.Count(&total).Error; err != nil {
+		return nil, 0, err
+	}
+
+	// 查询指定页的消息，按时间戳升序排序
+	if err := query.Order("timestamp DESC").
+		Offset(int((page - 1) * pageSize)).
+		Limit(int(pageSize)).
+		Find(&messages).Error; err != nil {
+		return nil, 0, err
+	}
+
+	// 转换为 model.PrivateMessage 类型
+	var result []*model.PrivateMessage
+	for _, msg := range messages {
+		result = append(result, &model.PrivateMessage{
+			MessageID:   utils.Int2String(int64(msg.MessageID)),
+			SenderID:    utils.Int2String(int64(msg.SenderID)),
+			ReceiverID:  utils.Int2String(int64(msg.ReceiverID)),
+			Content:     msg.Content,
+			ContentType: msg.ContentType,
+			Status:      msg.Status,
+			Timestamp:   msg.Timestamp,
+			IsRecalled:  msg.IsRecalled,
+			CreatedAt:   msg.CreatedAt,
+			UpdatedAt:   msg.UpdatedAt,
+			DeletedAt:   msg.DeletedAt,
+		})
+	}
+
+	// 反转消息顺序，确保最新的消息在最前面
+	for i, j := 0, len(result)-1; i < j; i, j = i+1, j-1 {
+		result[i], result[j] = result[j], result[i]
+	}
+	return result, total, nil
 }
 
 // UpdatePrivateMessage 更新私聊消息

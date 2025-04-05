@@ -26,10 +26,10 @@ type PrivateMessage struct {
 	Content     string         `gorm:"type:text;column:content;comment:消息内容" json:"content"`
 	ContentType string         `gorm:"type:varchar(20);column:content_type;comment:消息类型(text/image/file/audio)" json:"content_type"`
 	Status      string         `gorm:"type:ENUM('sent', 'delivered', 'read');column:status;default:'sent';comment:消息状态" json:"status"`
-	Timestamp   int64          `gorm:"column:timestamp;comment:消息时间戳（毫秒级）" json:"timestamp"`
+	Timestamp   int64          `gorm:"column:timestamp;autoCreateTime;comment:消息时间戳（毫秒级）" json:"timestamp"`
 	IsRecalled  bool           `gorm:"column:is_recalled;default:false;comment:是否已撤回" json:"is_recalled"`
-	CreatedAt   time.Time      `gorm:"->;column:created_at;autoCreateTime;comment:创建时间" json:"created_at"`
-	UpdatedAt   time.Time      `gorm:"->;column:updated_at;autoUpdateTime;comment:更新时间" json:"updated_at"`
+	CreatedAt   time.Time      `gorm:"column:created_at;autoCreateTime;comment:创建时间" json:"created_at"`
+	UpdatedAt   time.Time      `gorm:"column:updated_at;autoUpdateTime;comment:更新时间" json:"updated_at"`
 	DeletedAt   gorm.DeletedAt `gorm:"index;column:deleted_at;comment:软删除时间" json:"-"`
 }
 

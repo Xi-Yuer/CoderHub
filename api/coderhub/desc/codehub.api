@@ -1000,6 +1000,32 @@ type (
 		Type          int64  `form:"type"`
 		RequestUserId string `header:"request-user-id"`
 	}
+    GetChatMessageListReq {
+        Page int64 `form:"page"`
+        PageSize int64 `form:"page_size"`
+        SenderID string `form:"sender_id"`
+        ReceiverID string `form:"receiver_id"`
+    }
+    ChatMessageList {
+        List []*PrivateMessage `json:"list"`
+        Total int64 `json:"total"`
+    }
+    GetPrivateChatMessageListResp {
+        Response
+        Data *ChatMessageList `json:"data"`
+    }
+    UpdateChatSessionReq {
+        SessionID string `json:"sessionId"`
+        SessionName string `json:"sessionName"`
+    }
+    UpdateChatSessionResp {
+        Response
+        Data *Session `json:"data"`
+    }
+    GetChatMessageListResp {
+        Response
+        Data *GetMessageListResp `json:"data"`
+    }
 	Message {
 		ID         string    `json:"id"`
 		SenderID   string    `json:"senderID"`
@@ -1013,17 +1039,17 @@ type (
 		UpdatedAt  int64     `json:"updatedAt"`
 	}
 	PrivateMessage {
-		MessageID   string `json:"messageId"`
-		SessionID   string `json:"sessionId"`
-		SenderID    string `json:"senderId"`
-		ReceiverID  string `json:"receiverId"`
+        MessageID string `json:"message_id"`
+        SessionID string `json:"session_id"`
+        SenderID string `json:"sender_id"`
+        ReceiverID string `json:"receiver_id"`
 		Content     string `json:"content"`
-		ContentType string `json:"contentType"`
+        ContentType string `json:"content_type"`
 		Status      string `json:"status"`
 		Timestamp   int64  `json:"timestamp"`
-		IsRecalled  bool   `json:"isRecalled"`
-		CreatedAt   int64  `json:"createdAt"`
-		UpdatedAt   int64  `json:"updatedAt"`
+        IsRecalled bool `json:"is_recalled"`
+        CreatedAt int64 `json:"created_at"`
+        UpdatedAt int64 `json:"updated_at"`
 	}
 	MessageList {
 		List  []*Message `json:"list"`
@@ -1740,6 +1766,12 @@ service CodeHubAPI {
 	@handler ListMessage
 	get /list (GetMessageListReq) returns (GetMessageListResp)
 
+    @doc(
+        summary: "获取聊天消息列表"
+    )
+    @handler ListChatMessage
+    get /chat/list (GetChatMessageListReq) returns (GetPrivateChatMessageListResp)
+
 	@doc (
 		summary: "删除消息"
 	)
@@ -1801,6 +1833,12 @@ service CodeHubAPI {
 	)
 	@handler CreateSession
 	post /create (CreateSessionReq) returns (CreateSessionResp)
+
+    @doc(
+        summary: "更新会话消息"
+    )
+    @handler UpdateMessage
+    post /update (UpdateChatSessionReq) returns (UpdateChatSessionResp)
 
 	@doc (
 		summary: "获取会话列表"

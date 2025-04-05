@@ -385,6 +385,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 	server.AddRoutes(
 		[]rest.Route{
 			{
+				// 获取聊天消息列表
+				Method:  http.MethodGet,
+				Path:    "/chat/list",
+				Handler: message_auth.ListChatMessageHandler(serverCtx),
+			},
+			{
 				// 删除消息
 				Method:  http.MethodDelete,
 				Path:    "/delete/:id",
@@ -561,6 +567,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Method:  http.MethodGet,
 				Path:    "/list",
 				Handler: session_auth.ListSessionHandler(serverCtx),
+			},
+			{
+				// 更新会话消息
+				Method:  http.MethodPost,
+				Path:    "/update",
+				Handler: session_auth.UpdateMessageHandler(serverCtx),
 			},
 		},
 		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),

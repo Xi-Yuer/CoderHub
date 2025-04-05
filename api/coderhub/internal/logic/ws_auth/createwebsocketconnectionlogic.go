@@ -101,7 +101,7 @@ func (l *CreateWebSocketConnectionLogic) CreateWebSocketConnection(w http.Respon
 				Content:     message.Content,
 				ContentType: message.ContentType,
 				Status:      model.Sent,
-				Timestamp:   time.Now().Unix(),
+				IsRecalled:  message.IsRecalled,
 			}
 		}
 	}()

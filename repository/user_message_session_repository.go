@@ -26,7 +26,7 @@ type UserSessionRepository interface {
 	// GetUserSession 获取用户会话
 	GetUserSession(ctx context.Context, userSession *model.UserSession) (*model.UserSession, error)
 	// UpdateUserSession 更新用户会话
-	UpdateUserSession(ctx context.Context, userSession *model.UserSession) error
+	UpdateUserSession(ctx context.Context, userSession *model.UserSession) (*model.UserSession, error)
 	// GetUserSessions 获取用户会话列表
 	GetUserSessions(ctx context.Context, userID uint64, page, pageSize int64, sessionName string) ([]*model.UserSession, int64, error)
 	// DeleteUserSession 删除用户会话
@@ -53,11 +53,21 @@ func (u *UserSessionRepositoryImpl) GetUserSession(ctx context.Context, userSess
 	}
 	return &session, nil
 }
-func (u *UserSessionRepositoryImpl) UpdateUserSession(ctx context.Context, userSession *model.UserSession) error {
-	if err := u.DB.WithContext(ctx).Save(userSession).Error; err != nil {
-		return err
+func (u *UserSessionRepositoryImpl) UpdateUserSession(ctx context.Context, userSession *model.UserSession) (*model.UserSession, error) {
+	var session *model.UserSession
+	err := u.DB.WithContext(ctx).Model(&model.UserSession{}).Where("session_id = ?", userSession.SessionID).Find(session).Error
+	if err != nil {
+		return nil, err
 	}
-	return nil
+	if userSession.SessionName != "" {
+		session.SessionName = userSession.SessionName
+	}
+	err = u.DB.WithContext(ctx).Model(&session).Updates(userSession).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return session, nil
 }
 func (u *UserSessionRepositoryImpl) GetUserSessions(ctx context.Context, userID uint64, page, pageSize int64, sessionName string) ([]*model.UserSession, int64, error) {
 	var sessions []*model.UserSession
