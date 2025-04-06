@@ -30,6 +30,8 @@ func (l *UpdateMessageLogic) UpdateMessage(req *types.UpdateChatSessionReq) (res
 	session, err := l.svcCtx.UserSessionRepository.UpdateUserSession(l.ctx, &model.UserSession{
 		SessionID:          req.SessionID,
 		SessionName:        req.SessionName,
+		UserID:             req.SenderID,
+		PeerID:             req.PeerID,
 		UnreadMessageCount: 0,
 		UnreadCount:        0,
 	})

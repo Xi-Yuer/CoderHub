@@ -96,6 +96,17 @@ func (r *MessageRepositoryImpl) GetUnReadMessageCount(ctx context.Context, recei
 	if err != nil {
 		return 0, fmt.Errorf("failed to count unread messages: %w", err)
 	}
+
+	// 查询用户所有会话信息未读数量
+	var userSessions []model.UserSession
+	err = r.DB.WithContext(ctx).Where("user_id = ?", receiverId).Find(&userSessions).Error
+	if err != nil {
+		return 0, fmt.Errorf("failed to fetch user sessions: %w", err)
+	}
+	for _, userSession := range userSessions {
+		fmt.Println("userSession.UnreadMessageCount", userSession.UnreadMessageCount)
+		count += int64(userSession.UnreadMessageCount)
+	}
 	return int32(count), nil
 }
 

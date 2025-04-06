@@ -549,6 +549,7 @@ type GetArticlesResp struct {
 type GetChatMessageListReq struct {
 	Page       int64  `form:"page"`
 	PageSize   int64  `form:"page_size"`
+	SessionID  string `form:"session_id"`
 	SenderID   string `form:"sender_id"`
 	ReceiverID string `form:"receiver_id"`
 }
@@ -1113,6 +1114,8 @@ type UpdateArticleResp struct {
 
 type UpdateChatSessionReq struct {
 	SessionID   string `json:"sessionId"`
+	SenderID    string `json:"senderId"`
+	PeerID      string `json:"peerId"`
 	SessionName string `json:"sessionName,optional"`
 }
 

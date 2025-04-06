@@ -54,20 +54,27 @@ func (u *UserSessionRepositoryImpl) GetUserSession(ctx context.Context, userSess
 	return &session, nil
 }
 func (u *UserSessionRepositoryImpl) UpdateUserSession(ctx context.Context, userSession *model.UserSession) (*model.UserSession, error) {
-	var session model.UserSession
-	err := u.DB.WithContext(ctx).Model(&model.UserSession{}).Where("session_id = ?", userSession.SessionID).First(&session).Error
-	if err != nil {
+	if err := u.DB.WithContext(ctx).Model(&model.UserSession{}).
+		Where("session_id = ?", userSession.SessionID).
+		Updates(map[string]interface{}{
+			"unread_count":         userSession.UnreadCount,
+			"unread_message_count": userSession.UnreadMessageCount,
+			"last_message_id":      userSession.LastMessageID,
+			"last_message_content": userSession.LastMessageContent,
+			// 如果还有其他字段要更新，明确写出
+		}).Error; err != nil {
 		return nil, err
 	}
 	if userSession.SessionName != "" {
-		session.SessionName = userSession.SessionName
+		if err := u.DB.WithContext(ctx).Model(&model.UserSession{}).
+			Where("session_id = ?", userSession.SessionID).
+			Updates(map[string]interface{}{
+				"session_name": userSession.SessionName,
+			}).Error; err != nil {
+			return nil, err
+		}
 	}
-	err = u.DB.WithContext(ctx).Model(&session).Updates(*userSession).Error
-	if err != nil {
-		return nil, err
-	}
-
-	return &session, nil
+	return userSession, nil
 }
 
 func (u *UserSessionRepositoryImpl) GetUserSessions(ctx context.Context, userID uint64, page, pageSize int64, sessionName string) ([]*model.UserSession, int64, error) {

@@ -2,6 +2,7 @@ package message_auth
 
 import (
 	"coderhub/conf"
+	"coderhub/model"
 	"context"
 
 	"coderhub/api/coderhub/internal/svc"
@@ -33,7 +34,13 @@ func (l *ListChatMessageLogic) ListChatMessage(req *types.GetChatMessageListReq)
 	if len(privateMessages) == 0 {
 		return l.successResp(nil)
 	}
-
+	_, _ = l.svcCtx.UserSessionRepository.UpdateUserSession(l.ctx, &model.UserSession{
+		SessionID:          req.SessionID,
+		UserID:             req.SenderID,
+		PeerID:             req.ReceiverID,
+		UnreadMessageCount: 0,
+		UnreadCount:        0,
+	})
 	var data types.ChatMessageList
 	for _, v := range privateMessages {
 		data.List = append(data.List, &types.PrivateMessage{
