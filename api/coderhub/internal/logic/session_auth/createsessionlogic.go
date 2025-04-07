@@ -74,11 +74,19 @@ func (l *CreateSessionLogic) CreateSession(req *types.CreateSessionReq) (resp *t
 		PeerID:      utils.Int2String(UserID),
 		UserID:      req.PeerID,
 	}
+	userNickName := senderUser.NickName
+	if userNickName.String != "" {
+		peerSession.SessionName = userNickName.String
+	}
 	senderSession := &model.UserSession{
 		SessionID:   utils.Int2String(utils.GenID()),
 		SessionName: peerUser.UserName,
 		UserID:      utils.Int2String(UserID),
 		PeerID:      req.PeerID,
+	}
+	peerUserNickName := peerUser.NickName
+	if peerUserNickName.String != "" {
+		senderSession.SessionName = peerUserNickName.String
 	}
 	session1, err := l.svcCtx.UserSessionRepository.Create(l.ctx, peerSession)
 

@@ -45,6 +45,7 @@ func (l *ListSessionLogic) ListSession(req *types.GetSessionListReq) (resp *type
 				LastMessageID:      session.LastMessageID,
 				LastMessageContent: session.LastMessageContent,
 				UnreadMessageCount: int64(session.UnreadMessageCount),
+				CreatedAt:          session.CreatedAt.Unix(),
 			})
 		}
 		return l.successResp(data)

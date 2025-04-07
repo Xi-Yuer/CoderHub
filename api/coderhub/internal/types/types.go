@@ -1059,6 +1059,7 @@ type Session struct {
 	LastMessageID      string `json:"lastMessageID"`
 	LastMessageContent string `json:"lastMessageContent"`
 	UnreadMessageCount int64  `json:"unreadMessageCount"`
+	CreatedAt          int64  `json:"createdAt"`
 }
 
 type SessionList struct {

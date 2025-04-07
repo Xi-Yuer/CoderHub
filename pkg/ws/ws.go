@@ -207,7 +207,6 @@ func (h *Hub) saveMessage(msg model.PrivateMessage) error {
 	// 更新会话信息
 	_, err := h.UserSessionRepository.UpdateUserSession(context.Background(), &model.UserSession{
 		SessionID:          msg.SessionID,
-		SessionName:        msg.SessionID,
 		UserID:             msg.SenderID,
 		PeerID:             msg.ReceiverID,
 		LastMessageID:      msg.MessageID,
