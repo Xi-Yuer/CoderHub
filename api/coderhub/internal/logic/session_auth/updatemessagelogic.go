@@ -33,7 +33,6 @@ func (l *UpdateMessageLogic) UpdateMessage(req *types.UpdateChatSessionReq) (res
 		UserID:             req.SenderID,
 		PeerID:             req.PeerID,
 		UnreadMessageCount: 0,
-		UnreadCount:        0,
 	})
 	if err != nil {
 		return l.errorResp(err)

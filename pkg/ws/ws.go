@@ -149,9 +149,8 @@ func (h *Hub) sendMessage(msg model.PrivateMessage) {
 		// 更新发送者会话信息
 		session.LastMessageID = msg.MessageID
 		session.LastMessageContent = msg.Content
-		session.UpdatedAt = time.Now().UnixMilli()
+		session.UpdatedAt = time.Now()
 		session.UnreadMessageCount = 0
-		session.UnreadCount = 0
 		if _, err := h.UserSessionRepository.UpdateUserSession(context.Background(), session); err != nil {
 			logx.Errorf("Failed to update sender's user session: %v", err)
 		}
@@ -167,13 +166,10 @@ func (h *Hub) sendMessage(msg model.PrivateMessage) {
 			receiverSession.LastMessageContent = msg.Content
 			if !ok { // 接收者不在线，未读消息数量加 1
 				receiverSession.UnreadMessageCount++
-				receiverSession.UnreadCount++
 			} else {
 				receiverSession.UnreadMessageCount = 0
-				receiverSession.UnreadCount = 0
 			}
-			receiverSession.UpdatedAt = time.Now().UnixMilli()
-
+			receiverSession.UpdatedAt = time.Now()
 			if _, err := h.UserSessionRepository.UpdateUserSession(context.Background(), receiverSession); err != nil {
 				logx.Errorf("Failed to update receiver's user session: %v", err)
 			}

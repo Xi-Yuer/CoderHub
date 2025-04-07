@@ -55,7 +55,6 @@ func (u *UserSessionRepositoryImpl) GetUserSession(ctx context.Context, userSess
 func (u *UserSessionRepositoryImpl) UpdateUserSession(ctx context.Context, userSession *model.UserSession) (*model.UserSession, error) {
 	// 构造要更新的字段
 	updateFields := map[string]interface{}{
-		"unread_count":         userSession.UnreadCount,
 		"unread_message_count": userSession.UnreadMessageCount,
 		"last_message_id":      userSession.LastMessageID,
 		"last_message_content": userSession.LastMessageContent,

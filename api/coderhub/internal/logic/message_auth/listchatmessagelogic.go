@@ -39,7 +39,6 @@ func (l *ListChatMessageLogic) ListChatMessage(req *types.GetChatMessageListReq)
 		UserID:             req.SenderID,
 		PeerID:             req.ReceiverID,
 		UnreadMessageCount: 0,
-		UnreadCount:        0,
 	})
 	var data types.ChatMessageList
 	for _, v := range privateMessages {

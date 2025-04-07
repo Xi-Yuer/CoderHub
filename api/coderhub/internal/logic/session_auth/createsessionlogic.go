@@ -64,7 +64,7 @@ func (l *CreateSessionLogic) CreateSession(req *types.CreateSessionReq) (resp *t
 			PeerID:             userSession.PeerID,
 			LastMessageID:      userSession.LastMessageID,
 			LastMessageContent: userSession.LastMessageContent,
-			UnreadMessageCount: int64(userSession.UnreadCount),
+			UnreadMessageCount: int64(userSession.UnreadMessageCount),
 		})
 	}
 
