@@ -4,7 +4,6 @@ import (
 	"coderhub/model"
 	"coderhub/shared/storage"
 	"context"
-	"fmt"
 	"gorm.io/gorm"
 )
 
@@ -65,9 +64,6 @@ func (r *UserFavorEntityRepositoryImpl) GetEntitiesFavorCount(ctx context.Contex
 func (r *UserFavorEntityRepositoryImpl) GetList(ctx context.Context, userFavorEntity *model.UserFavor, page, pageSize int) ([]*model.UserFavor, int64, error) {
 	var userFavorEntities []*model.UserFavor
 	var total int64
-	fmt.Println("userFavorEntity.UserId", userFavorEntity.UserId)
-	fmt.Println("userFavorEntity.FavorFoldId", userFavorEntity.FavorFoldId)
-	fmt.Println("userFavorEntity.EntityType", userFavorEntity.EntityType)
 	err := r.DB.WithContext(ctx).Model(&model.UserFavor{}).Where("user_id = ? AND favor_fold_id = ? AND entity_type = ?", userFavorEntity.UserId, userFavorEntity.FavorFoldId, userFavorEntity.EntityType).Limit(pageSize).Offset((page - 1) * pageSize).Count(&total).Find(&userFavorEntities).Error
 	return userFavorEntities, total, err
 }

@@ -104,7 +104,6 @@ func (r *MessageRepositoryImpl) GetUnReadMessageCount(ctx context.Context, recei
 		return 0, fmt.Errorf("failed to fetch user sessions: %w", err)
 	}
 	for _, userSession := range userSessions {
-		fmt.Println("userSession.UnreadMessageCount", userSession.UnreadMessageCount)
 		count += int64(userSession.UnreadMessageCount)
 	}
 	return int32(count), nil

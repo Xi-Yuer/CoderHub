@@ -5,8 +5,6 @@ import (
 	"coderhub/shared/storage"
 	"context"
 	"errors"
-	"fmt"
-
 	"gorm.io/gorm"
 )
 
@@ -98,9 +96,6 @@ func (r *commentRepository) ListByArticleID(ctx context.Context, articleID int64
 	var comments []model.Comment
 	var total int64
 	// 查询评论列表 parent_id = 0 为顶级评论，此外还要额外查询顶级下三条回复评论,并且构建树形结构
-	fmt.Println("文章ID: ", articleID)
-	fmt.Println("页码: ", page)
-	fmt.Println("每页大小: ", pageSize)
 	// 查询顶级评论
 	r.DB.WithContext(ctx).Where("entity_id = ? AND root_id = 0", articleID).Order("created_at ASC").Limit(int(pageSize)).Offset(int((page - 1) * pageSize)).Find(&comments)
 	// 查询评论总数

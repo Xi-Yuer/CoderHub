@@ -1,14 +1,12 @@
 package user_public
 
 import (
-	"context"
-	"fmt"
-
 	"coderhub/api/coderhub/internal/svc"
 	"coderhub/api/coderhub/internal/types"
 	"coderhub/conf"
 	"coderhub/rpc/coderhub/coderhub"
 	"coderhub/shared/utils"
+	"context"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -29,7 +27,6 @@ func NewGetUserInfoLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetUs
 }
 
 func (l *GetUserInfoLogic) GetUserInfo(req *types.GetUserInfoReq) (resp *types.GetUserInfoResp, err error) {
-	fmt.Println("req.RequestUserID:", req.RequestUserID)
 	UserInfo, err := l.svcCtx.UserService.GetUserInfo(l.ctx, &coderhub.GetUserInfoRequest{UserId: utils.String2Int(req.Id), RequestUserId: utils.String2Int(req.RequestUserID)})
 	if err != nil {
 		return &types.GetUserInfoResp{

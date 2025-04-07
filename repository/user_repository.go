@@ -81,11 +81,6 @@ func (r *UserRepositoryImpl) GetUserByName(name string) (*model.User, error) {
 		Count(&articleCount).Error; err != nil {
 		return nil, err
 	}
-
-	fmt.Println("用户粉丝数量==>", followerCount)
-	fmt.Println("用户关注数量==>", followCount)
-	fmt.Println("用户文章数量==>", articleCount)
-
 	user.FollowerCount = followerCount
 	user.FollowCount = followCount
 	user.ArticleCount = articleCount
@@ -136,11 +131,6 @@ func (r *UserRepositoryImpl) GetUserByID(id int64) (*model.User, error) {
 		Count(&articleCount).Error; err != nil {
 		return nil, err
 	}
-
-	fmt.Println("用户粉丝数量==>", followerCount)
-	fmt.Println("用户关注数量==>", followCount)
-	fmt.Println("用户文章数量==>", articleCount)
-
 	user.FollowerCount = followerCount
 	user.FollowCount = followCount
 	user.ArticleCount = articleCount
@@ -162,9 +152,7 @@ func (r *UserRepositoryImpl) FindOneByEmail(email string) (*model.User, error) {
 
 func (r *UserRepositoryImpl) BatchGetUserByID(ids []int64) ([]*model.User, error) {
 	var users []*model.User
-	fmt.Println("repository_ids", ids)
 	err := r.DB.Where("id IN (?)", ids).Find(&users).Error
-	fmt.Println("repository_users_length", len(users))
 	return users, err
 }
 
@@ -187,7 +175,6 @@ func (r *UserRepositoryImpl) UpdateUser(user *model.User) error {
 		}
 
 		for _, key := range keys {
-			fmt.Println("delCache", key)
 			_ = r.delCache(key)
 		}
 
@@ -208,7 +195,6 @@ func (r *UserRepositoryImpl) ResetPassword(email string, password string) error 
 	}
 
 	for _, key := range keys {
-		fmt.Println("delCache", key)
 		_ = r.delCache(key)
 	}
 	return r.DB.Model(&model.User{}).Where("email = ?", email).Update("password", password).Error

@@ -1,7 +1,6 @@
 package utils
 
 import (
-	"fmt"
 	"github.com/bwmarrin/snowflake"
 	"time"
 )
@@ -25,8 +24,7 @@ func Init(startTime string, machineID int64) (err error) {
 }
 
 func init() {
-	if err := Init("2024-01-01", 1); err != nil {
-		fmt.Println("Init() failed, err = ", err)
+	if err := Init("2025-01-01", 1); err != nil {
 		return
 	}
 }

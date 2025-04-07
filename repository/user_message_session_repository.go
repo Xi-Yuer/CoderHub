@@ -3,7 +3,6 @@ package repository
 import (
 	"coderhub/model"
 	"context"
-	"fmt"
 	"strconv"
 
 	"gorm.io/gorm"
@@ -54,40 +53,37 @@ func (u *UserSessionRepositoryImpl) GetUserSession(ctx context.Context, userSess
 	return &session, nil
 }
 func (u *UserSessionRepositoryImpl) UpdateUserSession(ctx context.Context, userSession *model.UserSession) (*model.UserSession, error) {
+	// 构造要更新的字段
+	updateFields := map[string]interface{}{
+		"unread_count":         userSession.UnreadCount,
+		"unread_message_count": userSession.UnreadMessageCount,
+		"last_message_id":      userSession.LastMessageID,
+		"last_message_content": userSession.LastMessageContent,
+	}
+
+	// 如果 session_name 非空，则添加到更新字段中
+	if userSession.SessionName != "" {
+		updateFields["session_name"] = userSession.SessionName
+	}
+
+	// 执行更新
 	if err := u.DB.WithContext(ctx).Model(&model.UserSession{}).
 		Where("session_id = ?", userSession.SessionID).
-		Updates(map[string]interface{}{
-			"unread_count":         userSession.UnreadCount,
-			"unread_message_count": userSession.UnreadMessageCount,
-			"last_message_id":      userSession.LastMessageID,
-			"last_message_content": userSession.LastMessageContent,
-			// 如果还有其他字段要更新，明确写出
-		}).Error; err != nil {
+		Updates(updateFields).Error; err != nil {
 		return nil, err
 	}
-	if userSession.SessionName != "" {
-		if err := u.DB.WithContext(ctx).Model(&model.UserSession{}).
-			Where("session_id = ?", userSession.SessionID).
-			Updates(map[string]interface{}{
-				"session_name": userSession.SessionName,
-			}).Error; err != nil {
-			return nil, err
-		}
-	}
+
 	return userSession, nil
 }
 
 func (u *UserSessionRepositoryImpl) GetUserSessions(ctx context.Context, userID uint64, page, pageSize int64, sessionName string) ([]*model.UserSession, int64, error) {
 	var sessions []*model.UserSession
-	fmt.Println("GetUserSessions.Page:", page)
-	fmt.Println("GetUserSessions.PageSize:", pageSize)
 	if err := u.DB.WithContext(ctx).Model(&model.UserSession{}).Where(model.UserSession{
 		UserID:      strconv.FormatUint(userID, 10),
 		SessionName: sessionName,
 	}).Limit(int(pageSize)).Offset(int((page - 1) * pageSize)).Find(&sessions).Error; err != nil {
 		return nil, 0, err
 	}
-	fmt.Println("GetUserSessions.sessions:", sessions)
 	var total int64
 	if err := u.DB.WithContext(ctx).Model(&model.UserSession{}).Where(model.UserSession{
 		UserID:      strconv.FormatUint(userID, 10),

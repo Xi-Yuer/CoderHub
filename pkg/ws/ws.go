@@ -181,6 +181,7 @@ func (h *Hub) sendMessage(msg model.PrivateMessage) {
 	}
 
 	if ok {
+		msg.Status = "read"
 		if err := h.sendAndSaveMessage(target, msg); err != nil {
 			logx.Errorf("Failed to send and save message: %v", err)
 		}
@@ -207,6 +208,18 @@ func (h *Hub) sendAndSaveMessage(target *Connection, msg model.PrivateMessage) e
 
 // saveMessage 保存消息到数据库
 func (h *Hub) saveMessage(msg model.PrivateMessage) error {
+	// 更新会话信息
+	_, err := h.UserSessionRepository.UpdateUserSession(context.Background(), &model.UserSession{
+		SessionID:          msg.SessionID,
+		SessionName:        msg.SessionID,
+		UserID:             msg.SenderID,
+		PeerID:             msg.ReceiverID,
+		LastMessageID:      msg.MessageID,
+		LastMessageContent: msg.Content,
+	})
+	if err != nil {
+		return err
+	}
 	message := &model.PrivateMessage{
 		MessageID:   msg.MessageID,
 		SessionID:   msg.SessionID,

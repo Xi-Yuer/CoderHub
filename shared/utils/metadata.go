@@ -37,7 +37,6 @@ func GetUserID(ctx context.Context) (int64, error) {
 
 func SetUserMetaData(ctx context.Context) context.Context {
 	value := ctx.Value("userId")
-	fmt.Println("用户ID:", value)
 	md := metadata.New(
 		map[string]string{
 			"userId": fmt.Sprintf("%v", value), // 将 json.Number 转换为 string

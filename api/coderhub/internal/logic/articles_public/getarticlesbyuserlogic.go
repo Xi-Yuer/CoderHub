@@ -40,7 +40,6 @@ func (l *GetArticlesByUserLogic) GetArticlesByUser(req *types.GetArticlesByUserR
 		return l.errorResp(err)
 	}
 
-	fmt.Println("articlesIDs: ", articles.Ids)
 	if len(articles.Ids) == 0 {
 		return &types.GetArticlesByUserResp{
 			Response: types.Response{
@@ -111,15 +110,12 @@ func (l *GetArticlesByUserLogic) errorResp(err error) (*types.GetArticlesByUserR
 
 func (l *GetArticlesByUserLogic) convertToArticleType(article *coderhub.GetArticleResponse) *types.GetArticle {
 	if article == nil {
-		fmt.Println("article is nil")
 		return nil
 	}
 	if article.Article == nil {
-		fmt.Println("article.Article is nil")
 		return nil
 	}
 	if article.Author == nil {
-		fmt.Println("article.Author is nil")
 		return nil
 	}
 

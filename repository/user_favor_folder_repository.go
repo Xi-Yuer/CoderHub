@@ -4,7 +4,6 @@ import (
 	"coderhub/model"
 	"coderhub/shared/storage"
 	"context"
-	"fmt"
 	"gorm.io/gorm"
 )
 
@@ -47,7 +46,6 @@ func (r *UserFavorFolderRepositoryImpl) UpdateFolderNum(ctx context.Context, id 
 
 func (r *UserFavorFolderRepositoryImpl) GetFolderByID(ctx context.Context, id int64) (*model.UserFavorFolder, error) {
 	var userFavorFolder model.UserFavorFolder
-	fmt.Println("id:", id)
 	err := r.DB.WithContext(ctx).Where("id = ?", id).First(&userFavorFolder).Error
 	return &userFavorFolder, err
 }

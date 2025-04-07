@@ -8,7 +8,6 @@ import (
 	"coderhub/shared/utils"
 	"context"
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"time"
 
@@ -41,7 +40,6 @@ func (l *CreateWebSocketConnectionLogic) CreateWebSocketConnection(w http.Respon
 	}
 	// 获取用户身份信息 (从 JWT 解析 UserID)
 	userToken := r.URL.Query().Get("token")
-	fmt.Println("UserToken:", userToken)
 	if userToken == "" {
 		_ = conn.Close()
 		return err
@@ -50,9 +48,6 @@ func (l *CreateWebSocketConnectionLogic) CreateWebSocketConnection(w http.Respon
 	if err != nil {
 		return err
 	}
-
-	fmt.Println("UserID:", userID)
-
 	// 创建 WebSocket 连接实例
 	connection := &ws.Connection{
 		Conn:         conn,
@@ -84,9 +79,6 @@ func (l *CreateWebSocketConnectionLogic) CreateWebSocketConnection(w http.Respon
 				logx.Errorf("Failed to unmarshal message: %v", err)
 				continue
 			}
-			fmt.Println("SessionID:", message.SessionID)
-			fmt.Println("ReceiverID:", message.ReceiverID)
-			fmt.Println("Content:", message.Content)
 			// 数据校验
 			if message.SessionID == "" || message.ReceiverID == "" || message.Content == "" {
 				logx.Errorf("Invalid message: %v", err)
