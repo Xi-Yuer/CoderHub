@@ -80,14 +80,21 @@ func (r *ArticleRepositoryImpl) GetArticlesByIDs(ids []int64) ([]*model.Articles
 
 func (r *ArticleRepositoryImpl) ListRecommendedArticles(type_ string, categoryID int64, page, pageSize int64) ([]int64, error) {
 	var ids []int64
-	if err := r.DB.Debug().Table("articles").
-		Where("type = ? AND category_id = ?", type_, categoryID).
+
+	query := r.DB.Table("articles").Where("type = ?", type_)
+
+	if categoryID > 0 {
+		query = query.Where("category_id = ?", categoryID)
+	}
+
+	if err := query.
 		Order("created_at DESC").
 		Limit(int(pageSize)).
 		Offset(int((page-1)*pageSize)).
 		Pluck("id", &ids).Error; err != nil {
 		return nil, err
 	}
+
 	return ids, nil
 }
 func (r *ArticleRepositoryImpl) ListArticlesByAuthor(authorID int64, _type string, page, pageSize int64) ([]int64, int64, error) {

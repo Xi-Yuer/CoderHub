@@ -27,8 +27,10 @@ func NewGetSystemTagListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 	}
 }
 
-func (l *GetSystemTagListLogic) GetSystemTagList() (resp *types.GetTagListResp, err error) {
-	list, err := l.svcCtx.TagService.GetSystemProviderTagList(l.ctx, &coderhub.GetSystemProviderTagListRequest{})
+func (l *GetSystemTagListLogic) GetSystemTagList(req *types.GetSystemTagReq) (resp *types.GetTagListResp, err error) {
+	list, err := l.svcCtx.TagService.GetSystemProviderTagList(l.ctx, &coderhub.GetSystemProviderTagListRequest{
+		Type: req.Type,
+	})
 	if err != nil {
 		return l.errorResp(err)
 	}
@@ -61,6 +63,7 @@ func (l *GetSystemTagListLogic) successResp(list *coderhub.GetSystemProviderTagL
 				ID:               utils.Int2String(v.Id),
 				Name:             v.Name,
 				Description:      v.Description,
+				Type:             v.Type,
 				IsSystemProvider: v.IsSystemProvider,
 				Icon:             v.Icon,
 				UsageCount:       v.UsageCount,

@@ -24,7 +24,7 @@ func NewGetArticleTagListLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 }
 
 func (l *GetArticleTagListLogic) GetArticleTagList(in *coderhub.GetArticleTagListRequest) (*coderhub.GetArticleTagListResponse, error) {
-	list, total, err := l.svcCtx.ArticleTagRepository.GetList(l.ctx, int64(in.Page), int64(in.PageSize))
+	list, total, err := l.svcCtx.ArticleTagRepository.GetList(l.ctx, in.Type, int64(in.Page), int64(in.PageSize))
 	if err != nil {
 		return nil, err
 	}
@@ -34,6 +34,7 @@ func (l *GetArticleTagListLogic) GetArticleTagList(in *coderhub.GetArticleTagLis
 			Id:               v.ID,
 			Name:             v.Name,
 			Description:      v.Description,
+			Type:             v.Type,
 			IsSystemProvider: v.IsSystemProvider,
 			Icon:             v.Icon,
 			UsageCount:       v.UsageCount,

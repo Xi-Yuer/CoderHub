@@ -31,6 +31,7 @@ func (l *CreateTagLogic) CreateTag(req *types.CreateTagReq) (resp *types.CreateT
 		Name:             req.Name,
 		Description:      req.Description,
 		IsSystemProvider: req.IsSystemProvider,
+		Type:             req.Type,
 		Icon:             req.Icon,
 	})
 	if err != nil {

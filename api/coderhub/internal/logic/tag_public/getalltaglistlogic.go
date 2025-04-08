@@ -31,6 +31,7 @@ func (l *GetAllTagListLogic) GetAllTagList(req *types.GetTagListReq) (resp *type
 	list, err := l.svcCtx.TagService.GetArticleTagList(l.ctx, &coderhub.GetArticleTagListRequest{
 		Page:     req.Page,
 		PageSize: req.PageSize,
+		Type:     req.Type,
 	})
 	if err != nil {
 		return l.errorResp(err)
@@ -64,6 +65,7 @@ func (l *GetAllTagListLogic) successResp(list *coderhub.GetArticleTagListRespons
 				ID:               utils.Int2String(v.Id),
 				Name:             v.Name,
 				Description:      v.Description,
+				Type:             v.Type,
 				IsSystemProvider: v.IsSystemProvider,
 				Icon:             v.Icon,
 				UsageCount:       v.UsageCount,

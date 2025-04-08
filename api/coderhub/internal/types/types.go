@@ -233,6 +233,7 @@ type CreateTagReq struct {
 	Description      string `json:"description"`        // 标签描述
 	IsSystemProvider bool   `json:"is_system_provider"` // 是否为系统标签
 	Icon             string `json:"icon"`               // 标签图标
+	Type             string `json:"type"`               // 标签类型
 }
 
 type CreateTagResp struct {
@@ -538,7 +539,7 @@ type GetArticlesReq struct {
 	Page       int32  `form:"page"`                            // 页码
 	PageSize   int32  `form:"page_size"`                       // 每页数量
 	UserID     string `form:"user_id,optional"`                // 用户 ID
-	CategoryID string `form:"category_id"`                     // 分类 ID
+	CategoryID string `form:"category_id,optional"`            // 分类 ID
 }
 
 type GetArticlesResp struct {
@@ -778,9 +779,14 @@ type GetSessionListResp struct {
 	Data *SessionList `json:"data"`
 }
 
+type GetSystemTagReq struct {
+	Type string `form:"type"` // 标签类型
+}
+
 type GetTagListReq struct {
-	Page     int32 `form:"page"`      // 页码
-	PageSize int32 `form:"page_size"` // 每页数量
+	Page     int32  `form:"page"`      // 页码
+	PageSize int32  `form:"page_size"` // 每页数量
+	Type     string `form:"type"`      // 标签类型
 }
 
 type GetTagListResp struct {
@@ -1071,6 +1077,7 @@ type Tag struct {
 	ID               string `json:"id"`                 // 标签 ID
 	Name             string `json:"name"`               // 标签名称
 	Description      string `json:"description"`        // 标签描述
+	Type             string `json:"type"`               // 标签类型
 	IsSystemProvider bool   `json:"is_system_provider"` // 是否为系统标签
 	Icon             string `json:"icon"`               // 标签图标
 	UsageCount       int64  `json:"usage_count"`        // 标签使用次数

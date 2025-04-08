@@ -24,6 +24,8 @@ type UserSessionRepository interface {
 	Create(ctx context.Context, userSession *model.UserSession) (*model.UserSession, error)
 	// GetUserSession 获取用户会话
 	GetUserSession(ctx context.Context, userSession *model.UserSession) (*model.UserSession, error)
+	// GetUserSessionBySessionID 根据会话ID获取用户会话
+	GetUserSessionBySessionID(ctx context.Context, sessionID string) (*model.UserSession, error)
 	// UpdateUserSession 更新用户会话
 	UpdateUserSession(ctx context.Context, userSession *model.UserSession) (*model.UserSession, error)
 	// GetUserSessions 获取用户会话列表
@@ -52,6 +54,15 @@ func (u *UserSessionRepositoryImpl) GetUserSession(ctx context.Context, userSess
 	}
 	return &session, nil
 }
+
+func (u *UserSessionRepositoryImpl) GetUserSessionBySessionID(ctx context.Context, sessionID string) (*model.UserSession, error) {
+	var session model.UserSession
+	if err := u.DB.WithContext(ctx).Where("session_id =?", sessionID).First(&session).Error; err != nil {
+		return nil, err
+	}
+	return &session, nil
+}
+
 func (u *UserSessionRepositoryImpl) UpdateUserSession(ctx context.Context, userSession *model.UserSession) (*model.UserSession, error) {
 	// 构造要更新的字段
 	updateFields := map[string]interface{}{

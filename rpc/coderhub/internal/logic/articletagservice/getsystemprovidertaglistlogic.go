@@ -24,7 +24,7 @@ func NewGetSystemProviderTagListLogic(ctx context.Context, svcCtx *svc.ServiceCo
 }
 
 func (l *GetSystemProviderTagListLogic) GetSystemProviderTagList(in *coderhub.GetSystemProviderTagListRequest) (*coderhub.GetSystemProviderTagListResponse, error) {
-	tags, total, err := l.svcCtx.ArticleTagRepository.GetSystemTags(l.ctx)
+	tags, total, err := l.svcCtx.ArticleTagRepository.GetSystemTags(l.ctx, in.Type)
 	if err != nil {
 		return nil, err
 	}
@@ -34,6 +34,7 @@ func (l *GetSystemProviderTagListLogic) GetSystemProviderTagList(in *coderhub.Ge
 			Id:               v.ID,
 			Name:             v.Name,
 			Description:      v.Description,
+			Type:             v.Type,
 			IsSystemProvider: v.IsSystemProvider,
 			Icon:             v.Icon,
 			UsageCount:       v.UsageCount,

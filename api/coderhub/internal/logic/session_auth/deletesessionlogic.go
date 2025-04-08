@@ -27,9 +27,7 @@ func NewDeleteSessionLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Del
 }
 
 func (l *DeleteSessionLogic) DeleteSession(req *types.DeleteSessionReq) (resp *types.DeleteSessionResp, err error) {
-	userSession, err := l.svcCtx.UserSessionRepository.GetUserSession(l.ctx, &model.UserSession{
-		SessionID: req.ID,
-	})
+	userSession, err := l.svcCtx.UserSessionRepository.GetUserSessionBySessionID(l.ctx, req.ID)
 	if err != nil {
 		return l.errorResp(err)
 	}
@@ -47,7 +45,7 @@ func (l *DeleteSessionLogic) DeleteSession(req *types.DeleteSessionReq) (resp *t
 	if err != nil {
 		return l.errorResp(err)
 	}
-	return
+	return l.successResp()
 }
 
 func (l *DeleteSessionLogic) errorResp(err error) (resp *types.DeleteSessionResp, err1 error) {

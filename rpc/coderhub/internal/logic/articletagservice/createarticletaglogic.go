@@ -27,6 +27,7 @@ func (l *CreateArticleTagLogic) CreateArticleTag(in *coderhub.CreateArticleTagRe
 	err := l.svcCtx.ArticleTagRepository.Create(l.ctx, &model.ArticleTag{
 		ID:               utils.GenID(),
 		Name:             in.Name,
+		Type:             in.Type,
 		Description:      in.Description,
 		Icon:             in.Icon,
 		IsSystemProvider: in.IsSystemProvider,

@@ -9,7 +9,7 @@ import (
 	"github.com/zeromicro/go-zero/rest/httpx"
 )
 
-// 获取全部分类标签（包含系统和用户自定义的标签）
+// GetAllTagListHandler 获取全部分类标签（包含系统和用户自定义的标签）
 func GetAllTagListHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var req types.GetTagListReq
