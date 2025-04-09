@@ -28,4 +28,5 @@ type Config struct {
 	WorkExpService              zrpc.RpcClientConf
 	MessageService              zrpc.RpcClientConf
 	CreatorDashBoardService     zrpc.RpcClientConf
+	SignInService               zrpc.RpcClientConf
 }

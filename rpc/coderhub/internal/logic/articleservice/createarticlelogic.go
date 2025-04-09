@@ -108,6 +108,10 @@ func (l *CreateArticleLogic) CreateArticle(in *coderhub.CreateArticleRequest) (*
 		})
 		return nil, fmt.Errorf("保存文章失败: %w", err)
 	}
+	// 增加用户经验
+	go func() {
+		_ = l.svcCtx.UserRepository.IncrUserLevel(article.AuthorID, conf.ArticleCreateLevel)
+	}()
 
 	return &coderhub.CreateArticleResponse{
 		Id: articleID,

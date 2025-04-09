@@ -32,6 +32,8 @@ type User struct {
 	Status bool `gorm:"default:true;not null" json:"status"`
 	// 是否为管理员
 	IsAdmin bool `gorm:"default:false;not null" json:"is_admin"`
+	// 用户等级，默认为 300，level3
+	Level int32 `gorm:"default:300;not null" json:"level"`
 	// 记录创建时间
 	CreatedAt time.Time `gorm:"<-:create" json:"created_at"`
 	// 更新时间

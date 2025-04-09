@@ -1,6 +1,7 @@
 package commentservicelogic
 
 import (
+	"coderhub/conf"
 	"coderhub/model"
 	"coderhub/rpc/coderhub/coderhub"
 	imagerelationservicelogic "coderhub/rpc/coderhub/internal/logic/imagerelationservice"
@@ -118,6 +119,10 @@ func (l *CreateCommentLogic) CreateComment(in *coderhub.CreateCommentRequest) (*
 			}
 		}
 	}
+	// 增加用户经验
+	go func() {
+		_ = l.svcCtx.UserRepository.IncrUserLevel(in.UserId, conf.CommentCreateLevel)
+	}()
 
 	// 返回评论响应
 	return &coderhub.CreateCommentResponse{

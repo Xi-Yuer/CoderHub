@@ -1,6 +1,7 @@
 package articleservicelogic
 
 import (
+	"coderhub/conf"
 	"coderhub/model"
 	"context"
 
@@ -37,12 +38,20 @@ func (l *UpdateLikeCountLogic) UpdateLikeCount(in *coderhub.UpdateLikeCountReque
 		if err != nil {
 			return nil, err
 		}
+		// 减少用户经验
+		go func() {
+			_ = l.svcCtx.UserRepository.IncrUserLevel(in.UserId, conf.DisArticleLikeLevel)
+		}()
 	} else {
 		// 点赞
 		err := l.svcCtx.ArticlesRelationLikeRepository.Create(l.ctx, &articleRelationLike)
 		if err != nil {
 			return nil, err
 		}
+		// 增加用户经验
+		go func() {
+			_ = l.svcCtx.UserRepository.IncrUserLevel(in.UserId, conf.ArticleLikeLevel)
+		}()
 	}
 
 	return &coderhub.UpdateLikeCountResponse{}, nil

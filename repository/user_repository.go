@@ -19,6 +19,7 @@ type UserRepository interface {
 	FindOneByEmail(email string) (*model.User, error)
 	BatchGetUserByID(ids []int64) ([]*model.User, error)
 	UpdateUser(user *model.User) error
+	IncrUserLevel(id int64, level int32) error
 	ResetPassword(email string, password string) error
 	DeleteUser(id int64) error
 }
@@ -178,6 +179,29 @@ func (r *UserRepositoryImpl) UpdateUser(user *model.User) error {
 			_ = r.delCache(key)
 		}
 
+		return nil
+	})
+}
+
+func (r *UserRepositoryImpl) IncrUserLevel(id int64, level int32) error {
+	return r.DB.Transaction(func(tx *gorm.DB) error {
+		// 获取旧数据用于清理缓存
+		var oldUser model.User
+		if err := tx.First(&oldUser, id).Error; err != nil {
+			return fmt.Errorf("获取用户失败: %w", err)
+		}
+		// 清理所有相关缓存
+		keys := []string{
+			oldUser.CacheKeyByID(oldUser.ID),
+			oldUser.CacheKeyByName(oldUser.UserName),
+		}
+		for _, key := range keys {
+			_ = r.delCache(key)
+		}
+		// 更新用户等级,原来的基础上加数值
+		if err := tx.Model(&model.User{}).Where("id = ?", id).Update("level", gorm.Expr("level + ?", level)).Error; err != nil {
+			return err
+		}
 		return nil
 	})
 }

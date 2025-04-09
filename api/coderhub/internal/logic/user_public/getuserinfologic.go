@@ -50,6 +50,7 @@ func (l *GetUserInfoLogic) GetUserInfo(req *types.GetUserInfoReq) (resp *types.G
 			Phone:        UserInfo.Phone,
 			Avatar:       UserInfo.Avatar,
 			Gender:       UserInfo.Gender,
+			Level:        UserInfo.Level,
 			Age:          UserInfo.Age,
 			Status:       UserInfo.Status,
 			IsAdmin:      UserInfo.IsAdmin,

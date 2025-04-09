@@ -40,6 +40,7 @@ message UserInfo {
   int64 follower_count = 15;
   bool  is_followed = 16;
   int32 article_count = 17;
+  int32 level = 18;
 }
 
 message UpdateUserInfoRequest {
@@ -1370,4 +1371,23 @@ service CreatorDashBoardService {
   rpc GetCreatorDashBoard(GetCreatorDashBoardRequest) returns (GetCreatorDashBoardResponse);
 }
 
+// 签到
+message UserSignInRequest {
+  int64 userId = 1;
+}
+message SignInResponse {
+  bool success = 1;
+  repeated bool days = 2;
+}
 
+// 获取签到信息
+message GetUserSignInMonthRequest {
+  int64 userId = 1;
+  int32 year = 2;
+  int32 month = 3;
+}
+
+service  SignInService {
+  rpc UserSignIn(UserSignInRequest) returns (SignInResponse);
+  rpc GetUserSignInMonth(GetUserSignInMonthRequest) returns (SignInResponse);
+}

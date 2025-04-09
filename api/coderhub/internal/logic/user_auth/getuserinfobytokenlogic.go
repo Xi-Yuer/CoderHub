@@ -46,6 +46,7 @@ func (l *GetUserInfoByTokenLogic) GetUserInfoByToken() (resp *types.GetUserInfoR
 		Email:        user.Email,
 		Phone:        user.Phone,
 		Avatar:       user.Avatar,
+		Level:        user.Level,
 		Gender:       user.Gender,
 		Age:          user.Age,
 		Status:       user.Status,

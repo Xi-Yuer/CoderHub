@@ -115,6 +115,7 @@ func (l *GetArticleLogic) convertToArticleType(article *coderhub.GetArticleRespo
 			Username: article.Author.UserName,
 			Nickname: article.Author.NickName,
 			Email:    article.Author.Email,
+			Level:    article.Author.Level,
 			Phone:    article.Author.Phone,
 			Avatar:   article.Author.Avatar,
 			Gender:   article.Author.Gender,

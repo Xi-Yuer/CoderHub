@@ -39,6 +39,7 @@ type (
 		Email        string `json:"email"` // 邮箱
 		Phone        string `json:"phone"` // 手机号
 		Avatar       string `json:"avatar"` // 头像
+        Level int32 `json:"level"` // 等级
 		Gender       int32  `json:"gender,options=0|1"` // 性别 0:未知 1:男 2:女
 		Age          int32  `json:"age,range=[0:120]"` // 年龄
 		Status       bool   `json:"status"` // 状态 true:正常 false:禁用
@@ -1160,6 +1161,23 @@ type (
 		Response
 		Data bool `json:"data"`
 	}
+    CreateSignReq{
+    }
+    CreateSignResp {
+        Response
+        Data []UserSign `json:"data"`
+    }
+    GetUserSignReq {
+        Year int64 `form:"year"`
+        Month int64 `form:"month"`
+    }
+    UserSign {
+        isSignin bool `json:"bool"`
+    }
+    GetUserSignResp {
+        Response
+        Data []UserSign `json:"data"`
+    }
 )
 
 @server (
@@ -1862,5 +1880,24 @@ service CodeHubAPI {
 	)
 	@handler DeleteSession
 	delete /delete/:id (DeleteSessionReq) returns (DeleteSessionResp)
+}
+
+@server(
+    jwt: Auth
+    prefix: /api/signin
+    group: signin_auth
+)
+service CodeHubAPI {
+    @doc(
+        summary: "创建一个签到"
+    )
+    @handler CreateSignIn
+    post /create (CreateSignReq) returns (CreateSignResp)
+
+    @doc(
+        summary: "获取签到列表"
+    )
+    @handler ListSignIn
+    get /list (GetUserSignReq) returns (GetUserSignResp)
 }
 

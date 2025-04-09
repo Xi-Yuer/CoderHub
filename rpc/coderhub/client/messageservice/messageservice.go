@@ -160,6 +160,7 @@ type (
 	GetUserFollowsResp                  = coderhub.GetUserFollowsResp
 	GetUserInfoByUsernameRequest        = coderhub.GetUserInfoByUsernameRequest
 	GetUserInfoRequest                  = coderhub.GetUserInfoRequest
+	GetUserSignInMonthRequest           = coderhub.GetUserSignInMonthRequest
 	GetWorkExpListRequest               = coderhub.GetWorkExpListRequest
 	GetWorkExpListResponse              = coderhub.GetWorkExpListResponse
 	Image                               = coderhub.Image
@@ -183,6 +184,7 @@ type (
 	ResetPasswordResponse               = coderhub.ResetPasswordResponse
 	Response                            = coderhub.Response
 	SchoolExp                           = coderhub.SchoolExp
+	SignInResponse                      = coderhub.SignInResponse
 	UpdateArticleRequest                = coderhub.UpdateArticleRequest
 	UpdateArticleResponse               = coderhub.UpdateArticleResponse
 	UpdateArticleTagUsageCountRequest   = coderhub.UpdateArticleTagUsageCountRequest
@@ -201,6 +203,7 @@ type (
 	UploadRequest                       = coderhub.UploadRequest
 	UserFollowInfo                      = coderhub.UserFollowInfo
 	UserInfo                            = coderhub.UserInfo
+	UserSignInRequest                   = coderhub.UserSignInRequest
 	WorkExp                             = coderhub.WorkExp
 
 	MessageService interface {

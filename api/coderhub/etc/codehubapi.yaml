@@ -90,3 +90,8 @@ CreatorDashBoardService:
     Hosts:
       - etcd:2379
     Key: coderhub.rpc
+SignInService:
+  Etcd:
+    Hosts:
+      - etcd:2379
+    Key: coderhub.rpc

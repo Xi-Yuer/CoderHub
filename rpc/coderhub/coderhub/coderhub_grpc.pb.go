@@ -4542,3 +4542,143 @@ var CreatorDashBoardService_ServiceDesc = grpc.ServiceDesc{
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "coderhub.proto",
 }
+
+const (
+	SignInService_UserSignIn_FullMethodName         = "/coderhub.SignInService/UserSignIn"
+	SignInService_GetUserSignInMonth_FullMethodName = "/coderhub.SignInService/GetUserSignInMonth"
+)
+
+// SignInServiceClient is the client API for SignInService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type SignInServiceClient interface {
+	UserSignIn(ctx context.Context, in *UserSignInRequest, opts ...grpc.CallOption) (*SignInResponse, error)
+	GetUserSignInMonth(ctx context.Context, in *GetUserSignInMonthRequest, opts ...grpc.CallOption) (*SignInResponse, error)
+}
+
+type signInServiceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewSignInServiceClient(cc grpc.ClientConnInterface) SignInServiceClient {
+	return &signInServiceClient{cc}
+}
+
+func (c *signInServiceClient) UserSignIn(ctx context.Context, in *UserSignInRequest, opts ...grpc.CallOption) (*SignInResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SignInResponse)
+	err := c.cc.Invoke(ctx, SignInService_UserSignIn_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *signInServiceClient) GetUserSignInMonth(ctx context.Context, in *GetUserSignInMonthRequest, opts ...grpc.CallOption) (*SignInResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SignInResponse)
+	err := c.cc.Invoke(ctx, SignInService_GetUserSignInMonth_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// SignInServiceServer is the server API for SignInService service.
+// All implementations must embed UnimplementedSignInServiceServer
+// for forward compatibility.
+type SignInServiceServer interface {
+	UserSignIn(context.Context, *UserSignInRequest) (*SignInResponse, error)
+	GetUserSignInMonth(context.Context, *GetUserSignInMonthRequest) (*SignInResponse, error)
+	mustEmbedUnimplementedSignInServiceServer()
+}
+
+// UnimplementedSignInServiceServer must be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedSignInServiceServer struct{}
+
+func (UnimplementedSignInServiceServer) UserSignIn(context.Context, *UserSignInRequest) (*SignInResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UserSignIn not implemented")
+}
+func (UnimplementedSignInServiceServer) GetUserSignInMonth(context.Context, *GetUserSignInMonthRequest) (*SignInResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUserSignInMonth not implemented")
+}
+func (UnimplementedSignInServiceServer) mustEmbedUnimplementedSignInServiceServer() {}
+func (UnimplementedSignInServiceServer) testEmbeddedByValue()                       {}
+
+// UnsafeSignInServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to SignInServiceServer will
+// result in compilation errors.
+type UnsafeSignInServiceServer interface {
+	mustEmbedUnimplementedSignInServiceServer()
+}
+
+func RegisterSignInServiceServer(s grpc.ServiceRegistrar, srv SignInServiceServer) {
+	// If the following call pancis, it indicates UnimplementedSignInServiceServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&SignInService_ServiceDesc, srv)
+}
+
+func _SignInService_UserSignIn_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UserSignInRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SignInServiceServer).UserSignIn(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SignInService_UserSignIn_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SignInServiceServer).UserSignIn(ctx, req.(*UserSignInRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SignInService_GetUserSignInMonth_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetUserSignInMonthRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SignInServiceServer).GetUserSignInMonth(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SignInService_GetUserSignInMonth_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SignInServiceServer).GetUserSignInMonth(ctx, req.(*GetUserSignInMonthRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// SignInService_ServiceDesc is the grpc.ServiceDesc for SignInService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var SignInService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "coderhub.SignInService",
+	HandlerType: (*SignInServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "UserSignIn",
+			Handler:    _SignInService_UserSignIn_Handler,
+		},
+		{
+			MethodName: "GetUserSignInMonth",
+			Handler:    _SignInService_GetUserSignInMonth_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "coderhub.proto",
+}

@@ -59,3 +59,14 @@ const (
 	ErrGetArticleFailed    = "获取文章失败: %v"
 	ErrDeleteArticleFailed = "删除文章失败: %v"
 )
+
+const (
+	ArticleCreateLevel   = 10
+	ArticleLikeLevel     = 5
+	DisArticleLikeLevel  = -5
+	CommentCreateLevel   = 5
+	CommentLikeLevel     = 2
+	DisCommentLikeLevel  = -2
+	FavorFoldCreateLevel = 2
+	SignInLevel          = 2
+)

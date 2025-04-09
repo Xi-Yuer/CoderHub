@@ -165,6 +165,7 @@ func (l *GetArticleLogic) GetArticle(in *coderhub.GetArticleRequest) (*coderhub.
 			Avatar:    author.Avatar.String,
 			Email:     author.Email.String,
 			Gender:    author.Gender,
+			Level:     author.Level,
 			Age:       author.Age,
 			Phone:     author.Phone.String,
 			NickName:  author.NickName.String,

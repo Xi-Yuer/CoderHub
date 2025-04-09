@@ -118,6 +118,7 @@ func (l *ListArticlesLogic) ListArticles(in *coderhub.GetArticlesRequest) (*code
 			Avatar:    author.Avatar.String,
 			Email:     author.Email.String,
 			Gender:    author.Gender,
+			Level:     author.Level,
 			Age:       author.Age,
 			Phone:     author.Phone.String,
 			NickName:  author.NickName.String,

@@ -228,6 +228,14 @@ type CreateSessionResp struct {
 	Data Session `json:"data"`
 }
 
+type CreateSignReq struct {
+}
+
+type CreateSignResp struct {
+	Response
+	Data []UserSign `json:"data"`
+}
+
 type CreateTagReq struct {
 	Name             string `json:"name"`               // 标签名称
 	Description      string `json:"description"`        // 标签描述
@@ -822,6 +830,16 @@ type GetUserListResp struct {
 	Data UserList `json:"data"` // 用户列表
 }
 
+type GetUserSignReq struct {
+	Year  int64 `form:"year"`
+	Month int64 `form:"month"`
+}
+
+type GetUserSignResp struct {
+	Response
+	Data []UserSign `json:"data"`
+}
+
 type GetWorkExpListReq struct {
 	Page     int32  `form:"page"`
 	PageSize int32  `form:"page_size"`
@@ -1209,6 +1227,7 @@ type UserInfo struct {
 	Email        string `json:"email"`              // 邮箱
 	Phone        string `json:"phone"`              // 手机号
 	Avatar       string `json:"avatar"`             // 头像
+	Level        int32  `json:"level"`              // 等级
 	Gender       int32  `json:"gender,options=0|1"` // 性别 0:未知 1:男 2:女
 	Age          int32  `json:"age,range=[0:120]"`  // 年龄
 	Status       bool   `json:"status"`             // 状态 true:正常 false:禁用
@@ -1224,6 +1243,10 @@ type UserInfo struct {
 type UserList struct {
 	Total int64      `json:"total"` // 总数
 	List  []UserInfo `json:"list"`  // 用户列表
+}
+
+type UserSign struct {
+	IsSignin bool `json:"bool"`
 }
 
 type WebSocketResponse struct {

@@ -91,6 +91,7 @@ func NewGorm() *gorm.DB {
 			&model.Message{},
 			&model.PrivateMessage{},
 			&model.UserSession{},
+			&model.UserSigningLog{},
 		); err != nil {
 			log.Fatalf("数据库迁移失败: %v", err)
 		}

@@ -1,6 +1,7 @@
 package favorfoldservicelogic
 
 import (
+	"coderhub/conf"
 	"coderhub/model"
 	"coderhub/rpc/coderhub/coderhub"
 	"coderhub/rpc/coderhub/internal/svc"
@@ -35,7 +36,10 @@ func (l *CreateFavorFoldLogic) CreateFavorFold(in *coderhub.CreateFavorFoldReque
 	if err != nil {
 		return nil, err
 	}
-
+	// 增加用户经验
+	go func() {
+		_ = l.svcCtx.UserRepository.IncrUserLevel(in.UserId, conf.FavorFoldCreateLevel)
+	}()
 	return &coderhub.CreateFavorFoldResponse{
 		Success: true,
 	}, nil
