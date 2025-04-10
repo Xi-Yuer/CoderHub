@@ -1,7 +1,0 @@
-http.host: 0.0.0.0
-log.level: debug
-xpack.monitoring.elasticsearch.hosts:
-- http://elasticsearch:9200
-xpack.monitoring.elasticsearch.password: 2214380963Wx!!
-xpack.monitoring.elasticsearch.username: elastic
-xpack.monitoring.enabled: false

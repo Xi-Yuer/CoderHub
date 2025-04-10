@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"bytes"
 	"coderhub/model"
 	"coderhub/shared/storage"
 	"encoding/json"
@@ -22,25 +23,56 @@ type ArticleRepository interface {
 	GetUserArticleCount(authorID int64) (int64, error)
 	GetUserMicroPostCount(authorID int64) (int64, error)
 	GetUserAllArticleIDS(authorID int64) ([]int64, error)
+	GetArticlesBySearchKeys(keys string, _type string, page, pageSize int64) ([]int64, error)
 }
 type ArticleRepositoryImpl struct {
 	DB       *gorm.DB
 	Redis    storage.RedisDB
+	Elastic  *storage.ElasticSearchClient
 	minLikes int32
 }
 
-func NewArticleRepositoryImpl(db *gorm.DB, rdb storage.RedisDB) *ArticleRepositoryImpl {
+func NewArticleRepositoryImpl(db *gorm.DB, rdb storage.RedisDB, elastic *storage.ElasticSearchClient) *ArticleRepositoryImpl {
 	return &ArticleRepositoryImpl{
 		DB:       db,
 		Redis:    rdb,
+		Elastic:  elastic,
 		minLikes: 10,
 	}
+}
+
+type ArticleEsVO struct {
+	ID      int64  `json:"id"`
+	Title   string `json:"title"`
+	Summary string `json:"summary"`
+	Content string `json:"content"`
+	Tags    string `json:"tags"`
 }
 
 func (r *ArticleRepositoryImpl) CreateArticle(article *model.Articles) error {
 	if err := r.DB.Create(article).Error; err != nil {
 		return err
 	}
+	// 创建文章后，异步更新ES
+	go func() {
+		articleEsVO := ArticleEsVO{
+			ID:      article.ID,
+			Title:   article.Title,
+			Summary: article.Summary,
+			Content: article.Content,
+			Tags:    article.Tags,
+		}
+		articleJSON, err := json.Marshal(articleEsVO)
+		if err != nil {
+			fmt.Printf("Failed to marshal article to JSON: %v\n", err)
+			return
+		}
+		// 使用 bytes.NewReader 将字节切片转换为 io.Reader
+		err = r.Elastic.CreateIndex("articles", article.ID, bytes.NewReader(articleJSON))
+		if err != nil {
+			fmt.Printf("Failed to create index in Elasticsearch: %v\n", err)
+		}
+	}()
 	// 创建后设置缓存
 	return r.setCache(article.CacheKeyByID(article.ID), article)
 }
@@ -180,6 +212,8 @@ func (r *ArticleRepositoryImpl) DeleteArticle(id int64) error {
 	if err != nil {
 		return err
 	}
+	// 删除ES索引
+	err = r.Elastic.DeleteByID("articles", id)
 	return r.DB.Delete(&model.Articles{}, id).Error
 }
 
@@ -225,6 +259,19 @@ func (r *ArticleRepositoryImpl) GetUserMicroPostCount(authorID int64) (int64, er
 func (r *ArticleRepositoryImpl) GetUserAllArticleIDS(authorID int64) ([]int64, error) {
 	var ids []int64
 	if err := r.DB.Model(&model.Articles{}).Where("author_id = ?", authorID).Pluck("id", &ids).Error; err != nil {
+		return nil, err
+	}
+	return ids, nil
+}
+func (r *ArticleRepositoryImpl) GetArticlesBySearchKeys(keys string, _type string, page, pageSize int64) ([]int64, error) {
+	// 先从ES中搜索到对应搜索关键字的文章ID
+	ids, err := r.Elastic.SearchByFields("articles", map[string]interface{}{
+		"title":   keys,
+		"summary": keys,
+		"content": keys,
+		"tags":    keys,
+	})
+	if err != nil {
 		return nil, err
 	}
 	return ids, nil

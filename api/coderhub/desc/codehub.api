@@ -39,7 +39,7 @@ type (
 		Email        string `json:"email"` // 邮箱
 		Phone        string `json:"phone"` // 手机号
 		Avatar       string `json:"avatar"` // 头像
-        Level int32 `json:"level"` // 等级
+		Level        int32  `json:"level"` // 等级
 		Gender       int32  `json:"gender,options=0|1"` // 性别 0:未知 1:男 2:女
 		Age          int32  `json:"age,range=[0:120]"` // 年龄
 		Status       bool   `json:"status"` // 状态 true:正常 false:禁用
@@ -448,12 +448,19 @@ type (
 		Article *Article  `json:"article"` // 文章详情
 		Author  *UserInfo `json:"author"` // 作者信息
 	}
+	SearchArticlesReq {
+		Keyword       string `form:"keyword"` // 关键词
+		Page          int32  `form:"page"`
+		PageSize      int32  `form:"page_size"`
+		RequestUserID string `header:"request-user-id,optional"` // 请求用户 ID
+		Type          string `form:"type,options=article|micro_post"`
+	}
 	GetArticlesReq {
 		Type       string `form:"type,options=article|micro_post"` // 内容类型
 		Page       int32  `form:"page"` // 页码
 		PageSize   int32  `form:"page_size"` // 每页数量
 		UserID     string `form:"user_id,optional"` // 用户 ID
-        CategoryID string `form:"category_id,optional"`            // 分类 ID
+		CategoryID string `form:"category_id,optional"` // 分类 ID
 	}
 	GetArticlesByUserReq {
 		Type          string `form:"type,options=article|micro_post"` // 内容类型
@@ -819,7 +826,7 @@ type (
 		ID               string `json:"id"` // 标签 ID
 		Name             string `json:"name"` // 标签名称
 		Description      string `json:"description"` // 标签描述
-        Type string `json:"type"` // 标签类型
+		Type             string `json:"type"` // 标签类型
 		IsSystemProvider bool   `json:"is_system_provider"` // 是否为系统标签
 		Icon             string `json:"icon"` // 标签图标
 		UsageCount       int64  `json:"usage_count"` // 标签使用次数
@@ -830,15 +837,15 @@ type (
 		Total int64  `json:"total"`
 		List  []*Tag `json:"list"`
 	}
-        // 获取系统标签
-    GetSystemTagReq {
-        Type string `form:"type"` // 标签类型
-    }
+	// 获取系统标签
+	GetSystemTagReq {
+		Type string `form:"type"` // 标签类型
+	}
 	// 获取标签列表
 	GetTagListReq {
-        Page int32 `form:"page"`          // 页码
-        PageSize int32 `form:"page_size"` // 每页数量
-        Type string `form:"type"`         // 标签类型
+		Page     int32  `form:"page"` // 页码
+		PageSize int32  `form:"page_size"` // 每页数量
+		Type     string `form:"type"` // 标签类型
 	}
 	GetTagListResp {
 		Response
@@ -850,7 +857,7 @@ type (
 		Description      string `json:"description"` // 标签描述
 		IsSystemProvider bool   `json:"is_system_provider"` // 是否为系统标签
 		Icon             string `json:"icon"` // 标签图标
-        Type string `json:"type"` // 标签类型
+		Type             string `json:"type"` // 标签类型
 	}
 	CreateTagResp {
 		Response
@@ -1009,24 +1016,24 @@ type (
 		RequestUserId string `header:"request-user-id"`
 	}
 	GetChatMessageListReq {
-        Page int64 `form:"page"`
-        PageSize int64 `form:"page_size"`
-        SessionID string `form:"session_id"`
-        SenderID string `form:"sender_id"`
+		Page       int64  `form:"page"`
+		PageSize   int64  `form:"page_size"`
+		SessionID  string `form:"session_id"`
+		SenderID   string `form:"sender_id"`
 		ReceiverID string `form:"receiver_id"`
 	}
 	ChatMessageList {
-        List []*PrivateMessage `json:"list"`
-        Total int64 `json:"total"`
+		List  []*PrivateMessage `json:"list"`
+		Total int64             `json:"total"`
 	}
 	GetPrivateChatMessageListResp {
 		Response
 		Data *ChatMessageList `json:"data"`
 	}
 	UpdateChatSessionReq {
-        SessionID string `json:"sessionId"`
-        SenderID string `json:"senderId"`
-        PeerID string `json:"peerId"`
+		SessionID   string `json:"sessionId"`
+		SenderID    string `json:"senderId"`
+		PeerID      string `json:"peerId"`
 		SessionName string `json:"sessionName,optional"`
 	}
 	UpdateChatSessionResp {
@@ -1050,17 +1057,17 @@ type (
 		UpdatedAt  int64     `json:"updatedAt"`
 	}
 	PrivateMessage {
-        MessageID string `json:"message_id"`
-        SessionID string `json:"session_id"`
-        SenderID string `json:"sender_id"`
-        ReceiverID string `json:"receiver_id"`
+		MessageID   string `json:"message_id"`
+		SessionID   string `json:"session_id"`
+		SenderID    string `json:"sender_id"`
+		ReceiverID  string `json:"receiver_id"`
 		Content     string `json:"content"`
 		ContentType string `json:"content_type"`
 		Status      string `json:"status"`
 		Timestamp   int64  `json:"timestamp"`
-        IsRecalled bool `json:"is_recalled"`
-        CreatedAt int64 `json:"created_at"`
-        UpdatedAt int64 `json:"updated_at"`
+		IsRecalled  bool   `json:"is_recalled"`
+		CreatedAt   int64  `json:"created_at"`
+		UpdatedAt   int64  `json:"updated_at"`
 	}
 	MessageList {
 		List  []*Message `json:"list"`
@@ -1134,7 +1141,7 @@ type (
 		LastMessageID      string `json:"lastMessageID"`
 		LastMessageContent string `json:"lastMessageContent"`
 		UnreadMessageCount int64  `json:"unreadMessageCount"`
-        CreatedAt int64 `json:"createdAt"`
+		CreatedAt          int64  `json:"createdAt"`
 	}
 	CreateSessionResp {
 		Response
@@ -1161,23 +1168,22 @@ type (
 		Response
 		Data bool `json:"data"`
 	}
-    CreateSignReq{
-    }
-    CreateSignResp {
-        Response
-        Data []UserSign `json:"data"`
-    }
-    GetUserSignReq {
-        Year int64 `form:"year"`
-        Month int64 `form:"month"`
-    }
-    UserSign {
-        isSignin bool `json:"bool"`
-    }
-    GetUserSignResp {
-        Response
-        Data []UserSign `json:"data"`
-    }
+	CreateSignReq  {}
+	CreateSignResp {
+		Response
+		Data []UserSign `json:"data"`
+	}
+	GetUserSignReq {
+		Year  int64 `form:"year"`
+		Month int64 `form:"month"`
+	}
+	UserSign {
+		isSignin bool `json:"bool"`
+	}
+	GetUserSignResp {
+		Response
+		Data []UserSign `json:"data"`
+	}
 )
 
 @server (
@@ -1444,6 +1450,12 @@ service CodeHubAPI {
 	get /detail/:id (GetArticleReq) returns (GetArticleResp)
 
 	@doc (
+		summary: "搜索文章"
+	)
+	@handler SearchArticles
+	get /search (SearchArticlesReq) returns (GetArticlesResp)
+
+	@doc (
 		summary: "获取某个用户的文章列表"
 	)
 	@handler GetArticlesByUser
@@ -1649,7 +1661,7 @@ service CodeHubAPI {
 		summary: "获取系统分类标签"
 	)
 	@handler GetSystemTagList
-    get /system/list (GetSystemTagReq) returns (GetTagListResp)
+	get /system/list (GetSystemTagReq) returns (GetTagListResp)
 
 	@doc (
 		summary: "获取全部分类标签（包含系统和用户自定义的标签）"
@@ -1795,7 +1807,7 @@ service CodeHubAPI {
 	@handler ListMessage
 	get /list (GetMessageListReq) returns (GetMessageListResp)
 
-    @doc(
+	@doc (
 		summary: "获取聊天消息列表"
 	)
 	@handler ListChatMessage
@@ -1863,7 +1875,7 @@ service CodeHubAPI {
 	@handler CreateSession
 	post /create (CreateSessionReq) returns (CreateSessionResp)
 
-    @doc(
+	@doc (
 		summary: "更新会话消息"
 	)
 	@handler UpdateMessage
@@ -1882,22 +1894,22 @@ service CodeHubAPI {
 	delete /delete/:id (DeleteSessionReq) returns (DeleteSessionResp)
 }
 
-@server(
-    jwt: Auth
-    prefix: /api/signin
-    group: signin_auth
+@server (
+	jwt:    Auth
+	prefix: /api/signin
+	group:  signin_auth
 )
 service CodeHubAPI {
-    @doc(
-        summary: "创建一个签到"
-    )
-    @handler CreateSignIn
-    post /create (CreateSignReq) returns (CreateSignResp)
+	@doc (
+		summary: "创建一个签到"
+	)
+	@handler CreateSignIn
+	post /create (CreateSignReq) returns (CreateSignResp)
 
-    @doc(
-        summary: "获取签到列表"
-    )
-    @handler ListSignIn
-    get /list (GetUserSignReq) returns (GetUserSignResp)
+	@doc (
+		summary: "获取签到列表"
+	)
+	@handler ListSignIn
+	get /list (GetUserSignReq) returns (GetUserSignResp)
 }
 

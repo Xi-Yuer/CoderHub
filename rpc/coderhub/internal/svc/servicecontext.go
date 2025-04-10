@@ -6,16 +6,18 @@ import (
 	"coderhub/shared/messaging"
 	"coderhub/shared/storage"
 	"fmt"
+
+	"github.com/elastic/go-elasticsearch/v8"
 	//"github.com/elastic/go-elasticsearch/v8"
 )
 
 type ServiceContext struct {
 	Config                         config.Config
 	Minio                          *storage.Minio
-	UserRepository                 repository.UserRepository
-	UserFollowRepository           repository.UserFollowRepository
 	RedisDB                        storage.RedisDB
 	GoMail                         messaging.GoMailImpl
+	UserRepository                 repository.UserRepository
+	UserFollowRepository           repository.UserFollowRepository
 	ImageRepository                repository.ImageRepository
 	ImageRelationRepository        repository.ImageRelationRepository
 	AcademicNavigatorRepository    repository.AcademicNavigatorRepository
@@ -49,13 +51,17 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		c.Minio.UseSSL,
 	)
 
-	//cfg := elasticsearch.Config{
-	//	Addresses: []string{"http://elasticsearch:9200"},
-	//	Username:  "elastic",
-	//	Password:  "2214380963Wx!!",
-	//}
+	cfg := elasticsearch.Config{
+		Addresses: []string{"http://elasticsearch:9200"},
+		Username:  "elasticsearch",
+		Password:  "2214380963Wx!!",
+	}
+	elasticSearchClient, err := storage.NewElasticSearchClient(&cfg)
+	if err != nil {
+		panic(err)
+	}
 
-	err := minioClient.Connect()
+	err = minioClient.Connect()
 	if err != nil {
 		panic(fmt.Sprintf("Minio 连接失败: %v", err))
 	}
@@ -74,7 +80,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		ImageRepository:                repository.NewImageRepository(sql),
 		ImageRelationRepository:        repository.NewImageRelationRepository(sql),
 		AcademicRelationLikeRepository: repository.NewAcademicRelationLikeRepositoryImpl(sql),
-		ArticleRepository:              repository.NewArticleRepositoryImpl(sql, redisDB),
+		ArticleRepository:              repository.NewArticleRepositoryImpl(sql, redisDB, elasticSearchClient),
 		ArticlesRelationLikeRepository: repository.NewArticlesRelationLikeRepository(sql, redisDB),
 		ArticlePVRepository:            repository.NewArticlePVRepositoryImpl(sql, redisDB),
 		CommentRepository:              repository.NewCommentRepository(sql, redisDB),

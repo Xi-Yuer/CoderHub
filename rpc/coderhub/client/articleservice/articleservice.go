@@ -169,6 +169,7 @@ type (
 	IsUserFollowedReq                   = coderhub.IsUserFollowedReq
 	IsUserFollowedResp                  = coderhub.IsUserFollowedResp
 	LikeAcademicNavigatorRequest        = coderhub.LikeAcademicNavigatorRequest
+	ListArticlesRequest                 = coderhub.ListArticlesRequest
 	ListAuthorArticlesRequest           = coderhub.ListAuthorArticlesRequest
 	ListByUserRequest                   = coderhub.ListByUserRequest
 	ListByUserResponse                  = coderhub.ListByUserResponse
@@ -216,6 +217,7 @@ type (
 		UpdateLikeCount(ctx context.Context, in *UpdateLikeCountRequest, opts ...grpc.CallOption) (*UpdateLikeCountResponse, error)
 		DeleteArticle(ctx context.Context, in *DeleteArticleRequest, opts ...grpc.CallOption) (*DeleteArticleResponse, error)
 		ListArticleIDsByAuthor(ctx context.Context, in *ListAuthorArticlesRequest, opts ...grpc.CallOption) (*ListRecommendedArticlesResponse, error)
+		ListArticlesBySearchKeyword(ctx context.Context, in *ListArticlesRequest, opts ...grpc.CallOption) (*ListRecommendedArticlesResponse, error)
 	}
 
 	defaultArticleService struct {
@@ -272,4 +274,9 @@ func (m *defaultArticleService) DeleteArticle(ctx context.Context, in *DeleteArt
 func (m *defaultArticleService) ListArticleIDsByAuthor(ctx context.Context, in *ListAuthorArticlesRequest, opts ...grpc.CallOption) (*ListRecommendedArticlesResponse, error) {
 	client := coderhub.NewArticleServiceClient(m.cli.Conn())
 	return client.ListArticleIDsByAuthor(ctx, in, opts...)
+}
+
+func (m *defaultArticleService) ListArticlesBySearchKeyword(ctx context.Context, in *ListArticlesRequest, opts ...grpc.CallOption) (*ListRecommendedArticlesResponse, error) {
+	client := coderhub.NewArticleServiceClient(m.cli.Conn())
+	return client.ListArticlesBySearchKeyword(ctx, in, opts...)
 }

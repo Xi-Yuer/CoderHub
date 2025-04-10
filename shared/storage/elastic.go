@@ -3,6 +3,7 @@ package storage
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"reflect"
 	"strconv"
 
@@ -11,7 +12,9 @@ import (
 )
 
 type ElasticsearchImpl interface {
+	CreateIndex(index string, body io.Reader) error
 	SearchByFields(index string, fields map[string]interface{}) ([]int64, error)
+	DeleteByID(index string, ids int64) error
 }
 
 type ElasticSearchClient struct {
@@ -28,6 +31,22 @@ func NewElasticSearchClient(cfg *elasticsearch.Config) (*ElasticSearchClient, er
 		return nil, err
 	}
 	return &ElasticSearchClient{Client: client}, nil
+}
+
+// CreateIndex 创建索引
+func (c *ElasticSearchClient) CreateIndex(index string, docID int64, body io.Reader) error {
+	// 创建索引
+	result, err := c.Client.Index(index, body, c.Client.Index.WithDocumentID(strconv.FormatInt(docID, 10)))
+	if err != nil {
+		return err
+	}
+	defer func(Body io.ReadCloser) {
+		_ = Body.Close()
+	}(result.Body)
+	if result.IsError() {
+		return fmt.Errorf("error creating index in Elasticsearch: %s", result.String())
+	}
+	return nil
 }
 
 // SearchByFields 根据传入的字段查询数据，只返回数据的ID
@@ -73,7 +92,9 @@ func (c *ElasticSearchClient) SearchByFields(index string, fields map[string]int
 	if err != nil {
 		return nil, err
 	}
-	defer result.Body.Close()
+	defer func(Body io.ReadCloser) {
+		_ = Body.Close()
+	}(result.Body)
 
 	if result.IsError() {
 		return nil, fmt.Errorf("error searching Elasticsearch: %s", result.String())
@@ -97,4 +118,21 @@ func (c *ElasticSearchClient) SearchByFields(index string, fields map[string]int
 	}
 
 	return ids, nil
+}
+
+// DeleteByID 根据ID删除索引
+func (c *ElasticSearchClient) DeleteByID(index string, id int64) error {
+	// 删除索引
+	result, err := c.Client.Delete(index, strconv.FormatInt(id, 10))
+	if err != nil {
+		return err
+	}
+	defer func(Body io.ReadCloser) {
+		_ = Body.Close()
+	}(result.Body)
+
+	if result.IsError() {
+		return fmt.Errorf("error deleting Elasticsearch index: %s", result.String())
+	}
+	return nil
 }

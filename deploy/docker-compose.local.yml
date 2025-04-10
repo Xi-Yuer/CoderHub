@@ -31,18 +31,23 @@ services:
     container_name: etcd
     networks:
       - coderhub-network
-    command:
-      [
+    command: [
         "etcd",
-        "--name", "etcd0",
-        "--advertise-client-urls", "http://etcd:2379",   # 使用服务名称
-        "--listen-client-urls", "http://0.0.0.0:2379",   # 监听来自所有地址的连接
-        "--initial-advertise-peer-urls", "http://etcd:2380",
-        "--listen-peer-urls", "http://0.0.0.0:2380",
-        "--initial-cluster", "etcd0=http://etcd:2380"
+        "--name",
+        "etcd0",
+        "--advertise-client-urls",
+        "http://etcd:2379", # 使用服务名称
+        "--listen-client-urls",
+        "http://0.0.0.0:2379", # 监听来自所有地址的连接
+        "--initial-advertise-peer-urls",
+        "http://etcd:2380",
+        "--listen-peer-urls",
+        "http://0.0.0.0:2380",
+        "--initial-cluster",
+        "etcd0=http://etcd:2380",
       ]
     healthcheck:
-      test: [ "CMD", "etcdctl", "cluster-health" ]
+      test: ["CMD", "etcdctl", "cluster-health"]
       interval: 30s
       retries: 5
       start_period: 30s
@@ -73,6 +78,38 @@ services:
         read_only: true
         consistency: consistent
 
+  elasticsearch:
+    image: elasticsearch:8.11.3
+    container_name: elasticsearch
+    environment:
+      - node.name=elasticsearch
+      - discovery.type=single-node # 明确使用单节点模式
+      - bootstrap.memory_lock=true
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - ELASTIC_PASSWORD=2214380963Wx!! # 设置明确的密码
+    depends_on:
+      - mysql
+    volumes:
+      - type: bind
+        source: ./data/elasticsearch
+        target: /usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"
+    networks:
+      - coderhub-network
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    # 添加健康检查
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9200/_cluster/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+
   minio:
     image: quay.io/minio/minio:latest
     container_name: minio
@@ -91,13 +128,13 @@ services:
         target: /root/.minio
     command: server /data --console-address ":9001"
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:9000/minio/health/live" ]
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
       interval: 30s
       timeout: 20s
       retries: 3
     networks:
       - coderhub-network
-  
+
   #  Api 服务
   api:
     build:
@@ -112,7 +149,7 @@ services:
     networks:
       - coderhub-network
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:8888/api/coderhub/health" ] # 修改为实际的健康检查端点
+      test: ["CMD", "curl", "-f", "http://localhost:8888/api/coderhub/health"] # 修改为实际的健康检查端点
       interval: 10s
       retries: 10
       start_period: 30s
@@ -129,10 +166,11 @@ services:
       - mysql
       - redis
       - etcd
+      - elasticsearch
     networks:
       - coderhub-network
     healthcheck:
-      test: [ "CMD", "nc", "-z", "localhost", "8080" ] # 使用netcat检查端口是否开放
+      test: ["CMD", "nc", "-z", "localhost", "8080"] # 使用netcat检查端口是否开放
       interval: 10s
       retries: 10
       start_period: 30s
@@ -160,7 +198,7 @@ services:
       - NEXT_PUBLIC_LOCAL_API_BASE_URL=http://nginx
       - NEXT_PUBLIC_SERVER_API_BASE_URL=http://nginx/api
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:3000" ]
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
       interval: 10s
       retries: 10
       start_period: 30s

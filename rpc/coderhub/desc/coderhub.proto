@@ -343,6 +343,13 @@ message GetArticlesRequest {
   int64 user_id = 2;                          // 用户 ID
 }
 
+message ListArticlesRequest {
+  int64 page = 1;
+  int64 page_size = 2;
+  string type = 3;
+  string keyword = 4;
+}
+
 message ListRecommendedArticlesRequest {
   string type = 1; // 内容类型
   int64 page = 2;
@@ -440,6 +447,7 @@ service ArticleService {
   rpc UpdateLikeCount(UpdateLikeCountRequest) returns (UpdateLikeCountResponse); // 更新点赞数
   rpc DeleteArticle(DeleteArticleRequest) returns (DeleteArticleResponse); // 删除文章
   rpc ListArticleIDsByAuthor(ListAuthorArticlesRequest) returns (ListRecommendedArticlesResponse); // 获取作者的文章列表ids
+  rpc ListArticlesBySearchKeyword(ListArticlesRequest) returns (ListRecommendedArticlesResponse);
 }
 
 

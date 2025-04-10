@@ -67,3 +67,8 @@ func (s *ArticleServiceServer) ListArticleIDsByAuthor(ctx context.Context, in *c
 	l := articleservicelogic.NewListArticleIDsByAuthorLogic(ctx, s.svcCtx)
 	return l.ListArticleIDsByAuthor(in)
 }
+
+func (s *ArticleServiceServer) ListArticlesBySearchKeyword(ctx context.Context, in *coderhub.ListArticlesRequest) (*coderhub.ListRecommendedArticlesResponse, error) {
+	l := articleservicelogic.NewListArticlesBySearchKeywordLogic(ctx, s.svcCtx)
+	return l.ListArticlesBySearchKeyword(in)
+}

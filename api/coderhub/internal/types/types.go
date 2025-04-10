@@ -1066,6 +1066,14 @@ type SchoolExpList struct {
 	List  []*SchoolExp `json:"list"`
 }
 
+type SearchArticlesReq struct {
+	Keyword       string `form:"keyword"` // 关键词
+	Page          int32  `form:"page"`
+	PageSize      int32  `form:"page_size"`
+	RequestUserID string `header:"request-user-id,optional"` // 请求用户 ID
+	Type          string `form:"type,options=article|micro_post"`
+}
+
 type SendResetPasswordLinkReq struct {
 	Email string `json:"email"` // 邮箱
 }
