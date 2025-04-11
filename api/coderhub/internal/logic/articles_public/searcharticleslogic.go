@@ -45,7 +45,10 @@ func (l *SearchArticlesLogic) SearchArticles(req *types.SearchArticlesReq) (resp
 				Code:    conf.HttpCode.HttpStatusOK,
 				Message: "No recommended articles found",
 			},
-			Data: nil,
+			Data: types.GetArticleResponse{
+				List:  nil,
+				Total: 0,
+			},
 		}, nil
 	}
 
@@ -64,7 +67,10 @@ func (l *SearchArticlesLogic) SearchArticles(req *types.SearchArticlesReq) (resp
 				Code:    conf.HttpCode.HttpStatusOK,
 				Message: "No articles found for given IDs",
 			},
-			Data: nil,
+			Data: types.GetArticleResponse{
+				List:  nil,
+				Total: 0,
+			},
 		}, nil
 	}
 
@@ -82,7 +88,10 @@ func (l *SearchArticlesLogic) SearchArticles(req *types.SearchArticlesReq) (resp
 			Code:    conf.HttpCode.HttpStatusOK,
 			Message: conf.HttpMessage.MsgOK,
 		},
-		Data: list,
+		Data: types.GetArticleResponse{
+			List:  list,
+			Total: 0,
+		},
 	}, nil
 }
 
@@ -92,7 +101,10 @@ func (l *SearchArticlesLogic) errorResp(err error) (*types.GetArticlesResp, erro
 			Code:    conf.HttpCode.HttpBadRequest,
 			Message: err.Error(),
 		},
-		Data: nil,
+		Data: types.GetArticleResponse{
+			List:  nil,
+			Total: 0,
+		},
 	}, nil
 }
 

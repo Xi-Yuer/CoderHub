@@ -479,7 +479,7 @@ type (
 	}
 	GetArticlesResp {
 		Response
-		Data []*GetArticle `json:"data"` // 文章列表
+		Data GetArticleResponse `json:"data"` // 文章列表
 	}
 	GetArticleResp {
 		Response

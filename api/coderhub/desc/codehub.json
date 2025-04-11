@@ -5338,10 +5338,7 @@
           "description": " 提示信息"
         },
         "data": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/GetArticle"
-          },
+          "$ref": "#/definitions/GetArticleResponse",
           "description": " 文章列表"
         }
       },

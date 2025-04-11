@@ -45,7 +45,10 @@ func (l *GetArticlesLogic) GetArticles(req *types.GetArticlesReq) (resp *types.G
 				Code:    conf.HttpCode.HttpStatusOK,
 				Message: "No recommended articles found",
 			},
-			Data: nil,
+			Data: types.GetArticleResponse{
+				List:  nil,
+				Total: 0,
+			},
 		}, nil
 	}
 
@@ -64,7 +67,10 @@ func (l *GetArticlesLogic) GetArticles(req *types.GetArticlesReq) (resp *types.G
 				Code:    conf.HttpCode.HttpStatusOK,
 				Message: "No articles found for given IDs",
 			},
-			Data: nil,
+			Data: types.GetArticleResponse{
+				List:  nil,
+				Total: 0,
+			},
 		}, nil
 	}
 
@@ -82,7 +88,10 @@ func (l *GetArticlesLogic) GetArticles(req *types.GetArticlesReq) (resp *types.G
 			Code:    conf.HttpCode.HttpStatusOK,
 			Message: conf.HttpMessage.MsgOK,
 		},
-		Data: list,
+		Data: types.GetArticleResponse{
+			List:  list,
+			Total: 0,
+		},
 	}, nil
 }
 
@@ -92,7 +101,10 @@ func (l *GetArticlesLogic) errorResp(err error) (*types.GetArticlesResp, error) 
 			Code:    conf.HttpCode.HttpBadRequest,
 			Message: err.Error(),
 		},
-		Data: nil,
+		Data: types.GetArticleResponse{
+			List:  nil,
+			Total: 0,
+		},
 	}, nil
 }
 

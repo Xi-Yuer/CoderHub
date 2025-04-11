@@ -552,7 +552,7 @@ type GetArticlesReq struct {
 
 type GetArticlesResp struct {
 	Response
-	Data []*GetArticle `json:"data"` // 文章列表
+	Data GetArticleResponse `json:"data"` // 文章列表
 }
 
 type GetChatMessageListReq struct {
