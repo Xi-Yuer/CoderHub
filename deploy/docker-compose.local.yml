@@ -152,8 +152,8 @@ services:
       ETCD_PORT: 2379
       MYSQL_HOST: mysql
       MYSQL_PORT: 3306
-      ENDPOINT: https://es-cn-2ml47q1gp0003equa.public.elasticsearch.aliyuncs.com:9200
-      APIKEY: VGtxVEk1WUJ6a1BZNGNYZVRnTmQ6VTdMQzZIc19UYmFVdWVvQnBLcEpfUQ==
+      ENDPOINT: https://es-cn-9me47qcyn0001owj4.public.elasticsearch.aliyuncs.com:9200
+      APIKEY: cEc3MEk1WUJOa1dKb1NfUkFnb1I6b2p0c2JBc1ZTVEtkM1dwSWEyeEJiZw==
 
   web:
     image: web:latest

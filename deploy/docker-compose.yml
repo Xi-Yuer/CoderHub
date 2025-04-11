@@ -142,6 +142,8 @@ services:
       ETCD_PORT: 2379
       MYSQL_HOST: mysql
       MYSQL_PORT: 3306
+      ENDPOINT:
+      APIKEY:
 
   web:
     image: 2214380963/coderhub-web:latest
