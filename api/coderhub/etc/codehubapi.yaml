@@ -95,3 +95,4 @@ SignInService:
     Hosts:
       - etcd:2379
     Key: coderhub.rpc
+DEEPSEEKSEARCHKEY: ${DEEPSEEKSEARCHKEY}

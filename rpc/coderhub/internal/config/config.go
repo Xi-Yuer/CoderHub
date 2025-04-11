@@ -4,8 +4,9 @@ import "github.com/zeromicro/go-zero/zrpc"
 
 type Config struct {
 	zrpc.RpcServerConf
-	WebSite string
-	Minio   MinioConfig
+	WebSite       string
+	Minio         MinioConfig
+	ElasticSearch ElasticSearch
 }
 
 type MinioConfig struct {
@@ -18,4 +19,9 @@ type MinioConfig struct {
 	Region          string
 	ThumbnailBucket string
 	ThumbnailWidth  uint
+}
+
+type ElasticSearch struct {
+	Endpoint []string `json:"endpoint,env=Endpoint"`
+	APIKEY   string   `json:"apikey,env=APIKEY"`
 }

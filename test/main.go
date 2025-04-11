@@ -1,57 +1,87 @@
 package main
 
 import (
-	"coderhub/model"
+	"context"
+	"crypto/tls"
+	"encoding/json"
 	"fmt"
-	"gorm.io/driver/mysql"
-	"gorm.io/gorm"
-	"gorm.io/gorm/logger"
-	"log"
-	"os"
-	"time"
+	"github.com/elastic/go-elasticsearch/v8"
+	"github.com/elastic/go-elasticsearch/v8/esutil"
+	"io"
+	"net/http"
+	"strconv"
 )
 
 func main() {
-	var articles []*model.ArticleAndAuthInfo
-	db, err := gorm.Open(mysql.New(mysql.Config{
-		DSN:                       "root:2214380963Wx!!@tcp(localhost:3306)/coderhub?charset=utf8&parseTime=True&loc=Local", // Data source name
-		DefaultStringSize:         256,                                                                                      // Default string size
-		DisableDatetimePrecision:  true,                                                                                     // Disable datetime precision for MySQL < 5.6
-		DontSupportRenameIndex:    true,                                                                                     // Drop & create index for renaming in MySQL < 5.7
-		DontSupportRenameColumn:   true,                                                                                     // Use 'change' for renaming columns
-		SkipInitializeWithVersion: false,                                                                                    // Automatically configure based on MySQL version
-	}), &gorm.Config{
-		Logger: logger.New(
-			log.New(os.Stdout, "\r\n", log.LstdFlags), // io writer
-			logger.Config{
-				SlowThreshold:             time.Second, // Slow SQL threshold
-				LogLevel:                  logger.Info, // Log level set to Info for development
-				IgnoreRecordNotFoundError: false,       // Log ErrRecordNotFound errors
-				ParameterizedQueries:      true,        // Include params in SQL log for easier debugging
-				Colorful:                  true,        // Enable colored output
-			},
-		),
-	})
-	err = db.Table("articles AS a").
-		Select(`
-        a.*,
-		u.*,
-        u.id AS author_id,
-        GROUP_CONCAT(img.url) AS images
-    	`).
-		Joins("JOIN users u ON a.author_id = u.id").
-		Joins("LEFT JOIN image_relations ir ON a.id = ir.entity_id AND ir.entity_type = ?", "article_content").
-		Joins("LEFT JOIN images img ON ir.image_id = img.id").
-		Where("a.type = ? AND a.status = ?", "micro_post", "published").
-		Group("a.id").
-		Order("a.id DESC").
-		Limit(10).
-		Scan(&articles).Error
-	if err != nil {
-		fmt.Println(err.Error())
+
+	cfg := elasticsearch.Config{
+		Addresses: []string{
+			"https://es-cn-2ml47q1gp0003equa.public.elasticsearch.aliyuncs.com:9200",
+		},
+		APIKey: "VGtxVEk1WUJ6a1BZNGNYZVRnTmQ6VTdMQzZIc19UYmFVdWVvQnBLcEpfUQ==",
+		Transport: &http.Transport{
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+		},
 	}
 
-	for _, article := range articles {
-		fmt.Printf("%#v\n", article)
+	client, err := elasticsearch.NewClient(cfg)
+
+	keywords := []string{"title", "summary", "content"}
+	searchValue := "11"
+	shouldClauses := make([]map[string]interface{}, 0, len(keywords))
+	for _, field := range keywords {
+		shouldClauses = append(shouldClauses, map[string]interface{}{
+			"wildcard": map[string]interface{}{
+				field: map[string]interface{}{
+					"value": fmt.Sprintf("*%s*", searchValue),
+				},
+			},
+		})
+	}
+
+	query := map[string]interface{}{
+		"query": map[string]interface{}{
+			"bool": map[string]interface{}{
+				"should": shouldClauses,
+			},
+		},
+	}
+
+	searchResp, err := client.Search(
+		client.Search.WithContext(context.Background()),
+		client.Search.WithIndex("micro_post"),
+		client.Search.WithBody(esutil.NewJSONReader(query)),
+		client.Search.WithTrackTotalHits(true),
+		client.Search.WithPretty(),
+	)
+	// 解析搜索结果，获取 ids
+	if err != nil {
+		fmt.Println(err)
+	}
+	defer func(Body io.ReadCloser) {
+		_ = Body.Close()
+	}(searchResp.Body)
+	if searchResp.IsError() {
+		fmt.Println("Error:", searchResp.String())
+	} else {
+		// 解析查询结果
+		var response map[string]interface{}
+		if err := json.NewDecoder(searchResp.Body).Decode(&response); err != nil {
+			fmt.Println("Error:", searchResp.String())
+		}
+		// 提取数据的ID
+		var ids []int64
+		if hits, ok := response["hits"].(map[string]interface{})["hits"].([]interface{}); ok {
+			for _, hit := range hits {
+				if doc, ok := hit.(map[string]interface{}); ok {
+					if idStr, ok := doc["_id"].(string); ok {
+						if id, err := strconv.ParseInt(idStr, 10, 64); err == nil {
+							ids = append(ids, id)
+						}
+					}
+				}
+			}
+		}
+		fmt.Println(ids)
 	}
 }

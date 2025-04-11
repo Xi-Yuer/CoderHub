@@ -2,7 +2,6 @@ package ai_auth
 
 import (
 	"bufio"
-	"coderhub/conf"
 	"coderhub/shared/utils"
 	"context"
 	"encoding/json"
@@ -39,7 +38,7 @@ func (l *ChatWithAILogic) ChatWithAI(w http.ResponseWriter, req *types.ChatWithA
 	request.Header.Add("Content-Type", "application/json")
 	request.Header.Add("Accept", "application/json")
 	request.Header.Add("Transfer-Encoding", "chunked")
-	request.Header.Add("Authorization", fmt.Sprintf("Bearer %s", conf.DeepSeekSearchKey))
+	request.Header.Add("Authorization", fmt.Sprintf("Bearer %s", l.svcCtx.Config.DEEPSEEKSEARCHKEY))
 
 	// 获取响应
 	res, err := http.DefaultClient.Do(request)

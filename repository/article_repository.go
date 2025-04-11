@@ -7,7 +7,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-
 	"gorm.io/gorm"
 )
 
@@ -53,26 +52,23 @@ func (r *ArticleRepositoryImpl) CreateArticle(article *model.Articles) error {
 	if err := r.DB.Create(article).Error; err != nil {
 		return err
 	}
-	// 创建文章后，异步更新ES
-	go func() {
-		articleEsVO := ArticleEsVO{
-			ID:      article.ID,
-			Title:   article.Title,
-			Summary: article.Summary,
-			Content: article.Content,
-			Tags:    article.Tags,
-		}
-		articleJSON, err := json.Marshal(articleEsVO)
-		if err != nil {
-			fmt.Printf("Failed to marshal article to JSON: %v\n", err)
-			return
-		}
-		// 使用 bytes.NewReader 将字节切片转换为 io.Reader
-		err = r.Elastic.CreateIndex("articles", article.ID, bytes.NewReader(articleJSON))
-		if err != nil {
-			fmt.Printf("Failed to create index in Elasticsearch: %v\n", err)
-		}
-	}()
+	articleEsVO := ArticleEsVO{
+		ID:      article.ID,
+		Title:   article.Title,
+		Summary: article.Summary,
+		Content: article.Content,
+		Tags:    article.Tags,
+	}
+	articleJSON, err := json.Marshal(articleEsVO)
+	if err != nil {
+		fmt.Printf("Failed to marshal article to JSON: %v\n", err)
+		return err
+	}
+	// 使用 bytes.NewReader 将字节切片转换为 io.Reader
+	err = r.Elastic.CreateIndex(article.Type, article.ID, bytes.NewReader(articleJSON))
+	if err != nil {
+		return err
+	}
 	// 创建后设置缓存
 	return r.setCache(article.CacheKeyByID(article.ID), article)
 }
@@ -213,7 +209,7 @@ func (r *ArticleRepositoryImpl) DeleteArticle(id int64) error {
 		return err
 	}
 	// 删除ES索引
-	err = r.Elastic.DeleteByID("articles", id)
+	err = r.Elastic.DeleteByID(model.ArticleType, id)
 	return r.DB.Delete(&model.Articles{}, id).Error
 }
 
@@ -264,15 +260,9 @@ func (r *ArticleRepositoryImpl) GetUserAllArticleIDS(authorID int64) ([]int64, e
 	return ids, nil
 }
 func (r *ArticleRepositoryImpl) GetArticlesBySearchKeys(keys string, _type string, page, pageSize int64) ([]int64, error) {
-	// 先从ES中搜索到对应搜索关键字的文章ID
-	ids, err := r.Elastic.SearchByFields("articles", map[string]interface{}{
-		"title":   keys,
-		"summary": keys,
-		"content": keys,
-		"tags":    keys,
-	})
+	fields, err := r.Elastic.SearchByFields(_type, keys, []string{"title", "summary", "content", "tags"}, page, pageSize)
 	if err != nil {
 		return nil, err
 	}
-	return ids, nil
+	return fields, nil
 }

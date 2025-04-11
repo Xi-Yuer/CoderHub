@@ -11,6 +11,7 @@ type Config struct {
 		AccessSecret string
 		AccessExpire int64
 	}
+	DEEPSEEKSEARCHKEY           string
 	UserService                 zrpc.RpcClientConf
 	ImageAuthService            zrpc.RpcClientConf
 	ArticlesService             zrpc.RpcClientConf

@@ -2,8 +2,6 @@ package conf
 
 var JWTSecret = "secret_key"
 
-var DeepSeekSearchKey = "sk-ae4be1c3925d451ba6a444950263663c"
-
 var GoMail = struct {
 	Username string
 	Password string

@@ -8,7 +8,6 @@ import (
 	"fmt"
 
 	"github.com/elastic/go-elasticsearch/v8"
-	//"github.com/elastic/go-elasticsearch/v8"
 )
 
 type ServiceContext struct {
@@ -52,14 +51,10 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	)
 
 	cfg := elasticsearch.Config{
-		Addresses: []string{"http://elasticsearch:9200"},
-		Username:  "elasticsearch",
-		Password:  "2214380963Wx!!",
+		Addresses: c.ElasticSearch.Endpoint,
+		APIKey:    c.ElasticSearch.APIKEY,
 	}
 	elasticSearchClient, err := storage.NewElasticSearchClient(&cfg)
-	if err != nil {
-		panic(err)
-	}
 
 	err = minioClient.Connect()
 	if err != nil {

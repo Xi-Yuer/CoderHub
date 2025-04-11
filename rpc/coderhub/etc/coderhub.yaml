@@ -15,4 +15,10 @@ Minio:
   ThumbnailBucket: coderhub-thumbnail
   ThumbnailWidth: 200
   UseSSL: false
+
 WebSite: http://localhost:3000
+
+ElasticSearch:
+  Endpoint:
+    - ${ENDPOINT}
+  APIKEY: ${APIKEY}
