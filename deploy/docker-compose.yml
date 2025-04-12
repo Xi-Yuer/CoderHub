@@ -5,10 +5,17 @@ services:
     environment:
       MYSQL_DATABASE: coderhub
       MYSQL_ROOT_PASSWORD: 2214380963Wx!!
+      MYSQL_USER: coderhub
+      MYSQL_PASSWORD: coderhub
     ports:
       - "3306:3306"
     networks:
       - coderhub-network
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "--silent" ]
+      interval: 10s
+      retries: 10
+      start_period: 30s
     volumes:
       - type: bind
         source: ./data/mysql
@@ -21,6 +28,11 @@ services:
       - "6379:6379"
     networks:
       - coderhub-network
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 10s
+      retries: 10
+      start_period: 30s
     volumes:
       - type: bind
         source: ./data/redis
@@ -67,6 +79,8 @@ services:
         condition: service_healthy
       api:
         condition: service_healthy
+      web:
+        condition: service_healthy
     networks:
       - coderhub-network
     volumes:
@@ -100,6 +114,7 @@ services:
       retries: 3
     networks:
       - coderhub-network
+
   #  Api 服务
   api:
     image: 2214380963/api:latest
@@ -111,6 +126,8 @@ services:
       - service
     networks:
       - coderhub-network
+    environment:
+      DEEPSEEKSEARCHKEY: sk-ae4be1c3925d451ba6a444950263663c
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8888/api/coderhub/health" ] # 修改为实际的健康检查端点
       interval: 10s
@@ -123,9 +140,12 @@ services:
     image: 2214380963/service:latest
     container_name: service
     depends_on:
-      - mysql
-      - redis
-      - etcd
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      etcd:
+        condition: service_healthy
     networks:
       - coderhub-network
     healthcheck:
@@ -142,8 +162,8 @@ services:
       ETCD_PORT: 2379
       MYSQL_HOST: mysql
       MYSQL_PORT: 3306
-      ENDPOINT:
-      APIKEY:
+      ENDPOINT: https://es-cn-9me47qcyn0001owj4.public.elasticsearch.aliyuncs.com:9200
+      APIKEY: cEc3MEk1WUJOa1dKb1NfUkFnb1I6b2p0c2JBc1ZTVEtkM1dwSWEyeEJiZw==
 
   web:
     image: 2214380963/coderhub-web:latest
