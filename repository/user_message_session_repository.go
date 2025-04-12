@@ -88,21 +88,30 @@ func (u *UserSessionRepositoryImpl) UpdateUserSession(ctx context.Context, userS
 
 func (u *UserSessionRepositoryImpl) GetUserSessions(ctx context.Context, userID uint64, page, pageSize int64, sessionName string) ([]*model.UserSession, int64, error) {
 	var sessions []*model.UserSession
-	if err := u.DB.WithContext(ctx).Model(&model.UserSession{}).Where(model.UserSession{
-		UserID:      strconv.FormatUint(userID, 10),
-		SessionName: sessionName,
-	}).Limit(int(pageSize)).Offset(int((page - 1) * pageSize)).Find(&sessions).Error; err != nil {
+
+	// 构造查询条件
+	query := u.DB.WithContext(ctx).Model(&model.UserSession{}).
+		Where("user_id = ?", strconv.FormatUint(userID, 10))
+
+	// 如果 sessionName 不为空，则添加模糊查询条件
+	if sessionName != "" {
+		query = query.Where("session_name LIKE ?", "%"+sessionName)
+	}
+
+	// 查询分页数据
+	if err := query.Limit(int(pageSize)).Offset(int((page - 1) * pageSize)).Find(&sessions).Error; err != nil {
 		return nil, 0, err
 	}
+
+	// 查询总记录数
 	var total int64
-	if err := u.DB.WithContext(ctx).Model(&model.UserSession{}).Where(model.UserSession{
-		UserID:      strconv.FormatUint(userID, 10),
-		SessionName: sessionName,
-	}).Count(&total).Error; err != nil {
+	if err := query.Count(&total).Error; err != nil {
 		return nil, 0, err
 	}
+
 	return sessions, total, nil
 }
+
 func (u *UserSessionRepositoryImpl) DeleteUserSession(ctx context.Context, userSession *model.UserSession) error {
 	if err := u.DB.WithContext(ctx).Where("user_id =? AND peer_id =?", userSession.UserID, userSession.PeerID).Delete(&model.UserSession{}).Error; err != nil {
 		return err

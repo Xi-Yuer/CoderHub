@@ -1,7 +1,6 @@
 package repository
 
 import (
-	"bytes"
 	"coderhub/model"
 	"coderhub/shared/storage"
 	"encoding/json"
@@ -31,11 +30,11 @@ type ArticleRepositoryImpl struct {
 	minLikes int32
 }
 
-func NewArticleRepositoryImpl(db *gorm.DB, rdb storage.RedisDB, elastic *storage.ElasticSearchClient) *ArticleRepositoryImpl {
+func NewArticleRepositoryImpl(db *gorm.DB, rdb storage.RedisDB) *ArticleRepositoryImpl {
 	return &ArticleRepositoryImpl{
-		DB:       db,
-		Redis:    rdb,
-		Elastic:  elastic,
+		DB:    db,
+		Redis: rdb,
+		//Elastic:  elastic,
 		minLikes: 10,
 	}
 }
@@ -52,23 +51,23 @@ func (r *ArticleRepositoryImpl) CreateArticle(article *model.Articles) error {
 	if err := r.DB.Create(article).Error; err != nil {
 		return err
 	}
-	articleEsVO := ArticleEsVO{
-		ID:      article.ID,
-		Title:   article.Title,
-		Summary: article.Summary,
-		Content: article.Content,
-		Tags:    article.Tags,
-	}
-	articleJSON, err := json.Marshal(articleEsVO)
-	if err != nil {
-		fmt.Printf("Failed to marshal article to JSON: %v\n", err)
-		return err
-	}
-	// 使用 bytes.NewReader 将字节切片转换为 io.Reader
-	err = r.Elastic.CreateIndex(article.Type, article.ID, bytes.NewReader(articleJSON))
-	if err != nil {
-		return err
-	}
+	//articleEsVO := ArticleEsVO{
+	//	ID:      article.ID,
+	//	Title:   article.Title,
+	//	Summary: article.Summary,
+	//	Content: article.Content,
+	//	Tags:    article.Tags,
+	//}
+	//articleJSON, err := json.Marshal(articleEsVO)
+	//if err != nil {
+	//	fmt.Printf("Failed to marshal article to JSON: %v\n", err)
+	//	return err
+	//}
+	//// 使用 bytes.NewReader 将字节切片转换为 io.Reader
+	//err = r.Elastic.CreateIndex(article.Type, article.ID, bytes.NewReader(articleJSON))
+	//if err != nil {
+	//	return err
+	//}
 	// 创建后设置缓存
 	return r.setCache(article.CacheKeyByID(article.ID), article)
 }
@@ -260,9 +259,16 @@ func (r *ArticleRepositoryImpl) GetUserAllArticleIDS(authorID int64) ([]int64, e
 	return ids, nil
 }
 func (r *ArticleRepositoryImpl) GetArticlesBySearchKeys(keys string, _type string, page, pageSize int64) ([]int64, error) {
-	fields, err := r.Elastic.SearchByFields(_type, keys, []string{"title", "summary", "content", "tags"}, page, pageSize)
-	if err != nil {
+	//fields, err := r.Elastic.SearchByFields(_type, keys, []string{"title", "summary", "content", "tags"}, page, pageSize)
+	//if err != nil {
+	//	return nil, err
+	//}
+	//return fields, nil
+
+	// 服务降级使用
+	var ids []int64
+	if err := r.DB.Table("articles").Where("type = ? AND (title LIKE ? OR summary LIKE ? OR content LIKE ? OR tags LIKE ?)", _type, "%"+keys, "%"+keys, "%"+keys, "%"+keys).Limit(int(pageSize)).Offset(int((page-1)*pageSize)).Pluck("id", &ids).Error; err != nil {
 		return nil, err
 	}
-	return fields, nil
+	return ids, nil
 }

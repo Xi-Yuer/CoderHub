@@ -6,8 +6,6 @@ import (
 	"coderhub/shared/messaging"
 	"coderhub/shared/storage"
 	"fmt"
-
-	"github.com/elastic/go-elasticsearch/v8"
 )
 
 type ServiceContext struct {
@@ -50,13 +48,13 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		c.Minio.UseSSL,
 	)
 
-	cfg := elasticsearch.Config{
-		Addresses: c.ElasticSearch.Endpoint,
-		APIKey:    c.ElasticSearch.APIKEY,
-	}
-	elasticSearchClient, err := storage.NewElasticSearchClient(&cfg)
+	//cfg := elasticsearch.Config{
+	//	Addresses: c.ElasticSearch.Endpoint,
+	//	APIKey:    c.ElasticSearch.APIKEY,
+	//}
+	//elasticSearchClient, err := storage.NewElasticSearchClient(&cfg)
 
-	err = minioClient.Connect()
+	err := minioClient.Connect()
 	if err != nil {
 		panic(fmt.Sprintf("Minio 连接失败: %v", err))
 	}
@@ -75,7 +73,8 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		ImageRepository:                repository.NewImageRepository(sql),
 		ImageRelationRepository:        repository.NewImageRelationRepository(sql),
 		AcademicRelationLikeRepository: repository.NewAcademicRelationLikeRepositoryImpl(sql),
-		ArticleRepository:              repository.NewArticleRepositoryImpl(sql, redisDB, elasticSearchClient),
+		ArticleRepository:              repository.NewArticleRepositoryImpl(sql, redisDB),
+		//ArticleRepository:              repository.NewArticleRepositoryImpl(sql, redisDB, elasticSearchClient),
 		ArticlesRelationLikeRepository: repository.NewArticlesRelationLikeRepository(sql, redisDB),
 		ArticlePVRepository:            repository.NewArticlePVRepositoryImpl(sql, redisDB),
 		CommentRepository:              repository.NewCommentRepository(sql, redisDB),
