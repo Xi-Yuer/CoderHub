@@ -5,8 +5,6 @@ services:
     environment:
       MYSQL_DATABASE: coderhub
       MYSQL_ROOT_PASSWORD: 2214380963Wx!!
-      MYSQL_USER: coderhub
-      MYSQL_PASSWORD: coderhub
     ports:
       - "3306:3306"
     networks:

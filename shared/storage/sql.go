@@ -32,11 +32,7 @@ func NewGorm() *gorm.DB {
 			},
 		)
 
-		// Get DSN from environment variable or configuration file
-		dsn := os.Getenv("MYSQL_DSN")
-		if dsn == "" {
-			dsn = "coderhub:coderhub@tcp(mysql:3306)/coderhub?charset=utf8mb4&parseTime=True&loc=Local"
-		}
+		dsn := "root:2214380963Wx!!@tcp(mysql:3306)/coderhub?charset=utf8mb4&parseTime=True&loc=Local"
 
 		// Connect to MySQL using GORM
 		db, err := gorm.Open(mysql.New(mysql.Config{
