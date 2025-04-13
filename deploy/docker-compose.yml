@@ -18,7 +18,12 @@ services:
       - type: bind
         source: ./data/mysql
         target: /var/lib/mysql
-
+      - type: bind
+        source: ./my.cnf
+        target: /etc/mysql/conf.d/my.cnf
+      - type: bind
+        source: ./init
+        target: /docker-entrypoint-initdb.d
   redis:
     image: redis:latest
     container_name: redis
@@ -141,8 +146,6 @@ services:
       mysql:
         condition: service_healthy
       redis:
-        condition: service_healthy
-      etcd:
         condition: service_healthy
     networks:
       - coderhub-network
