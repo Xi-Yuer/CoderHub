@@ -208,7 +208,7 @@ func (r *ArticleRepositoryImpl) DeleteArticle(id int64) error {
 		return err
 	}
 	// 删除ES索引
-	err = r.Elastic.DeleteByID(model.ArticleType, id)
+	//err = r.Elastic.DeleteByID(model.ArticleType, id)
 	return r.DB.Delete(&model.Articles{}, id).Error
 }
 
