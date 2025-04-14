@@ -36,7 +36,7 @@ func (l *GetUserInfoLogic) GetUserInfo(in *coderhub.GetUserInfoRequest) (*coderh
 	go func() {
 		user, err := l.svcCtx.UserRepository.GetUserByID(in.UserId)
 		if err != nil {
-			errChan <- fmt.Errorf("Failed to get user by ID %d: %w", in.UserId, err)
+			errChan <- fmt.Errorf("failed to get user by ID %d: %w", in.UserId, err)
 			return
 		}
 		userChan <- user
@@ -55,7 +55,7 @@ func (l *GetUserInfoLogic) GetUserInfo(in *coderhub.GetUserInfoRequest) (*coderh
 
 		isFollowed, err := l.svcCtx.UserFollowRepository.IsUserFollowed(in.RequestUserId, user.ID)
 		if err != nil {
-			errChan <- fmt.Errorf("Failed to check if user %d is followed by %d: %w", user.ID, in.RequestUserId, err)
+			errChan <- fmt.Errorf("failed to check if user %d is followed by %d: %w", user.ID, in.RequestUserId, err)
 			return
 		}
 		isFollowedChan <- isFollowed

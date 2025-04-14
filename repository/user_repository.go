@@ -113,25 +113,50 @@ func (r *UserRepositoryImpl) GetUserByID(id int64) (*model.User, error) {
 		return nil, err
 	}
 
-	// 查询用户粉丝数量
-	var followerCount int64
-	if err := r.DB.Table("user_follows").Where("followed_id = ?", id).Count(&followerCount).Error; err != nil {
-		return nil, err
+	// 并行查询用户粉丝数量、关注数量和文章数量
+	var (
+		followerCount int64
+		followCount   int64
+		articleCount  int64
+		errFollower   error
+		errFollow     error
+		errArticle    error
+		done          = make(chan bool)
+	)
+
+	go func() {
+		errFollower = r.DB.Table("user_follows").Where("followed_id = ?", id).Count(&followerCount).Error
+		done <- true
+	}()
+
+	go func() {
+		errFollow = r.DB.Table("user_follows").Where("follower_id = ?", id).Count(&followCount).Error
+		done <- true
+	}()
+
+	go func() {
+		errArticle = r.DB.Model(&model.Articles{}).
+			Where("author_id = ? AND deleted_at IS NULL AND status = ?", id, "published").
+			Count(&articleCount).Error
+		done <- true
+	}()
+
+	// 等待所有 goroutine 完成
+	for i := 0; i < 3; i++ {
+		<-done
 	}
 
-	// 查询用户关注数量
-	var followCount int64
-	if err := r.DB.Table("user_follows").Where("follower_id = ?", id).Count(&followCount).Error; err != nil {
-		return nil, err
+	// 检查错误
+	if errFollower != nil {
+		return nil, errFollower
+	}
+	if errFollow != nil {
+		return nil, errFollow
+	}
+	if errArticle != nil {
+		return nil, errArticle
 	}
 
-	// 查询用户文章数量
-	var articleCount int64
-	if err := r.DB.Model(&model.Articles{}).
-		Where("author_id = ? AND deleted_at IS NULL AND status = ?", id, "published").
-		Count(&articleCount).Error; err != nil {
-		return nil, err
-	}
 	user.FollowerCount = followerCount
 	user.FollowCount = followCount
 	user.ArticleCount = articleCount
