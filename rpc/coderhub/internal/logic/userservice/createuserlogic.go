@@ -2,13 +2,12 @@ package userservicelogic
 
 import (
 	"coderhub/model"
+	"coderhub/rpc/coderhub/coderhub"
+	"coderhub/rpc/coderhub/internal/svc"
 	"coderhub/shared/security"
 	"coderhub/shared/utils"
 	"context"
 	"errors"
-
-	"coderhub/rpc/coderhub/coderhub"
-	"coderhub/rpc/coderhub/internal/svc"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -47,6 +46,16 @@ func (l *CreateUserLogic) CreateUser(in *coderhub.CreateUserRequest) (*coderhub.
 	}); err != nil {
 		return nil, err
 	}
+
+	// 创建用户成功后，给新用户发送欢迎系统消息
+	_ = l.svcCtx.MessageRepository.Create(l.ctx, &model.Message{
+		SenderID:   0,
+		ReceiverID: ID,
+		Type:       model.MessageSystem,
+		EntityID:   0,
+		Content:    "亲爱的朋友，非常欢迎您加入 CoderHub 社区！在这里，您可以尽情分享您的编程知识、经验和项目成果，与广大编程爱好者交流互动，共同提升技术水平。",
+		IsRead:     false,
+	})
 
 	return &coderhub.CreateUserResponse{
 		UserId: ID,

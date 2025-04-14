@@ -50,7 +50,7 @@ func (l *DeleteArticleLogic) DeleteArticle(in *coderhub.DeleteArticleRequest) (*
 	}
 
 	// 参数校验
-	if err := l.validateRequest(in); err != nil {
+	if err = l.validateRequest(in); err != nil {
 		return nil, err
 	}
 

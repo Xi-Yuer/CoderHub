@@ -27,39 +27,77 @@ func NewGetUserInfoLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetUs
 
 // GetUserInfo 获取用户信息
 func (l *GetUserInfoLogic) GetUserInfo(in *coderhub.GetUserInfoRequest) (*coderhub.UserInfo, error) {
-	var User *model.User
-	User, err := l.svcCtx.UserRepository.GetUserByID(in.UserId)
-	if err != nil {
+	// 定义两个 channel 用于接收查询结果和错误
+	userChan := make(chan *model.User, 1)
+	errChan := make(chan error, 2)
+	isFollowedChan := make(chan bool, 1)
+
+	// 并行查询用户信息
+	go func() {
+		user, err := l.svcCtx.UserRepository.GetUserByID(in.UserId)
+		if err != nil {
+			errChan <- fmt.Errorf("Failed to get user by ID %d: %w", in.UserId, err)
+			return
+		}
+		userChan <- user
+	}()
+
+	// 并行查询关注状态
+	go func() {
+		var user *model.User
+		// 等待用户信息查询完成
+		select {
+		case user = <-userChan:
+		case err := <-errChan:
+			errChan <- err
+			return
+		}
+
+		isFollowed, err := l.svcCtx.UserFollowRepository.IsUserFollowed(in.RequestUserId, user.ID)
+		if err != nil {
+			errChan <- fmt.Errorf("Failed to check if user %d is followed by %d: %w", user.ID, in.RequestUserId, err)
+			return
+		}
+		isFollowedChan <- isFollowed
+	}()
+
+	// 等待结果
+	var user *model.User
+	var isFollowed bool
+	select {
+	case err := <-errChan:
+		l.Errorf("%v", err)
 		return nil, err
+	case user = <-userChan:
+		select {
+		case err := <-errChan:
+			l.Errorf("%v", err)
+			return nil, err
+		case isFollowed = <-isFollowedChan:
+		}
 	}
 
-	isUserFollowed, err := l.svcCtx.UserFollowRepository.IsUserFollowed(in.RequestUserId, User.ID)
-	if err != nil {
-		return nil, err
-	}
+	return buildUserInfoResponse(user, isFollowed), nil
+}
 
-	fmt.Printf("isUserFollowed: %v\n", isUserFollowed)
-	fmt.Printf("RequestUserId: %v\n", in.RequestUserId)
-	fmt.Printf("User.ID: %v\n", User.ID)
-	fmt.Printf("User: %v\n", User)
-
+func buildUserInfoResponse(user *model.User, isFollowed bool) *coderhub.UserInfo {
 	return &coderhub.UserInfo{
-		UserId:        User.ID,
-		UserName:      User.UserName,
-		Avatar:        User.Avatar.String,
-		Email:         User.Email.String,
-		Password:      User.Password,
-		Gender:        User.Gender,
-		Age:           User.Age,
-		Phone:         User.Phone.String,
-		NickName:      User.NickName.String,
-		IsAdmin:       User.IsAdmin,
-		Status:        User.Status,
-		CreatedAt:     User.CreatedAt.Unix(),
-		UpdatedAt:     User.UpdatedAt.Unix(),
-		FollowCount:   User.FollowCount,
-		FollowerCount: User.FollowerCount,
-		ArticleCount:  int32(User.ArticleCount),
-		IsFollowed:    isUserFollowed,
-	}, nil
+		UserId:        user.ID,
+		UserName:      user.UserName,
+		Avatar:        user.Avatar.String,
+		Email:         user.Email.String,
+		Password:      user.Password,
+		Gender:        user.Gender,
+		Age:           user.Age,
+		Phone:         user.Phone.String,
+		NickName:      user.NickName.String,
+		IsAdmin:       user.IsAdmin,
+		Status:        user.Status,
+		CreatedAt:     user.CreatedAt.Unix(),
+		UpdatedAt:     user.UpdatedAt.Unix(),
+		FollowCount:   user.FollowCount,
+		FollowerCount: user.FollowerCount,
+		ArticleCount:  int32(user.ArticleCount),
+		IsFollowed:    isFollowed,
+	}
 }
