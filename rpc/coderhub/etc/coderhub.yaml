@@ -5,7 +5,7 @@ Etcd:
     - etcd:2379
   Key: coderhub.rpc
 Minio:
-  BASEURL: http://8.156.66.210:9000 # 生产环境
+  BASEURL: https://xiyuer.club/minio # 生产环境
   #BASEURL: http://localhost:9000 # 测试环境
   Endpoint: minio:9000
   AccessKey: minioadmin
