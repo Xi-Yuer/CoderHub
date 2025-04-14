@@ -6,6 +6,7 @@ import (
 	"coderhub/shared/utils"
 	"context"
 	"fmt"
+	"net/url"
 
 	"coderhub/api/coderhub/internal/svc"
 	"coderhub/api/coderhub/internal/types"
@@ -29,11 +30,19 @@ func NewSearchArticlesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Se
 }
 
 func (l *SearchArticlesLogic) SearchArticles(req *types.SearchArticlesReq) (resp *types.GetArticlesResp, err error) {
+	// 对 Keyword 进行解码
+	decodedKeyword := req.Keyword
+	if decodedKeyword != "" {
+		decodedKeyword, err = url.QueryUnescape(decodedKeyword)
+		if err != nil {
+			return l.errorResp(fmt.Errorf("failed to decode keyword: %v", err))
+		}
+	}
 	articles, err := l.svcCtx.ArticlesService.ListArticlesBySearchKeyword(l.ctx, &coderhub.ListArticlesRequest{
 		Page:     int64(req.Page),
 		PageSize: int64(req.PageSize),
 		Type:     req.Type,
-		Keyword:  req.Keyword,
+		Keyword:  decodedKeyword,
 	})
 	if err != nil {
 		return l.errorResp(err)

@@ -6,7 +6,9 @@ import (
 	"coderhub/conf"
 	"coderhub/shared/utils"
 	"context"
+	"fmt"
 	"github.com/zeromicro/go-zero/core/logx"
+	"net/url"
 )
 
 type ListSessionLogic struct {
@@ -25,7 +27,15 @@ func NewListSessionLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ListS
 }
 
 func (l *ListSessionLogic) ListSession(req *types.GetSessionListReq) (resp *types.GetSessionListResp, err error) {
-	sessions, i, err := l.svcCtx.UserSessionRepository.GetUserSessions(l.ctx, uint64(utils.String2Int(req.UserID)), req.Page, req.PageSize, req.SessionName)
+	// 对 Keyword 进行解码
+	decodedKeyword := req.SessionName
+	if decodedKeyword != "" {
+		decodedKeyword, err = url.QueryUnescape(decodedKeyword)
+		if err != nil {
+			return l.errorResp(fmt.Errorf("failed to decode keyword: %v", err))
+		}
+	}
+	sessions, i, err := l.svcCtx.UserSessionRepository.GetUserSessions(l.ctx, uint64(utils.String2Int(req.UserID)), req.Page, req.PageSize, decodedKeyword)
 	if err != nil {
 		return l.errorResp(err)
 	}
