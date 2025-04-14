@@ -47,7 +47,7 @@ func (l *UpdateUserInfoLogic) UpdateUserInfo(in *coderhub.UpdateUserInfoRequest)
 	if err != nil {
 		return nil, err
 	}
-	if err := l.svcCtx.UserRepository.UpdateUser(&model.User{
+	if err = l.svcCtx.UserRepository.UpdateUser(&model.User{
 		ID:       UserInfo.UserId,
 		UserName: oldUser.UserName,
 		Password: oldUser.Password,

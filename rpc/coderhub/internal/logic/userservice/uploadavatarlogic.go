@@ -63,7 +63,7 @@ func (l *UploadAvatarLogic) UploadAvatar(in *coderhub.UploadAvatarRequest) (*cod
 	if err != nil {
 		// 事务回滚
 		batchDeleteRelationService := imagerelationservicelogic.NewBatchDeleteRelationLogic(l.ctx, l.svcCtx)
-		_, err := batchDeleteRelationService.BatchDeleteRelation(&coderhub.BatchDeleteRelationRequest{
+		_, err = batchDeleteRelationService.BatchDeleteRelation(&coderhub.BatchDeleteRelationRequest{
 			Ids: []int64{in.ImageId},
 		})
 		if err != nil {
