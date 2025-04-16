@@ -47,7 +47,7 @@ func (r *QuestionRepositoryRepositoryImpl) GetQuestionBankByID(ctx context.Conte
 func (r *QuestionRepositoryRepositoryImpl) GetQuestionBanks(ctx context.Context, categoryID int64, page, pageSize int32) ([]*model.QuestionBank, int64, error) {
 	var questionBanks []*model.QuestionBank
 	var total int64
-	query := r.DB.WithContext(ctx).Model(&model.QuestionBank{}).Where("category_id = ?", categoryID)
+	query := r.DB.WithContext(ctx).Model(&model.QuestionBank{}).Where("cate_gory_id = ?", categoryID)
 	// 先获取总数
 	if err := query.Count(&total).Error; err != nil {
 		return nil, 0, err
