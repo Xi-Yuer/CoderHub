@@ -2,6 +2,7 @@ package model
 
 import (
 	"fmt"
+	"log"
 	"time"
 
 	"gorm.io/gorm"
@@ -31,6 +32,37 @@ type Articles struct {
 
 func (a *Articles) CacheKeyByID(id int64) string {
 	return fmt.Sprintf("Articles:id:%d", id)
+}
+
+func (a *Articles) EnsureFullTextIndex(db *gorm.DB) error {
+	var count int64
+	// 查询 INFORMATION_SCHEMA 检查是否已有该索引
+	checkSQL := `
+		SELECT COUNT(1)
+		FROM INFORMATION_SCHEMA.STATISTICS
+		WHERE table_schema = DATABASE()
+		  AND table_name = 'articles'
+		  AND index_name = 'idx_fulltext_title_content'
+	`
+	if err := db.Raw(checkSQL).Scan(&count).Error; err != nil {
+		return err
+	}
+
+	// 若不存在，则添加全文索引
+	if count == 0 {
+		createIndexSQL := `
+			ALTER TABLE articles
+			ADD FULLTEXT INDEX idx_fulltext_title_content (title, content)
+		`
+		if err := db.Exec(createIndexSQL).Error; err != nil {
+			return fmt.Errorf("添加全文索引失败: %w", err)
+		}
+		log.Println("✅ 成功添加全文索引: idx_fulltext_title_content")
+	} else {
+		log.Println("ℹ️ 已存在全文索引: idx_fulltext_title_content，跳过创建")
+	}
+
+	return nil
 }
 
 type ArticlePreviewWithAuthInfo struct {

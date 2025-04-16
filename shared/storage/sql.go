@@ -93,12 +93,8 @@ func NewGorm() *gorm.DB {
 		}
 
 		// 添加全文索引（幂等执行，防止重复）
-		if err := db.Exec(`
-				ALTER TABLE articles 
-				ADD FULLTEXT INDEX IF NOT EXISTS idx_fulltext_title_content (title, content)
-			`).Error; err != nil {
-			log.Fatalf("添加全文索引失败: %v", err)
-		}
+		articles := model.Articles{}
+		articles.EnsureFullTextIndex(DB)
 
 		DB = db
 	})
