@@ -13,3 +13,6 @@
 ## 目标价值
 
 - 提供一个编程技术社区，让程序员能够在这里交流技术，分享经验，解决问题。
+
+
+![image](https://github.com/user-attachments/assets/bd029eea-b15c-4ea4-8023-981c64a33836)
