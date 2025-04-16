@@ -4,7 +4,6 @@ import (
 	"coderhub/model"
 	"coderhub/shared/storage"
 	"context"
-	"sync"
 
 	"gorm.io/gorm"
 )
@@ -66,30 +65,16 @@ func (r *UserFavorFolderRepositoryImpl) GetList(ctx context.Context, userID int6
 		query = query.Where("user_id = ?", userID)
 	}
 
-	// 并发执行计数查询和数据查询
-	var wg sync.WaitGroup
-	var countErr error
+	// 先执行 count 查询
+	if err := query.Count(&count).Error; err != nil {
+		return nil, 0, err
+	}
 
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-		// 创建新的查询会话，避免影响主查询
-		countErr = query.Session(&gorm.Session{}).
-			Select("COUNT(1)").
-			Count(&count).Error
-	}()
-
-	// 数据查询
+	// 再执行分页数据查询
 	err := query.Order("created_at desc").
 		Limit(int(pageSize)).
 		Offset(int((page - 1) * pageSize)).
 		Find(&userFavorFolders).Error
-
-	wg.Wait()
-
-	if countErr != nil {
-		return nil, 0, countErr
-	}
 	if err != nil {
 		return nil, 0, err
 	}
