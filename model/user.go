@@ -48,6 +48,12 @@ type User struct {
 	IsFollowed bool `gorm:"-" json:"is_followed"`
 	// 用户的文章数量（忽略）
 	ArticleCount int64 `gorm:"-" json:"article_count"`
+
+	// 添加复合索引
+	_ struct{} `gorm:"index:idx_status_created,priority:1,columns:status,created_at"` // 优化用户列表查询
+	_ struct{} `gorm:"index:idx_username_status,priority:1,columns:user_name,status"` // 优化用户名查询
+	_ struct{} `gorm:"index:idx_phone_email,priority:1,columns:phone,email"`          // 优化手机号和邮箱查询
+	_ struct{} `gorm:"index:idx_level_status,priority:1,columns:level,status"`        // 优化用户等级查询
 }
 
 // CacheKeyByID 根据用户ID生成缓存键

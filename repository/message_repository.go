@@ -5,7 +5,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"sync"
 
 	"gorm.io/gorm"
 )
@@ -67,18 +66,10 @@ func (r *MessageRepositoryImpl) List(ctx context.Context, message *model.Message
 
 	// 使用 Select 指定只计数需要的字段
 	query := r.DB.WithContext(ctx).Model(&model.Message{}).Where(message)
-	countQuery := query.Session(&gorm.Session{}) // 创建新会话避免影响主查询
-
-	// 并发执行计数查询和数据查询
-	var wg sync.WaitGroup
-	var countErr error
-
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-		countErr = countQuery.Count(&total).Error
-	}()
-
+	// 计算总记录数
+	if err := query.Count(&total).Error; err != nil {
+		return nil, 0, fmt.Errorf("failed to count messages: %w", err)
+	}
 	var fetchErr error
 	if page > 0 && pageSize > 0 {
 		fetchErr = query.
@@ -88,11 +79,6 @@ func (r *MessageRepositoryImpl) List(ctx context.Context, message *model.Message
 			Find(&messages).Error
 	}
 
-	wg.Wait()
-
-	if countErr != nil {
-		return nil, 0, fmt.Errorf("failed to count messages: %w", countErr)
-	}
 	if fetchErr != nil {
 		return nil, 0, fmt.Errorf("failed to fetch messages: %w", fetchErr)
 	}
