@@ -97,6 +97,7 @@ func NewGorm() *gorm.DB {
 		if err := articles.EnsureFullTextIndex(db); err != nil {
 			log.Printf("警告: 创建全文索引失败: %v", err)
 		}
+		DB = db
 	})
 
 	return DB
