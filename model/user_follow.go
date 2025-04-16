@@ -6,12 +6,9 @@ import (
 
 type UserFollow struct {
 	gorm.Model
-	FollowerID int64 `gorm:"index;uniqueIndex:idx_follower_followed"` // 关注者ID
-	FollowedID int64 `gorm:"index;uniqueIndex:idx_follower_followed"` // 被关注者ID
+	FollowerID int64 `gorm:"column:follower_id;not null"` // 关注者ID
+	FollowedID int64 `gorm:"column:followed_id;not null"` // 被关注者ID
 
-	// 联合唯一索引
-	_ struct {
-		FollowerID int64
-		FollowedID int64
-	} `gorm:"uniqueIndex:idx_follower_followed"`
+	// 优化后的联合索引，包含软删除字段
+	_ struct{} `gorm:"index:idx_follower_followed_del,priority:1,columns:follower_id,followed_id,deleted_at"`
 }

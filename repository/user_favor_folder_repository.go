@@ -4,6 +4,8 @@ import (
 	"coderhub/model"
 	"coderhub/shared/storage"
 	"context"
+	"sync"
+
 	"gorm.io/gorm"
 )
 
@@ -53,13 +55,41 @@ func (r *UserFavorFolderRepositoryImpl) GetFolderByID(ctx context.Context, id in
 func (r *UserFavorFolderRepositoryImpl) GetList(ctx context.Context, userID int64, requestUserId, page, pageSize int64) ([]*model.UserFavorFolder, int64, error) {
 	var userFavorFolders []*model.UserFavorFolder
 	var count int64
-	// 请求的用户不是自己的话，只能查看公开收藏夹
+
+	// 构建基础查询
+	query := r.DB.WithContext(ctx).Model(&model.UserFavorFolder{})
+
+	// 根据请求用户设置查询条件
 	if requestUserId != userID {
-		err := r.DB.WithContext(ctx).Where("user_id = ? AND is_public = ?", userID, true).Order("created_at desc").Limit(int(pageSize)).Offset(int((page - 1) * pageSize)).Find(&userFavorFolders).Count(&count).Error
-		return userFavorFolders, count, err
+		query = query.Where("user_id = ? AND is_public = ?", userID, true)
 	} else {
-		// 请求用户是自己的话，可以查看所有收藏夹
-		err := r.DB.WithContext(ctx).Where("user_id = ?", userID).Order("created_at desc").Limit(int(pageSize)).Offset(int((page - 1) * pageSize)).Find(&userFavorFolders).Count(&count).Error
-		return userFavorFolders, count, err
+		query = query.Where("user_id = ?", userID)
 	}
+
+	// 并发执行计数查询和数据查询
+	var wg sync.WaitGroup
+	var countErr error
+
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		countErr = query.Count(&count).Error
+	}()
+
+	// 数据查询
+	err := query.Order("created_at desc").
+		Limit(int(pageSize)).
+		Offset(int((page - 1) * pageSize)).
+		Find(&userFavorFolders).Error
+
+	wg.Wait()
+
+	if countErr != nil {
+		return nil, 0, countErr
+	}
+	if err != nil {
+		return nil, 0, err
+	}
+
+	return userFavorFolders, count, nil
 }

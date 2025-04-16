@@ -14,6 +14,7 @@ type UserFavorFolder struct {
 		UserID  int64
 		FavorID int64
 	} `gorm:"uniqueIndex:idx_user_id_favor_id"`
+	_ struct{} `gorm:"index:idx_user_public,priority:1,columns:user_id,is_public,created_at"` // 添加新的复合索引
 }
 
 type UserFavor struct {
@@ -27,6 +28,8 @@ type UserFavor struct {
 		FavorFoldId int64
 		EntityID    int64
 	} `gorm:"uniqueIndex:idx_user_id_favor_id_entity_id"`
+	// 添加新的复合索引，包含软删除字段，优化计数查询
+	_ struct{} `gorm:"index:idx_entity_type_del,priority:1,columns:entity_id,entity_type,deleted_at"`
 }
 
 var FavorEntityEnum = map[string]string{

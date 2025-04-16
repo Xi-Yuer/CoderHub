@@ -4,6 +4,8 @@ import (
 	"coderhub/model"
 	"coderhub/shared/storage"
 	"errors"
+	"fmt"
+
 	"gorm.io/gorm"
 )
 
@@ -63,7 +65,27 @@ func (r *UserFollowRepositoryImpl) DeleteUserFollow(userFollow *model.UserFollow
 	if userFollow.FollowerID == userFollow.FollowedID {
 		return errors.New("不能取消关注自己")
 	}
-	return r.DB.Model(&model.UserFollow{}).Where("follower_id = ? AND followed_id = ?", userFollow.FollowerID, userFollow.FollowedID).Unscoped().Delete(userFollow).Error
+
+	// 开启事务
+	tx := r.DB.Begin()
+	err := tx.Model(&model.UserFollow{}).
+		Where("follower_id = ? AND followed_id = ?", userFollow.FollowerID, userFollow.FollowedID).
+		Unscoped().
+		Delete(userFollow).Error
+
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	// 删除缓存
+	key := fmt.Sprintf("follow:%d:%d", userFollow.FollowerID, userFollow.FollowedID)
+	if err := r.Redis.Del(key); err != nil {
+		tx.Rollback()
+		return fmt.Errorf("failed to delete cache: %w", err)
+	}
+
+	return tx.Commit().Error
 }
 
 // GetUserFollows 查询用户关注的所有用户
@@ -109,9 +131,25 @@ func (r *UserFollowRepositoryImpl) BatchGetUserFans(followedID int64, page int32
 
 // IsUserFollowed 判断两个用户是否存在关注关系
 func (r *UserFollowRepositoryImpl) IsUserFollowed(followerID int64, followedID int64) (bool, error) {
-	var isFollowed int64
-	r.DB.Model(&model.UserFollow{}).Where("follower_id = ? AND followed_id = ?", followerID, followedID).Count(&isFollowed)
-	return isFollowed > 0, nil
+	var exists bool
+	// 先查缓存
+	key := fmt.Sprintf("follow:%d:%d", followerID, followedID)
+	exists, err := r.Redis.Exists(key)
+	if err == nil && exists {
+		return true, nil
+	}
+
+	err = r.DB.Model(&model.UserFollow{}).
+		Select("1").
+		Where("follower_id = ? AND followed_id = ?", followerID, followedID).
+		Limit(1).
+		Find(&exists).Error
+
+	// 如果存在关系，写入缓存
+	if exists {
+		r.Redis.Set(key, "1")
+	}
+	return exists, err
 }
 
 // GetMutualFollows 查询互相关注的用户

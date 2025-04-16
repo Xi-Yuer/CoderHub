@@ -282,16 +282,17 @@ func (r *ArticleRepositoryImpl) GetArticlesBySearchKeys(keys string, _type strin
 	keys = strings.Join(keywords, " ")
 
 	// 执行全文索引查询，使用 BOOLEAN MODE
-	sql := `
-		SELECT id FROM articles
-		WHERE type = ?
-		  AND MATCH(title, summary, content, tags) AGAINST(? IN BOOLEAN MODE)
-		LIMIT ? OFFSET ?
-	`
+	// sql := `
+	// 	SELECT id FROM articles
+	// 	WHERE type = ?
+	// 	  AND MATCH(title, summary, content, tags) AGAINST(? IN BOOLEAN MODE)
+	// 	LIMIT ? OFFSET ?
+	// `
 
-	if err := r.DB.Raw(sql, _type, keys, pageSize, (page-1)*pageSize).Scan(&ids).Error; err != nil {
-		return nil, err
-	}
+	// if err := r.DB.Raw(sql, _type, keys, pageSize, (page-1)*pageSize).Scan(&ids).Error; err != nil {
+	// 	return nil, err
+	// }
+	r.DB.Pluck("id", &ids).Model(&model.Articles{}).Where("type =? AND title LIKE ? OR summary LIKE ? OR content LIKE ? OR tags LIKE ?)", _type, "%"+keys, "%"+keys, "%"+keys, "%"+keys).Limit(int(pageSize)).Offset(int((page - 1) * pageSize))
 
 	return ids, nil
 }
