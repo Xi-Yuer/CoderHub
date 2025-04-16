@@ -185,7 +185,7 @@ func (m *Minio) UploadImageWithThumbnail(bucketName, objectName string, reader i
 		return ImageInfo{}, err
 	}
 	if !exists {
-		err := m.CreateBucket(bucketName)
+		err = m.CreateBucket(bucketName)
 		if err != nil {
 			return ImageInfo{}, err
 		}

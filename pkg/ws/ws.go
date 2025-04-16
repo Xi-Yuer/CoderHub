@@ -27,6 +27,7 @@ type Connection struct {
 	UserID       string
 	LastPingTime int64 // 记录最近一次心跳时间
 	mu           sync.Mutex
+	IsAlive      bool // 连接状态
 }
 
 // Hub 管理所有的 WebSocket 连接和消息
@@ -49,9 +50,9 @@ func NewHub() (*Hub, error) {
 	sql := storage.NewGorm()
 	return &Hub{
 		Connections:              make(map[string]*Connection),
-		Register:                 make(chan *Connection, 10),
-		Unregister:               make(chan *Connection),
-		Messages:                 make(chan model.PrivateMessage, 10),
+		Register:                 make(chan *Connection, 50),           // 增加注册通道缓冲
+		Unregister:               make(chan *Connection, 50),           // 增加注销通道缓冲
+		Messages:                 make(chan model.PrivateMessage, 100), // 增加消息通道缓冲
 		PrivateMessageRepository: repository.NewPrivateMessageRepository(sql, redisDB),
 		UserSessionRepository:    repository.NewUserSessionRepository(sql),
 	}, nil
@@ -132,50 +133,58 @@ func (h *Hub) sendMessage(msg model.PrivateMessage) {
 	target, ok := h.Connections[msg.ReceiverID]
 	h.mu.Unlock()
 
-	// 检查会话是否存在
-	session, err := h.UserSessionRepository.GetUserSession(context.Background(), &model.UserSession{
+	// 使用上下文控制超时
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	// 检查会话是否存在并更新会话信息
+	session, err := h.UserSessionRepository.GetUserSession(ctx, &model.UserSession{
 		SessionID: msg.SessionID,
 		UserID:    msg.SenderID,
 		PeerID:    msg.ReceiverID,
 	})
 	if err != nil {
 		logx.Errorf("Failed to get user session: %v", err)
+		return
 	}
 	if session == nil {
-		// 会话信息不存在，返回错误
 		logx.Errorf("User session not found for sender %s and receiver %s", msg.SenderID, msg.ReceiverID)
 		return
-	} else {
-		// 更新发送者会话信息
-		session.LastMessageID = msg.MessageID
-		session.LastMessageContent = msg.Content
-		session.UpdatedAt = time.Now()
-		session.UnreadMessageCount = 0
-		if _, err := h.UserSessionRepository.UpdateUserSession(context.Background(), session); err != nil {
-			logx.Errorf("Failed to update sender's user session: %v", err)
-		}
-		// 更新接收者会话信息
-		receiverSession, err := h.UserSessionRepository.GetUserSession(context.Background(), &model.UserSession{
-			UserID: msg.ReceiverID,
-			PeerID: msg.SenderID,
-		})
-		if err != nil {
-			logx.Errorf("Failed to get receiver's user session: %v", err)
-		} else {
-			receiverSession.LastMessageID = msg.MessageID
-			receiverSession.LastMessageContent = msg.Content
-			if !ok { // 接收者不在线，未读消息数量加 1
-				receiverSession.UnreadMessageCount++
-			} else {
-				receiverSession.UnreadMessageCount = 0
-			}
-			receiverSession.UpdatedAt = time.Now()
-			if _, err := h.UserSessionRepository.UpdateUserSession(context.Background(), receiverSession); err != nil {
-				logx.Errorf("Failed to update receiver's user session: %v", err)
-			}
+	}
+
+	// 批量更新会话信息
+	updates := make([]*model.UserSession, 0, 2)
+
+	// 更新发送者会话
+	session.LastMessageID = msg.MessageID
+	session.LastMessageContent = msg.Content
+	session.UpdatedAt = time.Now()
+	session.UnreadMessageCount = 0
+	updates = append(updates, session)
+
+	// 更新接收者会话
+	receiverSession := &model.UserSession{
+		SessionID:          msg.SessionID,
+		UserID:             msg.ReceiverID,
+		PeerID:             msg.SenderID,
+		LastMessageID:      msg.MessageID,
+		LastMessageContent: msg.Content,
+		UnreadMessageCount: 0,
+		UpdatedAt:          time.Now(),
+	}
+	if !ok { // 接收者不在线，未读消息数量加 1
+		receiverSession.UnreadMessageCount = 1
+	}
+	updates = append(updates, receiverSession)
+
+	// 批量更新会话
+	for _, update := range updates {
+		if _, err := h.UserSessionRepository.UpdateUserSession(ctx, update); err != nil {
+			logx.Errorf("Failed to update user session: %v", err)
 		}
 	}
 
+	// 处理消息发送和存储
 	if ok {
 		msg.Status = "read"
 		if err := h.sendAndSaveMessage(target, msg); err != nil {
@@ -187,6 +196,7 @@ func (h *Hub) sendMessage(msg model.PrivateMessage) {
 			logx.Errorf("Failed to save offline message: %v", err)
 		}
 	}
+
 	if msg.Content == "pong" {
 		h.handlePongMessage(msg.SenderID)
 	}
@@ -249,20 +259,41 @@ func (h *Hub) StartHeartbeat(interval time.Duration, timeout time.Duration) {
 
 // checkAndSendPing 发送 Ping 并检查超时
 func (h *Hub) checkAndSendPing(timeout time.Duration) {
+	var disconnectedUsers []string
+	var activeConns []*Connection
+
+	// 收集需要处理的连接
 	h.mu.Lock()
-	defer h.mu.Unlock()
-	now := time.Now().Unix()
 	for userID, conn := range h.Connections {
-		if now-conn.LastPingTime > int64(timeout.Seconds()) {
-			logx.Infof("User %s disconnected due to timeout", userID)
+		if time.Now().Unix()-conn.LastPingTime > int64(timeout.Seconds()) {
+			disconnectedUsers = append(disconnectedUsers, userID)
+		} else {
+			activeConns = append(activeConns, conn)
+		}
+	}
+	h.mu.Unlock()
+
+	// 处理超时连接
+	for _, userID := range disconnectedUsers {
+		h.mu.Lock()
+		if conn, ok := h.Connections[userID]; ok {
 			delete(h.Connections, userID)
 			_ = conn.Conn.Close()
-		} else {
-			if err := conn.Conn.WriteMessage(websocket.PingMessage, nil); err != nil {
-				logx.Errorf("Failed to send ping to %s: %v", userID, err)
-				delete(h.Connections, userID)
+			logx.Infof("User %s disconnected due to timeout", userID)
+		}
+		h.mu.Unlock()
+	}
+
+	// 发送心跳给活跃连接
+	for _, conn := range activeConns {
+		if err := conn.Conn.WriteMessage(websocket.PingMessage, nil); err != nil {
+			h.mu.Lock()
+			if _, ok := h.Connections[conn.UserID]; ok {
+				delete(h.Connections, conn.UserID)
 				_ = conn.Conn.Close()
+				logx.Errorf("Failed to send ping to %s: %v", conn.UserID, err)
 			}
+			h.mu.Unlock()
 		}
 	}
 }

@@ -8,22 +8,22 @@ import (
 )
 
 type Articles struct {
-	ID           int64          `gorm:"<-:create;primaryKey" json:"id"`                               // 主键 ID
-	Type         string         `gorm:"type:enum('article','micro_post');not null" json:"type"`       // 内容类型：长文(article) 或 短文(micro_post)
-	Title        string         `gorm:"size:255" json:"title"`                                        // 长文标题，短文可为空
-	Content      string         `gorm:"type:longtext;character set utf8mb4;not null" json:"content"`  // 内容（长文或短文）
-	Summary      string         `gorm:"type:text;character set utf8mb4" json:"summary"`               // 长文摘要，短文为空
-	AuthorID     int64          `gorm:"not null;index" json:"author_id"`                              // 作者 ID
-	Images       []Image        `gorm:"-" json:"images"`                                              // 文章图片列表
-	CoverImage   *Image         `gorm:"-" json:"cover_image,omitempty"`                               // 封面图片
-	Tags         string         `gorm:"size:255" json:"tags"`                                         // 标签，逗号分隔（适用于长文）
-	CategoryID   int64          `gorm:"not null;index" json:"category_id"`                            // 分类 ID
-	CommentCount int64          `gorm:"default:0" json:"comment_count"`                               // 评论数
-	Status       string         `gorm:"type:enum('draft','published');default:'draft'" json:"status"` // 内容状态
-	Version      int64          `gorm:"default:0" json:"version"`                                     // 版本号
-	CreatedAt    time.Time      `gorm:"<-:create" json:"created_at"`                                  // 创建时间
-	UpdatedAt    time.Time      `gorm:"autoCreateTime;autoUpdateTime" json:"updated_at"`              // 更新时间
-	DeletedAt    gorm.DeletedAt `gorm:"index" json:"deleted_at"`                                      // 删除时间
+	ID           int64          `gorm:"<-:create;primaryKey" json:"id"`                                                                           // 主键 ID
+	Type         string         `gorm:"type:enum('article','micro_post');not null;index:idx_type" json:"type"`                                    // 内容类型：长文(article) 或 短文(micro_post)
+	Title        string         `gorm:"size:255;index:idx_title" json:"title"`                                                                    // 长文标题，短文可为空
+	Content      string         `gorm:"type:longtext;character set utf8mb4;not null" json:"content"`                                              // 内容（长文或短文）
+	Summary      string         `gorm:"type:text;character set utf8mb4" json:"summary"`                                                           // 长文摘要，短文为空
+	AuthorID     int64          `gorm:"not null;index:idx_author_status" json:"author_id"`                                                        // 作者 ID
+	Images       []Image        `gorm:"-" json:"images"`                                                                                          // 文章图片列表
+	CoverImage   *Image         `gorm:"-" json:"cover_image,omitempty"`                                                                           // 封面图片
+	Tags         string         `gorm:"size:255;index:idx_tags" json:"tags"`                                                                      // 标签，逗号分隔（适用于长文）
+	CategoryID   int64          `gorm:"not null;index:idx_category_status" json:"category_id"`                                                    // 分类 ID
+	CommentCount int64          `gorm:"default:0" json:"comment_count"`                                                                           // 评论数
+	Status       string         `gorm:"type:enum('draft','published');default:'draft';index:idx_author_status,idx_category_status" json:"status"` // 内容状态
+	Version      int64          `gorm:"default:0" json:"version"`                                                                                 // 版本号
+	CreatedAt    time.Time      `gorm:"<-:create;index:idx_created_at" json:"created_at"`                                                         // 创建时间
+	UpdatedAt    time.Time      `gorm:"autoCreateTime;autoUpdateTime" json:"updated_at"`                                                          // 更新时间
+	DeletedAt    gorm.DeletedAt `gorm:"index" json:"deleted_at"`                                                                                  // 删除时间
 
 	ViewCount int64 `gorm:"-" json:"view_count"` // 阅读次数（长文专用）
 	LikeCount int64 `gorm:"-" json:"like_count"` // 点赞次数

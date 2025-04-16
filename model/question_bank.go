@@ -1,8 +1,9 @@
 package model
 
 import (
-	"gorm.io/gorm"
 	"time"
+
+	"gorm.io/gorm"
 )
 
 // QuestionBank 题库模型
@@ -11,21 +12,21 @@ type QuestionBank struct {
 	ID          int64  `gorm:"primaryKey;autoIncrement" json:"id"`
 	Name        string `gorm:"type:varchar(255);not null;unique;index:idx_name;comment:题库名称" json:"name"`
 	Description string `gorm:"type:text;comment:题库描述" json:"description"`
-	Difficulty  string `gorm:"type:enum('default','easy','medium','hard');comment:题库难度" json:"difficulty"`
-	Tags        string `gorm:"type:text;comment:题库标签（JSON格式）" json:"tags"`
-	CreateUser  int64  `gorm:"type:bigint;not null;comment:创建人" json:"create_user"`
+	Difficulty  string `gorm:"type:enum('default','easy','medium','hard');index:idx_difficulty;comment:题库难度" json:"difficulty"`
+	Tags        string `gorm:"type:text;index:idx_tags;comment:题库标签（JSON格式）" json:"tags"`
+	CreateUser  int64  `gorm:"type:bigint;not null;index:idx_create_user;comment:创建人" json:"create_user"`
 	CoverImage  *Image `gorm:"-" json:"cover_image,omitempty"`
-	CateGoryID  int64  `gorm:"index;not null;comment:题库分类" json:"cate_gory_id"`
+	CateGoryID  int64  `gorm:"index:idx_category_difficulty;not null;comment:题库分类" json:"category_id"`
 }
 
 // Question 题目模型
 type Question struct {
 	gorm.Model
-	BankID     int64  `json:"bank_id" gorm:"type:bigint;index;comment:题库ID"`
-	Title      string `json:"title" gorm:"type:varchar(255);not null;comment:题目标题"`
+	BankID     int64  `json:"bank_id" gorm:"type:bigint;index:idx_bank_difficulty;comment:题库ID"`
+	Title      string `json:"title" gorm:"type:varchar(255);not null;index:idx_title;comment:题目标题"`
 	Content    string `json:"content" gorm:"type:text;not null;comment:题目内容"`
-	CreateUser int64  `json:"create_user" gorm:"type:bigint;not null;comment:创建人"`
-	Difficulty string `json:"difficulty" gorm:"type:enum('default','easy','medium','hard');comment:题库难度"`
+	CreateUser int64  `json:"create_user" gorm:"type:bigint;not null;index:idx_create_user;comment:创建人"`
+	Difficulty string `json:"difficulty" gorm:"type:enum('default','easy','medium','hard');index:idx_bank_difficulty;comment:题库难度"`
 }
 
 type QuestionBanksPreviewWithCreateUser struct {

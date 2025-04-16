@@ -4,6 +4,7 @@ import (
 	"coderhub/model"
 	"coderhub/shared/storage"
 	"context"
+
 	"gorm.io/gorm"
 )
 
@@ -46,8 +47,16 @@ func (r *QuestionRepositoryRepositoryImpl) GetQuestionBankByID(ctx context.Conte
 func (r *QuestionRepositoryRepositoryImpl) GetQuestionBanks(ctx context.Context, categoryID int64, page, pageSize int32) ([]*model.QuestionBank, int64, error) {
 	var questionBanks []*model.QuestionBank
 	var total int64
-	err := r.DB.WithContext(ctx).Model(&model.QuestionBank{}).Where("cate_gory_id = ?", categoryID).Limit(int(pageSize)).Offset(int((page - 1) * pageSize)).Find(&questionBanks).Count(&total).Error
-	return questionBanks, total, err
+	query := r.DB.WithContext(ctx).Model(&model.QuestionBank{}).Where("category_id = ?", categoryID)
+	// 先获取总数
+	if err := query.Count(&total).Error; err != nil {
+		return nil, 0, err
+	}
+	// 再获取分页数据
+	if err := query.Limit(int(pageSize)).Offset(int((page - 1) * pageSize)).Find(&questionBanks).Error; err != nil {
+		return nil, 0, err
+	}
+	return questionBanks, total, nil
 }
 
 func (r *QuestionRepositoryRepositoryImpl) BatchGetQuestion(ctx context.Context, ids []int64) ([]*model.QuestionBanksPreviewWithCreateUser, error) {

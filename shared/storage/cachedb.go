@@ -51,8 +51,8 @@ func DefaultConfig() *RedisConfig {
 		Addr:         "redis:6379",
 		Password:     "",
 		DB:           0,
-		PoolSize:     10,             // 连接池大小
-		MinIdleConns: 5,              // 最小空闲连接数
+		PoolSize:     50,             // 增加连接池大小
+		MinIdleConns: 10,             // 增加最小空闲连接数
 		DefaultTTL:   24 * time.Hour, // 默认24小时过期
 	}
 }
