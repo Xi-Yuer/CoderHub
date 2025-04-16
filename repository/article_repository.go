@@ -6,8 +6,10 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"gorm.io/gorm"
 	"net/url"
+	"strings"
+
+	"gorm.io/gorm"
 )
 
 type ArticleRepository interface {
@@ -268,9 +270,28 @@ func (r *ArticleRepositoryImpl) GetArticlesBySearchKeys(keys string, _type strin
 
 	// 服务降级使用
 	var ids []int64
+
+	// 解码查询关键词
 	keys, _ = url.QueryUnescape(keys)
-	if err := r.DB.Table("articles").Where("type = ? AND (title LIKE ? OR summary LIKE ? OR content LIKE ? OR tags LIKE ?)", _type, "%"+keys, "%"+keys, "%"+keys, "%"+keys).Limit(int(pageSize)).Offset(int((page-1)*pageSize)).Pluck("id", &ids).Error; err != nil {
+
+	// 将用户输入的关键词转为 Boolean 模式格式，如：Go 微服务 => +Go +微服务
+	keywords := strings.Fields(keys)
+	for i, kw := range keywords {
+		keywords[i] = "+" + kw
+	}
+	keys = strings.Join(keywords, " ")
+
+	// 执行全文索引查询，使用 BOOLEAN MODE
+	sql := `
+		SELECT id FROM articles
+		WHERE type = ?
+		  AND MATCH(title, summary, content, tags) AGAINST(? IN BOOLEAN MODE)
+		LIMIT ? OFFSET ?
+	`
+
+	if err := r.DB.Raw(sql, _type, keys, pageSize, (page-1)*pageSize).Scan(&ids).Error; err != nil {
 		return nil, err
 	}
+
 	return ids, nil
 }

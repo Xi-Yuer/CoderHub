@@ -13,7 +13,7 @@ type QuestionBank struct {
 	Name        string `gorm:"type:varchar(255);not null;unique;index:idx_name;comment:题库名称" json:"name"`
 	Description string `gorm:"type:text;comment:题库描述" json:"description"`
 	Difficulty  string `gorm:"type:enum('default','easy','medium','hard');index:idx_difficulty;comment:题库难度" json:"difficulty"`
-	Tags        string `gorm:"type:text;index:idx_tags;comment:题库标签（JSON格式）" json:"tags"`
+	Tags        string `gorm:"type:varchar(255);index:idx_tags;comment:题库标签（JSON格式）" json:"tags"`
 	CreateUser  int64  `gorm:"type:bigint;not null;index:idx_create_user;comment:创建人" json:"create_user"`
 	CoverImage  *Image `gorm:"-" json:"cover_image,omitempty"`
 	CateGoryID  int64  `gorm:"index:idx_category_difficulty;not null;comment:题库分类" json:"category_id"`

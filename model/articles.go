@@ -27,7 +27,6 @@ type Articles struct {
 
 	ViewCount int64 `gorm:"-" json:"view_count"` // 阅读次数（长文专用）
 	LikeCount int64 `gorm:"-" json:"like_count"` // 点赞次数
-
 }
 
 func (a *Articles) CacheKeyByID(id int64) string {
