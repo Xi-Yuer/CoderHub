@@ -94,9 +94,9 @@ func NewGorm() *gorm.DB {
 
 		// 添加全文索引（幂等执行，防止重复）
 		articles := model.Articles{}
-		articles.EnsureFullTextIndex(DB)
-
-		DB = db
+		if err := articles.EnsureFullTextIndex(db); err != nil {
+			log.Printf("警告: 创建全文索引失败: %v", err)
+		}
 	})
 
 	return DB
