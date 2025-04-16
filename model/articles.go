@@ -35,32 +35,44 @@ func (a *Articles) CacheKeyByID(id int64) string {
 }
 
 func (a *Articles) EnsureFullTextIndex(db *gorm.DB) error {
+	if db == nil {
+		return fmt.Errorf("database connection is nil")
+	}
+
 	var count int64
 	// 查询 INFORMATION_SCHEMA 检查是否已有该索引
 	checkSQL := `
-		SELECT COUNT(1)
-		FROM INFORMATION_SCHEMA.STATISTICS
-		WHERE table_schema = DATABASE()
-		  AND table_name = 'articles'
-		  AND index_name = 'idx_fulltext_title_content'
-	`
+        SELECT COUNT(1)
+        FROM INFORMATION_SCHEMA.STATISTICS
+        WHERE table_schema = DATABASE()
+          AND table_name = 'articles'
+          AND index_name = 'idx_fulltext_title_content'
+    `
 	if err := db.Raw(checkSQL).Scan(&count).Error; err != nil {
 		return err
 	}
 
-	// 若不存在，则添加全文索引
-	if count == 0 {
-		createIndexSQL := `
-			ALTER TABLE articles
-			ADD FULLTEXT INDEX idx_fulltext_title_content (title, content)
-		`
-		if err := db.Exec(createIndexSQL).Error; err != nil {
-			return fmt.Errorf("添加全文索引失败: %w", err)
+	// 如果索引存在，先删除旧索引
+	if count > 0 {
+		dropIndexSQL := `
+            ALTER TABLE articles
+            DROP INDEX idx_fulltext_title_content
+        `
+		if err := db.Exec(dropIndexSQL).Error; err != nil {
+			return fmt.Errorf("删除旧索引失败: %w", err)
 		}
-		log.Println("✅ 成功添加全文索引: idx_fulltext_title_content")
-	} else {
-		log.Println("ℹ️ 已存在全文索引: idx_fulltext_title_content，跳过创建")
+		log.Println("ℹ️ 已删除旧的全文索引")
 	}
+
+	// 创建新的全文索引
+	createIndexSQL := `
+        ALTER TABLE articles
+        ADD FULLTEXT INDEX idx_fulltext_title_content (title, content)
+    `
+	if err := db.Exec(createIndexSQL).Error; err != nil {
+		return fmt.Errorf("添加全文索引失败: %w", err)
+	}
+	log.Println("✅ 成功添加全文索引: idx_fulltext_title_content")
 
 	return nil
 }
