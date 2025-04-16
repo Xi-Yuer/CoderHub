@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"gorm.io/gorm"
+	"net/url"
 )
 
 type ArticleRepository interface {
@@ -267,6 +268,7 @@ func (r *ArticleRepositoryImpl) GetArticlesBySearchKeys(keys string, _type strin
 
 	// 服务降级使用
 	var ids []int64
+	keys, _ = url.QueryUnescape(keys)
 	if err := r.DB.Table("articles").Where("type = ? AND (title LIKE ? OR summary LIKE ? OR content LIKE ? OR tags LIKE ?)", _type, "%"+keys, "%"+keys, "%"+keys, "%"+keys).Limit(int(pageSize)).Offset(int((page-1)*pageSize)).Pluck("id", &ids).Error; err != nil {
 		return nil, err
 	}

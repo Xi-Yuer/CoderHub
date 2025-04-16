@@ -177,7 +177,7 @@ services:
     environment:
       - NEXT_PUBLIC_LOCAL_BASE_URL=http://nginx
       - NEXT_PUBLIC_CLIENT_BASE_URL=http://nginx
-      - NEXT_PUBLIC_LOCAL_API_BASE_URL=http://nginx
+      - NEXT_PUBLIC_LOCAL_API_BASE_URL=https://xiyuer.club
       - NEXT_PUBLIC_SERVER_API_BASE_URL=http://nginx/api
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:3000" ]
