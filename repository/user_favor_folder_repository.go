@@ -73,7 +73,10 @@ func (r *UserFavorFolderRepositoryImpl) GetList(ctx context.Context, userID int6
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
-		countErr = query.Count(&count).Error
+		// 创建新的查询会话，避免影响主查询
+		countErr = query.Session(&gorm.Session{}).
+			Select("COUNT(1)").
+			Count(&count).Error
 	}()
 
 	// 数据查询

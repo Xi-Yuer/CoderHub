@@ -10,7 +10,7 @@ import (
 
 type Articles struct {
 	ID           int64          `gorm:"<-:create;primaryKey" json:"id"`                                                                           // 主键 ID
-	Type         string         `gorm:"type:enum('article','micro_post');not null;index:idx_type" json:"type"`                                    // 内容类型：长文(article) 或 短文(micro_post)
+	Type         string         `gorm:"type:enum('article','micro_post');not null" json:"type"`                                                   // 内容类型：长文(article) 或 短文(micro_post)
 	Title        string         `gorm:"size:255;index:idx_title" json:"title"`                                                                    // 长文标题，短文可为空
 	Content      string         `gorm:"type:longtext;character set utf8mb4;not null" json:"content"`                                              // 内容（长文或短文）
 	Summary      string         `gorm:"type:text;character set utf8mb4" json:"summary"`                                                           // 长文摘要，短文为空
@@ -22,12 +22,15 @@ type Articles struct {
 	CommentCount int64          `gorm:"default:0" json:"comment_count"`                                                                           // 评论数
 	Status       string         `gorm:"type:enum('draft','published');default:'draft';index:idx_author_status,idx_category_status" json:"status"` // 内容状态
 	Version      int64          `gorm:"default:0" json:"version"`                                                                                 // 版本号
-	CreatedAt    time.Time      `gorm:"<-:create;index:idx_created_at" json:"created_at"`                                                         // 创建时间
+	CreatedAt    time.Time      `gorm:"<-:create" json:"created_at"`                                                                              // 创建时间
 	UpdatedAt    time.Time      `gorm:"autoCreateTime;autoUpdateTime" json:"updated_at"`                                                          // 更新时间
 	DeletedAt    gorm.DeletedAt `gorm:"index" json:"deleted_at"`                                                                                  // 删除时间
 
 	ViewCount int64 `gorm:"-" json:"view_count"` // 阅读次数（长文专用）
 	LikeCount int64 `gorm:"-" json:"like_count"` // 点赞次数
+
+	// 添加新的复合索引
+	_ struct{} `gorm:"index:idx_type_created,priority:1,columns:type,created_at,deleted_at"` // 优化类型和创建时间的联合查询
 }
 
 func (a *Articles) CacheKeyByID(id int64) string {
@@ -35,13 +38,13 @@ func (a *Articles) CacheKeyByID(id int64) string {
 }
 
 func (a *Articles) EnsureFullTextIndex(db *gorm.DB) error {
-    if db == nil {
-        return fmt.Errorf("database connection is nil")
-    }
+	if db == nil {
+		return fmt.Errorf("database connection is nil")
+	}
 
-    // 检查索引是否存在
-    var indexExists bool
-    checkSQL := `
+	// 检查索引是否存在
+	var indexExists bool
+	checkSQL := `
         SELECT 1 
         FROM INFORMATION_SCHEMA.STATISTICS 
         WHERE table_schema = DATABASE()
@@ -49,27 +52,27 @@ func (a *Articles) EnsureFullTextIndex(db *gorm.DB) error {
         AND index_name = 'idx_fulltext_title_content' 
         LIMIT 1
     `
-    err := db.Raw(checkSQL).Scan(&indexExists).Error
-    if err != nil {
-        return fmt.Errorf("检查索引是否存在失败: %w", err)
-    }
+	err := db.Raw(checkSQL).Scan(&indexExists).Error
+	if err != nil {
+		return fmt.Errorf("检查索引是否存在失败: %w", err)
+	}
 
-    // 如果索引存在且需要重建
-    if indexExists {
-        return nil // 如果索引已存在，直接返回
-    }
+	// 如果索引存在且需要重建
+	if indexExists {
+		return nil // 如果索引已存在，直接返回
+	}
 
-    // 创建新的全文索引
-    createIndexSQL := `
+	// 创建新的全文索引
+	createIndexSQL := `
         ALTER TABLE articles
         ADD FULLTEXT INDEX idx_fulltext_title_content (title, content)
     `
-    if err := db.Exec(createIndexSQL).Error; err != nil {
-        return fmt.Errorf("添加全文索引失败: %w", err)
-    }
-    log.Println("✅ 成功添加全文索引: idx_fulltext_title_content")
+	if err := db.Exec(createIndexSQL).Error; err != nil {
+		return fmt.Errorf("添加全文索引失败: %w", err)
+	}
+	log.Println("✅ 成功添加全文索引: idx_fulltext_title_content")
 
-    return nil
+	return nil
 }
 
 type ArticlePreviewWithAuthInfo struct {
