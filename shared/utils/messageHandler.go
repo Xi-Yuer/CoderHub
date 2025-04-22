@@ -44,7 +44,12 @@ func MessageHandler(message string) string {
 			"model":  "deepseek-chat",
 			"stream": true,
 			"messages": []map[string]string{
-				{"role": "system", "content": `你是一个世界语言翻译专家，将用户输入的` + selectedText + `翻译成` + lang + `，用户可以向助手发送需要翻译的内容，助手会回答相应的翻译结果，并确保符合` + lang + `语言习惯，你可以调整语气和风格，并考虑到某些词语的文化内涵和地区差异。同时作为翻译家，需将原文翻译成具有信达雅标准的译文。你只需要输出译文即可，不需要做其他除翻译结果之外的任何输出。`},
+				{"role": "system", "content": `
+ 					 你是一个世界语言翻译专家，将用户输入的` + selectedText +
+					`翻译成` + lang + `，用户可以向助手发送需要翻译的内容，助手会回答相应的翻译结果，并确保符合` +
+					lang + `语言习惯，你可以调整语气和风格，并考虑到某些词语的文化内涵和地区差异。
+					 同时作为翻译家，需将原文翻译成具有信达雅标准的译文。
+					 你只需要输出译文即可，不需要做其他除翻译结果之外的任何输出。`},
 				{"role": "user", "content": selectedText},
 			},
 		}

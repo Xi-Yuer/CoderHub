@@ -32,7 +32,7 @@ func NewGorm() *gorm.DB {
 			},
 		)
 
-		dsn := "root:2214380963Wx!!@tcp(mysql:3306)/coderhub?charset=utf8mb4&parseTime=True&loc=Local"
+		dsn := "root:2214380963Wx!!@tcp(http://8.156.66.210:3306)/coderhub?charset=utf8mb4&parseTime=True&loc=Local"
 
 		// Connect to MySQL using GORM
 		db, err := gorm.Open(mysql.New(mysql.Config{
