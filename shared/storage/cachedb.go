@@ -48,7 +48,7 @@ type RedisDB interface {
 // DefaultConfig 默认配置
 func DefaultConfig() *RedisConfig {
 	return &RedisConfig{
-		Addr:         "http://8.156.66.210:6379",
+		Addr:         "8.156.66.210:6379",
 		Password:     "",
 		DB:           0,
 		PoolSize:     50,             // 增加连接池大小
