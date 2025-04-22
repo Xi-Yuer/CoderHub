@@ -49,7 +49,7 @@ type RedisDB interface {
 func DefaultConfig() *RedisConfig {
 	return &RedisConfig{
 		Addr:         "8.156.66.210:6379",
-		Password:     "",
+		Password:     "2214380963Wx!!",
 		DB:           0,
 		PoolSize:     50,             // 增加连接池大小
 		MinIdleConns: 10,             // 增加最小空闲连接数
