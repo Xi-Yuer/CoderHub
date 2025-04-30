@@ -1,46 +1,4 @@
 services:
-  mysql:
-    image: mysql:8.0
-    container_name: mysql
-    environment:
-      MYSQL_DATABASE: coderhub
-      MYSQL_ROOT_PASSWORD: 2214380963Wx!!
-    ports:
-      - "3306:3306"
-    networks:
-      - coderhub-network
-    healthcheck:
-      test: [ "CMD", "mysqladmin", "ping", "--silent" ]
-      interval: 10s
-      retries: 10
-      start_period: 30s
-    volumes:
-      - type: bind
-        source: ./data/mysql
-        target: /var/lib/mysql
-      - type: bind
-        source: ./my.cnf
-        target: /etc/mysql/conf.d/my.cnf
-      - type: bind
-        source: ./init
-        target: /docker-entrypoint-initdb.d
-  redis:
-    image: redis:latest
-    container_name: redis
-    ports:
-      - "6379:6379"
-    networks:
-      - coderhub-network
-    healthcheck:
-      test: [ "CMD", "redis-cli", "ping" ]
-      interval: 10s
-      retries: 10
-      start_period: 30s
-    volumes:
-      - type: bind
-        source: ./data/redis
-        target: /data
-
   etcd:
     image: quay.io/coreos/etcd:v3.5.0
     container_name: etcd
@@ -77,6 +35,7 @@ services:
     container_name: nginx
     ports:
       - "80:80"
+      - "443:443"
     depends_on:
       service:
         condition: service_healthy
@@ -92,6 +51,10 @@ services:
         target: /etc/nginx/nginx.conf
         read_only: true
         consistency: consistent
+      - type: bind
+        source: ./certs
+        target: /etc/nginx/certs
+        read_only: true
 
   minio:
     image: quay.io/minio/minio:latest
@@ -124,8 +87,6 @@ services:
     container_name: api
     depends_on:
       - etcd
-      - mysql
-      - redis
       - service
     networks:
       - coderhub-network
@@ -142,11 +103,6 @@ services:
   service:
     image: 2214380963/service:latest
     container_name: service
-    depends_on:
-      mysql:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
     networks:
       - coderhub-network
     healthcheck:
@@ -157,11 +113,11 @@ services:
       timeout: 10s
     restart: always
     environment:
-      REDIS_HOST: redis
+      REDIS_HOST: 8.156.66.210
       REDIS_PORT: 6379
       ETCD_HOST: etcd
       ETCD_PORT: 2379
-      MYSQL_HOST: mysql
+      MYSQL_HOST: 8.156.66.210
       MYSQL_PORT: 3306
       ENDPOINT: https://es-cn-9me47qcyn0001owj4.public.elasticsearch.aliyuncs.com:9200
       APIKEY: cEc3MEk1WUJOa1dKb1NfUkFnb1I6b2p0c2JBc1ZTVEtkM1dwSWEyeEJiZw==
@@ -174,11 +130,6 @@ services:
       - service
     networks:
       - coderhub-network
-    environment:
-      - NEXT_PUBLIC_LOCAL_BASE_URL=http://nginx
-      - NEXT_PUBLIC_CLIENT_BASE_URL=http://nginx
-      - NEXT_PUBLIC_LOCAL_API_BASE_URL=https://xiyuer.club
-      - NEXT_PUBLIC_SERVER_API_BASE_URL=http://nginx/api
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:3000" ]
       interval: 10s

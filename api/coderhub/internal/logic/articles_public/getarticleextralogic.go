@@ -52,6 +52,7 @@ func (l *GetArticleExtraLogic) successResp(data *coderhub.ArticleAdditionalInfo)
 			IsLiked:       data.IsLicked,
 			IsFavorited:   data.IsFavorite,
 			FavoriteCount: data.FavoriteCount,
+			AuthorID:      utils.Int2String(data.AuthorId),
 		},
 	}, nil
 }

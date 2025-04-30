@@ -61,6 +61,7 @@ type ArticleExtra struct {
 	IsLiked       bool   `json:"is_liked"`
 	IsFavorited   bool   `json:"is_favorited"`
 	FavoriteCount int32  `json:"favorite_count"`
+	AuthorID      string `json:"author_id"`
 }
 
 type CancelLikeAcademicNavigatorReq struct {

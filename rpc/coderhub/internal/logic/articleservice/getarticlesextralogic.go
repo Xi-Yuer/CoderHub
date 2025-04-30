@@ -27,6 +27,7 @@ func NewGetArticlesExtraLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 
 func (l *GetArticlesExtraLogic) GetArticlesExtra(in *coderhub.GetArticleRequest) (*coderhub.ArticleAdditionalInfo, error) {
 	type result struct {
+		author         int64
 		likeCount      int64
 		articlePV      *model.ArticlePV
 		commentCount   int64
@@ -40,6 +41,7 @@ func (l *GetArticlesExtraLogic) GetArticlesExtra(in *coderhub.GetArticleRequest)
 
 	go func() {
 		var (
+			author         int64
 			likeCount      int64
 			articlePV      *model.ArticlePV
 			commentCount   int64
@@ -50,10 +52,25 @@ func (l *GetArticlesExtraLogic) GetArticlesExtra(in *coderhub.GetArticleRequest)
 		)
 
 		// 使用 goroutine 并行获取各项信息
+
+		authorCh := make(chan struct {
+			author int64
+			err    error
+		})
+
+		go func() {
+			article, err := l.svcCtx.ArticleRepository.GetArticleByID(in.Id)
+			authorCh <- struct {
+				author int64
+				err    error
+			}{article.AuthorID, err}
+		}()
+
 		likeCountCh := make(chan struct {
 			count int64
 			err   error
 		})
+
 		go func() {
 			count, err := l.svcCtx.ArticlesRelationLikeRepository.List(l.ctx, in.Id)
 			likeCountCh <- struct {
@@ -123,6 +140,14 @@ func (l *GetArticlesExtraLogic) GetArticlesExtra(in *coderhub.GetArticleRequest)
 		}()
 
 		// 收集结果
+		authorRes := <-authorCh
+		if authorRes.err != nil {
+			l.Logger.Errorf("获取文章作者失败: %v", authorRes.err)
+			errs = append(errs, authorRes.err)
+		} else {
+			author = authorRes.author
+		}
+
 		likeRes := <-likeCountCh
 		if likeRes.err != nil {
 			l.Logger.Errorf("获取文章点赞数失败: %v", likeRes.err)
@@ -177,6 +202,7 @@ func (l *GetArticlesExtraLogic) GetArticlesExtra(in *coderhub.GetArticleRequest)
 		}
 
 		resChan <- result{
+			author:         author,
 			likeCount:      likeCount,
 			articlePV:      articlePV,
 			commentCount:   commentCount,
@@ -199,5 +225,6 @@ func (l *GetArticlesExtraLogic) GetArticlesExtra(in *coderhub.GetArticleRequest)
 		IsLicked:      res.isUserLiked[in.Id],
 		IsFavorite:    res.isUserFavorite[in.Id],
 		FavoriteCount: int32(res.favoriteCount),
+		AuthorId:      res.author,
 	}, nil
 }

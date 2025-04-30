@@ -331,6 +331,7 @@ message ArticleAdditionalInfo {
   bool is_licked = 5;               // 当前用户是否已点赞
   bool is_favorite = 6;             // 当前用户是否已收藏
   int32 favorite_count = 7;          // 收藏数
+  int64 author_id = 8;               // 作者 ID
 }
 
 // 请求文章详情
