@@ -493,7 +493,7 @@ type (
 		IsLiked       bool   `json:"is_liked"`
 		IsFavorited   bool   `json:"is_favorited"`
 		FavoriteCount int32  `json:"favorite_count"`
-		AuthorID string `json:"author_id"`
+        AuthorID string `json:"author_id"`
 	}
 	GetArticleExtraResp {
 		Response
@@ -1185,6 +1185,30 @@ type (
 		Response
 		Data []UserSign `json:"data"`
 	}
+    Banner {
+        ID string `json:"id"`
+        Title string `json:"title"`
+        ImageUrl string `json:"imageUrl"`
+        LinkUrl string `json:"linkUrl"`
+        CreatedAt int64 `json:"createdAt"`
+        UpdatedAt int64 `json:"updatedAt"`
+    }
+    CreateBannerReq {
+        Title string `json:"title"`
+        ImageUrl string `json:"imageUrl"`
+        LinkUrl string `json:"linkUrl"`
+    }
+    GetBannerListReq {
+        Page int64 `form:"page"`
+        PageSize int64 `form:"page_size"`
+    }
+    DeleteBannerReq {
+        ID string `path:"id"`
+    }
+    GetBannerListResp {
+        Response
+        Data []*Banner `json:"data"`
+    }
 )
 
 @server (
@@ -1912,5 +1936,29 @@ service CodeHubAPI {
 	)
 	@handler ListSignIn
 	get /list (GetUserSignReq) returns (GetUserSignResp)
+}
+
+@server(
+    prefix: /api/banner
+    group: banner_public
+)
+service CodeHubAPI {
+    @doc(
+        summary: "获取轮播图列表"
+    )
+    @handler ListBanner
+    get /list returns (GetBannerListResp)
+
+    @doc(
+        summary: "上传轮播图"
+    )
+    @handler UploadBanner
+    post /upload returns (CreateBannerReq)
+
+    @doc(
+        summary: "删除轮播图"
+    )
+    @handler DeleteBanner
+    delete /delete/:id returns (DeleteBannerReq)
 }
 

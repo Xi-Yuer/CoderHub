@@ -64,6 +64,15 @@ type ArticleExtra struct {
 	AuthorID      string `json:"author_id"`
 }
 
+type Banner struct {
+	ID        string `json:"id"`
+	Title     string `json:"title"`
+	ImageUrl  string `json:"imageUrl"`
+	LinkUrl   string `json:"linkUrl"`
+	CreatedAt int64  `json:"createdAt"`
+	UpdatedAt int64  `json:"updatedAt"`
+}
+
 type CancelLikeAcademicNavigatorReq struct {
 	Id string `path:"id"` // 学术导航 ID
 }
@@ -120,6 +129,12 @@ type CreateArticleReq struct {
 type CreateArticleResp struct {
 	Response
 	Data string `json:"data"` // 文章详情
+}
+
+type CreateBannerReq struct {
+	Title    string `json:"title"`
+	ImageUrl string `json:"imageUrl"`
+	LinkUrl  string `json:"linkUrl"`
 }
 
 type CreateCommentReq struct {
@@ -291,6 +306,10 @@ type DeleteArticleReq struct {
 type DeleteArticleResp struct {
 	Response
 	Data bool `json:"data"` // 是否删除成功
+}
+
+type DeleteBannerReq struct {
+	ID string `path:"id"`
 }
 
 type DeleteCommentReq struct {
@@ -554,6 +573,16 @@ type GetArticlesReq struct {
 type GetArticlesResp struct {
 	Response
 	Data GetArticleResponse `json:"data"` // 文章列表
+}
+
+type GetBannerListReq struct {
+	Page     int64 `form:"page"`
+	PageSize int64 `form:"page_size"`
+}
+
+type GetBannerListResp struct {
+	Response
+	Data []*Banner `json:"data"`
 }
 
 type GetChatMessageListReq struct {

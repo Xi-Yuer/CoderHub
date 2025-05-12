@@ -11,6 +11,7 @@ import (
 	ai_auth "coderhub/api/coderhub/internal/handler/ai_auth"
 	articles_auth "coderhub/api/coderhub/internal/handler/articles_auth"
 	articles_public "coderhub/api/coderhub/internal/handler/articles_public"
+	banner_public "coderhub/api/coderhub/internal/handler/banner_public"
 	coderhub "coderhub/api/coderhub/internal/handler/coderhub"
 	comments_auth "coderhub/api/coderhub/internal/handler/comments_auth"
 	creator_auth "coderhub/api/coderhub/internal/handler/creator_auth"
@@ -165,6 +166,30 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			},
 		},
 		rest.WithPrefix("/api/articles"),
+	)
+
+	server.AddRoutes(
+		[]rest.Route{
+			{
+				// 删除轮播图
+				Method:  http.MethodDelete,
+				Path:    "/delete/:id",
+				Handler: banner_public.DeleteBannerHandler(serverCtx),
+			},
+			{
+				// 获取轮播图列表
+				Method:  http.MethodGet,
+				Path:    "/list",
+				Handler: banner_public.ListBannerHandler(serverCtx),
+			},
+			{
+				// 上传轮播图
+				Method:  http.MethodPost,
+				Path:    "/upload",
+				Handler: banner_public.UploadBannerHandler(serverCtx),
+			},
+		},
+		rest.WithPrefix("/api/banner"),
 	)
 
 	server.AddRoutes(

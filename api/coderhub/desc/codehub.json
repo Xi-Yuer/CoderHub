@@ -667,6 +667,65 @@
         ]
       }
     },
+    "/api/banner/delete/{id}": {
+      "delete": {
+        "summary": "删除轮播图",
+        "operationId": "DeleteBanner",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/DeleteBannerReq"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "banner_public"
+        ]
+      }
+    },
+    "/api/banner/list": {
+      "get": {
+        "summary": "获取轮播图列表",
+        "operationId": "ListBanner",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/GetBannerListResp"
+            }
+          }
+        },
+        "tags": [
+          "banner_public"
+        ]
+      }
+    },
+    "/api/banner/upload": {
+      "post": {
+        "summary": "上传轮播图",
+        "operationId": "UploadBanner",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/CreateBannerReq"
+            }
+          }
+        },
+        "tags": [
+          "banner_public"
+        ]
+      }
+    },
     "/api/coderhub/health": {
       "get": {
         "summary": "健康检查",
@@ -3485,6 +3544,40 @@
         "author_id"
       ]
     },
+    "Banner": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "imageUrl": {
+          "type": "string"
+        },
+        "linkUrl": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "updatedAt": {
+          "type": "integer",
+          "format": "int64"
+        }
+      },
+      "title": "Banner",
+      "required": [
+        "id",
+        "title",
+        "imageUrl",
+        "linkUrl",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
     "CancelLikeAcademicNavigatorReq": {
       "type": "object",
       "title": "CancelLikeAcademicNavigatorReq"
@@ -3743,6 +3836,26 @@
       "title": "CreateArticleResp",
       "required": [
         "data"
+      ]
+    },
+    "CreateBannerReq": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "imageUrl": {
+          "type": "string"
+        },
+        "linkUrl": {
+          "type": "string"
+        }
+      },
+      "title": "CreateBannerReq",
+      "required": [
+        "title",
+        "imageUrl",
+        "linkUrl"
       ]
     },
     "CreateCommentReq": {
@@ -4430,6 +4543,10 @@
       "required": [
         "data"
       ]
+    },
+    "DeleteBannerReq": {
+      "type": "object",
+      "title": "DeleteBannerReq"
     },
     "DeleteCommentReq": {
       "type": "object",
@@ -5347,6 +5464,48 @@
         }
       },
       "title": "GetArticlesResp",
+      "required": [
+        "data"
+      ]
+    },
+    "GetBannerListReq": {
+      "type": "object",
+      "properties": {
+        "page": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "page_size": {
+          "type": "integer",
+          "format": "int64"
+        }
+      },
+      "title": "GetBannerListReq",
+      "required": [
+        "page",
+        "page_size"
+      ]
+    },
+    "GetBannerListResp": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32",
+          "description": " 状态码"
+        },
+        "message": {
+          "type": "string",
+          "description": " 提示信息"
+        },
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Banner"
+          }
+        }
+      },
+      "title": "GetBannerListResp",
       "required": [
         "data"
       ]
