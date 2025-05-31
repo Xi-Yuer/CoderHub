@@ -2,7 +2,7 @@
 // goctl 1.7.3
 // Source: coderhub.proto
 
-package userfollowservice
+package sandpackprojectsservice
 
 import (
 	"context"
@@ -215,64 +215,28 @@ type (
 	UserSignInRequest                   = coderhub.UserSignInRequest
 	WorkExp                             = coderhub.WorkExp
 
-	UserFollowService interface {
-		// 创建用户关注关系
-		CreateUserFollow(ctx context.Context, in *CreateUserFollowReq, opts ...grpc.CallOption) (*CreateUserFollowResp, error)
-		// 删除用户关注关系
-		DeleteUserFollow(ctx context.Context, in *DeleteUserFollowReq, opts ...grpc.CallOption) (*DeleteUserFollowResp, error)
-		// 获取用户关注列表
-		GetUserFollows(ctx context.Context, in *GetUserFollowsReq, opts ...grpc.CallOption) (*GetUserFollowsResp, error)
-		// 获取用户粉丝列表
-		GetUserFans(ctx context.Context, in *GetUserFansReq, opts ...grpc.CallOption) (*GetUserFansResp, error)
-		// 检查是否关注
-		IsUserFollowed(ctx context.Context, in *IsUserFollowedReq, opts ...grpc.CallOption) (*IsUserFollowedResp, error)
-		// 获取互相关注列表
-		GetMutualFollows(ctx context.Context, in *GetMutualFollowsReq, opts ...grpc.CallOption) (*GetMutualFollowsResp, error)
+	SandpackProjectsService interface {
+		CreateSandpackProjects(ctx context.Context, in *CreateSandpackProjectsRequest, opts ...grpc.CallOption) (*CreateSandpackProjectsResponse, error)
+		GetSandpackProjects(ctx context.Context, in *GetSandpackProjectsRequest, opts ...grpc.CallOption) (*SandpackProjects, error)
 	}
 
-	defaultUserFollowService struct {
+	defaultSandpackProjectsService struct {
 		cli zrpc.Client
 	}
 )
 
-func NewUserFollowService(cli zrpc.Client) UserFollowService {
-	return &defaultUserFollowService{
+func NewSandpackProjectsService(cli zrpc.Client) SandpackProjectsService {
+	return &defaultSandpackProjectsService{
 		cli: cli,
 	}
 }
 
-// 创建用户关注关系
-func (m *defaultUserFollowService) CreateUserFollow(ctx context.Context, in *CreateUserFollowReq, opts ...grpc.CallOption) (*CreateUserFollowResp, error) {
-	client := coderhub.NewUserFollowServiceClient(m.cli.Conn())
-	return client.CreateUserFollow(ctx, in, opts...)
+func (m *defaultSandpackProjectsService) CreateSandpackProjects(ctx context.Context, in *CreateSandpackProjectsRequest, opts ...grpc.CallOption) (*CreateSandpackProjectsResponse, error) {
+	client := coderhub.NewSandpackProjectsServiceClient(m.cli.Conn())
+	return client.CreateSandpackProjects(ctx, in, opts...)
 }
 
-// 删除用户关注关系
-func (m *defaultUserFollowService) DeleteUserFollow(ctx context.Context, in *DeleteUserFollowReq, opts ...grpc.CallOption) (*DeleteUserFollowResp, error) {
-	client := coderhub.NewUserFollowServiceClient(m.cli.Conn())
-	return client.DeleteUserFollow(ctx, in, opts...)
-}
-
-// 获取用户关注列表
-func (m *defaultUserFollowService) GetUserFollows(ctx context.Context, in *GetUserFollowsReq, opts ...grpc.CallOption) (*GetUserFollowsResp, error) {
-	client := coderhub.NewUserFollowServiceClient(m.cli.Conn())
-	return client.GetUserFollows(ctx, in, opts...)
-}
-
-// 获取用户粉丝列表
-func (m *defaultUserFollowService) GetUserFans(ctx context.Context, in *GetUserFansReq, opts ...grpc.CallOption) (*GetUserFansResp, error) {
-	client := coderhub.NewUserFollowServiceClient(m.cli.Conn())
-	return client.GetUserFans(ctx, in, opts...)
-}
-
-// 检查是否关注
-func (m *defaultUserFollowService) IsUserFollowed(ctx context.Context, in *IsUserFollowedReq, opts ...grpc.CallOption) (*IsUserFollowedResp, error) {
-	client := coderhub.NewUserFollowServiceClient(m.cli.Conn())
-	return client.IsUserFollowed(ctx, in, opts...)
-}
-
-// 获取互相关注列表
-func (m *defaultUserFollowService) GetMutualFollows(ctx context.Context, in *GetMutualFollowsReq, opts ...grpc.CallOption) (*GetMutualFollowsResp, error) {
-	client := coderhub.NewUserFollowServiceClient(m.cli.Conn())
-	return client.GetMutualFollows(ctx, in, opts...)
+func (m *defaultSandpackProjectsService) GetSandpackProjects(ctx context.Context, in *GetSandpackProjectsRequest, opts ...grpc.CallOption) (*SandpackProjects, error) {
+	client := coderhub.NewSandpackProjectsServiceClient(m.cli.Conn())
+	return client.GetSandpackProjects(ctx, in, opts...)
 }

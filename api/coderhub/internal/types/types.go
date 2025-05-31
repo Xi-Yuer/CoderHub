@@ -221,6 +221,19 @@ type CreateQuestionResp struct {
 	Data bool `json:"data"` // 题目详情
 }
 
+type CreateSandpackProject struct {
+	Name        string                 `json:"name"`
+	Description string                 `json:"description"`
+	Template    string                 `json:"template"`
+	ArticleID   string                 `json:"articleID"`
+	Files       []*SandpackProjectFile `json:"files"`
+}
+
+type CreateSandpackProjectResp struct {
+	Response
+	Data *CreateSandpackProject `json:"data"`
+}
+
 type CreateSchoolExpReq struct {
 	Education     string `json:"education"`
 	School        string `json:"school"`
@@ -791,6 +804,16 @@ type GetResponse struct {
 	Data *ImageInfo `json:"data"` // 图片详情
 }
 
+type GetSandpackProjectListReq struct {
+	UserID    string `form:"userID"`
+	ArticleID string `form:"articleID"`
+}
+
+type GetSandpackProjectListResp struct {
+	Response
+	Data *SandpackProject `json:"data"`
+}
+
 type GetSchoolExpListReq struct {
 	Page      int32  `form:"page"`
 	PageSize  int32  `form:"page_size"`
@@ -1077,6 +1100,24 @@ type ResetPasswordByLinkResp struct {
 type Response struct {
 	Code    int32  `json:"code"`    // 状态码
 	Message string `json:"message"` // 提示信息
+}
+
+type SandpackProject struct {
+	ID          string                 `json:"id"`
+	Name        string                 `json:"name"`
+	Description string                 `json:"description"`
+	Template    string                 `json:"template"`
+	UserID      string                 `json:"userID"`
+	ArticleID   string                 `json:"articleID"`
+	Files       []*SandpackProjectFile `json:"files"`
+	CreatedAt   int64                  `json:"createdAt"`
+	UpdatedAt   int64                  `json:"updatedAt"`
+}
+
+type SandpackProjectFile struct {
+	Name     string `json:"name"`
+	Code     string `json:"code"`
+	Language string `json:"language"`
 }
 
 type SchoolExp struct {

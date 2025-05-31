@@ -28,6 +28,8 @@ import (
 	question_bank_category_public "coderhub/api/coderhub/internal/handler/question_bank_category_public"
 	questions_auth "coderhub/api/coderhub/internal/handler/questions_auth"
 	questions_public "coderhub/api/coderhub/internal/handler/questions_public"
+	sandpack_auth "coderhub/api/coderhub/internal/handler/sandpack_auth"
+	sandpack_public "coderhub/api/coderhub/internal/handler/sandpack_public"
 	school_exp_auth "coderhub/api/coderhub/internal/handler/school_exp_auth"
 	school_exp_public "coderhub/api/coderhub/internal/handler/school_exp_public"
 	session_auth "coderhub/api/coderhub/internal/handler/session_auth"
@@ -547,6 +549,31 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			},
 		},
 		rest.WithPrefix("/api/questions"),
+	)
+
+	server.AddRoutes(
+		[]rest.Route{
+			{
+				// 创建一个sandpack
+				Method:  http.MethodPost,
+				Path:    "/create",
+				Handler: sandpack_auth.CreateSandpackHandler(serverCtx),
+			},
+		},
+		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
+		rest.WithPrefix("/api/sandpack"),
+	)
+
+	server.AddRoutes(
+		[]rest.Route{
+			{
+				// 获取sandpack列表
+				Method:  http.MethodGet,
+				Path:    "/list",
+				Handler: sandpack_public.ListSandpackHandler(serverCtx),
+			},
+		},
+		rest.WithPrefix("/api/sandpack"),
 	)
 
 	server.AddRoutes(

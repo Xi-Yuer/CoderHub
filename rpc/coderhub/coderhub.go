@@ -19,6 +19,8 @@ import (
 	messageserviceServer "coderhub/rpc/coderhub/internal/server/messageservice"
 	questionbankcategoryserviceServe "coderhub/rpc/coderhub/internal/server/questionbankcategoryservice"
 	questionserviceServer "coderhub/rpc/coderhub/internal/server/questionservice"
+	sandpackprojectfilesservice "coderhub/rpc/coderhub/internal/server/sandpackprojectfilesservice"
+	sandpackprojectsserviceServer "coderhub/rpc/coderhub/internal/server/sandpackprojectsservice"
 	schoolExpServer "coderhub/rpc/coderhub/internal/server/schoolexpservice"
 	userSignInService "coderhub/rpc/coderhub/internal/server/signinservice"
 	userfollowserviceServer "coderhub/rpc/coderhub/internal/server/userfollowservice"
@@ -61,6 +63,8 @@ func main() {
 		coderhub.RegisterMessageServiceServer(grpcServer, messageserviceServer.NewMessageServiceServer(ctx))
 		coderhub.RegisterCreatorDashBoardServiceServer(grpcServer, creatorDashBoardService.NewCreatorDashBoardServiceServer(ctx))
 		coderhub.RegisterSignInServiceServer(grpcServer, userSignInService.NewSignInServiceServer(ctx))
+		coderhub.RegisterSandpackProjectsServiceServer(grpcServer, sandpackprojectsserviceServer.NewSandpackProjectsServiceServer(ctx))
+		coderhub.RegisterSandpackProjectFilesServiceServer(grpcServer, sandpackprojectfilesservice.NewSandpackProjectFilesServiceServer(ctx))
 
 		if c.Mode == service.DevMode || c.Mode == service.TestMode {
 			reflection.Register(grpcServer)

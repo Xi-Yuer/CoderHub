@@ -1209,6 +1209,41 @@ type (
         Response
         Data []*Banner `json:"data"`
     }
+    SandpackProjectFile {
+        Name string `json:"name"`
+        Code string `json:"code"`
+        Language string `json:"language"`
+    }
+    CreateSandpackProject {
+        Name string `json:"name"`
+        Description string `json:"description"`
+        Template string `json:"template"`
+        ArticleID string `json:"articleID"`
+        Files []*SandpackProjectFile `json:"files"`
+    }
+    CreateSandpackProjectResp {
+        Response
+        Data *CreateSandpackProject `json:"data"`
+    }
+    SandpackProject {
+        ID string `json:"id"`
+        Name string `json:"name"`
+        Description string `json:"description"`
+        Template string `json:"template"`
+        UserID string `json:"userID"`
+        ArticleID string `json:"articleID"`
+        Files []*SandpackProjectFile `json:"files"`
+        CreatedAt int64 `json:"createdAt"`
+        UpdatedAt int64 `json:"updatedAt"`
+    }
+    GetSandpackProjectListReq {
+        UserID string `form:"userID"`
+        ArticleID string `form:"articleID"`
+    }
+    GetSandpackProjectListResp {
+        Response
+        Data *SandpackProject `json:"data"`
+    }
 )
 
 @server (
@@ -1960,5 +1995,30 @@ service CodeHubAPI {
     )
     @handler DeleteBanner
     delete /delete/:id returns (DeleteBannerReq)
+}
+
+@server(
+    jwt: Auth
+    prefix: /api/sandpack
+    group: sandpack_auth
+)
+service CodeHubAPI {
+    @doc(
+        summary: "创建一个sandpack"
+    )
+    @handler CreateSandpack
+    post /create (CreateSandpackProject) returns (CreateSandpackProjectResp)
+}
+
+@server(
+    prefix: /api/sandpack
+    group: sandpack_public
+)
+service CodeHubAPI {
+    @doc(
+        summary: "获取sandpack列表"
+    )
+    @handler ListSandpack
+    get /list (GetSandpackProjectListReq) returns (GetSandpackProjectListResp)
 }
 

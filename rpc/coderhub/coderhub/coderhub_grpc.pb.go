@@ -4720,3 +4720,285 @@ var SignInService_ServiceDesc = grpc.ServiceDesc{
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "coderhub.proto",
 }
+
+const (
+	SandpackProjectsService_CreateSandpackProjects_FullMethodName = "/coderhub.SandpackProjectsService/CreateSandpackProjects"
+	SandpackProjectsService_GetSandpackProjects_FullMethodName    = "/coderhub.SandpackProjectsService/GetSandpackProjects"
+)
+
+// SandpackProjectsServiceClient is the client API for SandpackProjectsService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type SandpackProjectsServiceClient interface {
+	CreateSandpackProjects(ctx context.Context, in *CreateSandpackProjectsRequest, opts ...grpc.CallOption) (*CreateSandpackProjectsResponse, error)
+	GetSandpackProjects(ctx context.Context, in *GetSandpackProjectsRequest, opts ...grpc.CallOption) (*SandpackProjects, error)
+}
+
+type sandpackProjectsServiceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewSandpackProjectsServiceClient(cc grpc.ClientConnInterface) SandpackProjectsServiceClient {
+	return &sandpackProjectsServiceClient{cc}
+}
+
+func (c *sandpackProjectsServiceClient) CreateSandpackProjects(ctx context.Context, in *CreateSandpackProjectsRequest, opts ...grpc.CallOption) (*CreateSandpackProjectsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CreateSandpackProjectsResponse)
+	err := c.cc.Invoke(ctx, SandpackProjectsService_CreateSandpackProjects_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *sandpackProjectsServiceClient) GetSandpackProjects(ctx context.Context, in *GetSandpackProjectsRequest, opts ...grpc.CallOption) (*SandpackProjects, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SandpackProjects)
+	err := c.cc.Invoke(ctx, SandpackProjectsService_GetSandpackProjects_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// SandpackProjectsServiceServer is the server API for SandpackProjectsService service.
+// All implementations must embed UnimplementedSandpackProjectsServiceServer
+// for forward compatibility.
+type SandpackProjectsServiceServer interface {
+	CreateSandpackProjects(context.Context, *CreateSandpackProjectsRequest) (*CreateSandpackProjectsResponse, error)
+	GetSandpackProjects(context.Context, *GetSandpackProjectsRequest) (*SandpackProjects, error)
+	mustEmbedUnimplementedSandpackProjectsServiceServer()
+}
+
+// UnimplementedSandpackProjectsServiceServer must be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedSandpackProjectsServiceServer struct{}
+
+func (UnimplementedSandpackProjectsServiceServer) CreateSandpackProjects(context.Context, *CreateSandpackProjectsRequest) (*CreateSandpackProjectsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateSandpackProjects not implemented")
+}
+func (UnimplementedSandpackProjectsServiceServer) GetSandpackProjects(context.Context, *GetSandpackProjectsRequest) (*SandpackProjects, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetSandpackProjects not implemented")
+}
+func (UnimplementedSandpackProjectsServiceServer) mustEmbedUnimplementedSandpackProjectsServiceServer() {
+}
+func (UnimplementedSandpackProjectsServiceServer) testEmbeddedByValue() {}
+
+// UnsafeSandpackProjectsServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to SandpackProjectsServiceServer will
+// result in compilation errors.
+type UnsafeSandpackProjectsServiceServer interface {
+	mustEmbedUnimplementedSandpackProjectsServiceServer()
+}
+
+func RegisterSandpackProjectsServiceServer(s grpc.ServiceRegistrar, srv SandpackProjectsServiceServer) {
+	// If the following call pancis, it indicates UnimplementedSandpackProjectsServiceServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&SandpackProjectsService_ServiceDesc, srv)
+}
+
+func _SandpackProjectsService_CreateSandpackProjects_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateSandpackProjectsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SandpackProjectsServiceServer).CreateSandpackProjects(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SandpackProjectsService_CreateSandpackProjects_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SandpackProjectsServiceServer).CreateSandpackProjects(ctx, req.(*CreateSandpackProjectsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SandpackProjectsService_GetSandpackProjects_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetSandpackProjectsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SandpackProjectsServiceServer).GetSandpackProjects(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SandpackProjectsService_GetSandpackProjects_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SandpackProjectsServiceServer).GetSandpackProjects(ctx, req.(*GetSandpackProjectsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// SandpackProjectsService_ServiceDesc is the grpc.ServiceDesc for SandpackProjectsService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var SandpackProjectsService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "coderhub.SandpackProjectsService",
+	HandlerType: (*SandpackProjectsServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "CreateSandpackProjects",
+			Handler:    _SandpackProjectsService_CreateSandpackProjects_Handler,
+		},
+		{
+			MethodName: "GetSandpackProjects",
+			Handler:    _SandpackProjectsService_GetSandpackProjects_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "coderhub.proto",
+}
+
+const (
+	SandpackProjectFilesService_CreateSandpackProjectFiles_FullMethodName = "/coderhub.SandpackProjectFilesService/CreateSandpackProjectFiles"
+	SandpackProjectFilesService_GetSandpackProjectFiles_FullMethodName    = "/coderhub.SandpackProjectFilesService/GetSandpackProjectFiles"
+)
+
+// SandpackProjectFilesServiceClient is the client API for SandpackProjectFilesService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type SandpackProjectFilesServiceClient interface {
+	CreateSandpackProjectFiles(ctx context.Context, in *SandpackProjectFilesResponse, opts ...grpc.CallOption) (*CreateSandpackProjectFilesResponse, error)
+	GetSandpackProjectFiles(ctx context.Context, in *GetSandpackProjectFilesRequest, opts ...grpc.CallOption) (*SandpackProjectFilesResponse, error)
+}
+
+type sandpackProjectFilesServiceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewSandpackProjectFilesServiceClient(cc grpc.ClientConnInterface) SandpackProjectFilesServiceClient {
+	return &sandpackProjectFilesServiceClient{cc}
+}
+
+func (c *sandpackProjectFilesServiceClient) CreateSandpackProjectFiles(ctx context.Context, in *SandpackProjectFilesResponse, opts ...grpc.CallOption) (*CreateSandpackProjectFilesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CreateSandpackProjectFilesResponse)
+	err := c.cc.Invoke(ctx, SandpackProjectFilesService_CreateSandpackProjectFiles_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *sandpackProjectFilesServiceClient) GetSandpackProjectFiles(ctx context.Context, in *GetSandpackProjectFilesRequest, opts ...grpc.CallOption) (*SandpackProjectFilesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SandpackProjectFilesResponse)
+	err := c.cc.Invoke(ctx, SandpackProjectFilesService_GetSandpackProjectFiles_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// SandpackProjectFilesServiceServer is the server API for SandpackProjectFilesService service.
+// All implementations must embed UnimplementedSandpackProjectFilesServiceServer
+// for forward compatibility.
+type SandpackProjectFilesServiceServer interface {
+	CreateSandpackProjectFiles(context.Context, *SandpackProjectFilesResponse) (*CreateSandpackProjectFilesResponse, error)
+	GetSandpackProjectFiles(context.Context, *GetSandpackProjectFilesRequest) (*SandpackProjectFilesResponse, error)
+	mustEmbedUnimplementedSandpackProjectFilesServiceServer()
+}
+
+// UnimplementedSandpackProjectFilesServiceServer must be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedSandpackProjectFilesServiceServer struct{}
+
+func (UnimplementedSandpackProjectFilesServiceServer) CreateSandpackProjectFiles(context.Context, *SandpackProjectFilesResponse) (*CreateSandpackProjectFilesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateSandpackProjectFiles not implemented")
+}
+func (UnimplementedSandpackProjectFilesServiceServer) GetSandpackProjectFiles(context.Context, *GetSandpackProjectFilesRequest) (*SandpackProjectFilesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetSandpackProjectFiles not implemented")
+}
+func (UnimplementedSandpackProjectFilesServiceServer) mustEmbedUnimplementedSandpackProjectFilesServiceServer() {
+}
+func (UnimplementedSandpackProjectFilesServiceServer) testEmbeddedByValue() {}
+
+// UnsafeSandpackProjectFilesServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to SandpackProjectFilesServiceServer will
+// result in compilation errors.
+type UnsafeSandpackProjectFilesServiceServer interface {
+	mustEmbedUnimplementedSandpackProjectFilesServiceServer()
+}
+
+func RegisterSandpackProjectFilesServiceServer(s grpc.ServiceRegistrar, srv SandpackProjectFilesServiceServer) {
+	// If the following call pancis, it indicates UnimplementedSandpackProjectFilesServiceServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&SandpackProjectFilesService_ServiceDesc, srv)
+}
+
+func _SandpackProjectFilesService_CreateSandpackProjectFiles_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SandpackProjectFilesResponse)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SandpackProjectFilesServiceServer).CreateSandpackProjectFiles(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SandpackProjectFilesService_CreateSandpackProjectFiles_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SandpackProjectFilesServiceServer).CreateSandpackProjectFiles(ctx, req.(*SandpackProjectFilesResponse))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SandpackProjectFilesService_GetSandpackProjectFiles_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetSandpackProjectFilesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SandpackProjectFilesServiceServer).GetSandpackProjectFiles(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SandpackProjectFilesService_GetSandpackProjectFiles_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SandpackProjectFilesServiceServer).GetSandpackProjectFiles(ctx, req.(*GetSandpackProjectFilesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// SandpackProjectFilesService_ServiceDesc is the grpc.ServiceDesc for SandpackProjectFilesService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var SandpackProjectFilesService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "coderhub.SandpackProjectFilesService",
+	HandlerType: (*SandpackProjectFilesServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "CreateSandpackProjectFiles",
+			Handler:    _SandpackProjectFilesService_CreateSandpackProjectFiles_Handler,
+		},
+		{
+			MethodName: "GetSandpackProjectFiles",
+			Handler:    _SandpackProjectFilesService_GetSandpackProjectFiles_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "coderhub.proto",
+}

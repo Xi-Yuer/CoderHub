@@ -59,6 +59,9 @@ type (
 	CreateQuestionResponse              = coderhub.CreateQuestionResponse
 	CreateRelationRequest               = coderhub.CreateRelationRequest
 	CreateRelationResponse              = coderhub.CreateRelationResponse
+	CreateSandpackProjectFilesResponse  = coderhub.CreateSandpackProjectFilesResponse
+	CreateSandpackProjectsRequest       = coderhub.CreateSandpackProjectsRequest
+	CreateSandpackProjectsResponse      = coderhub.CreateSandpackProjectsResponse
 	CreateSchoolExpRequest              = coderhub.CreateSchoolExpRequest
 	CreateSchoolExpResponse             = coderhub.CreateSchoolExpResponse
 	CreateUserFollowReq                 = coderhub.CreateUserFollowReq
@@ -148,6 +151,8 @@ type (
 	GetQuestionTreeRequest              = coderhub.GetQuestionTreeRequest
 	GetQuestionTreeResponse             = coderhub.GetQuestionTreeResponse
 	GetRequest                          = coderhub.GetRequest
+	GetSandpackProjectFilesRequest      = coderhub.GetSandpackProjectFilesRequest
+	GetSandpackProjectsRequest          = coderhub.GetSandpackProjectsRequest
 	GetSchoolExpListRequest             = coderhub.GetSchoolExpListRequest
 	GetSchoolExpListResponse            = coderhub.GetSchoolExpListResponse
 	GetSystemProviderTagListRequest     = coderhub.GetSystemProviderTagListRequest
@@ -184,6 +189,9 @@ type (
 	ResetPasswordRequest                = coderhub.ResetPasswordRequest
 	ResetPasswordResponse               = coderhub.ResetPasswordResponse
 	Response                            = coderhub.Response
+	SandpackProjectFiles                = coderhub.SandpackProjectFiles
+	SandpackProjectFilesResponse        = coderhub.SandpackProjectFilesResponse
+	SandpackProjects                    = coderhub.SandpackProjects
 	SchoolExp                           = coderhub.SchoolExp
 	SignInResponse                      = coderhub.SignInResponse
 	UpdateArticleRequest                = coderhub.UpdateArticleRequest

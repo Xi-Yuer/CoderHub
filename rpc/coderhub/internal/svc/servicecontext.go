@@ -35,6 +35,8 @@ type ServiceContext struct {
 	WorkExpRepository              repository.WorkExpRepository
 	MessageRepository              repository.MessageRepository
 	UserSigninLogRepository        repository.UserSigninLogRepository
+	SandpackFilesRepository        repository.SandpackFilesRepository
+	SandpackProjectsRepository     repository.SandpackProjectsRepository
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -93,5 +95,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		WorkExpRepository:              repository.NewWorkExpRepository(sql),
 		MessageRepository:              repository.NewMessageRepository(sql),
 		UserSigninLogRepository:        repository.NewUserSigninLogRepository(sql),
+		SandpackFilesRepository:        repository.NewSandpackFilesRepository(sql),
+		SandpackProjectsRepository:     repository.NewSandpackProjectsRepository(sql),
 	}
 }

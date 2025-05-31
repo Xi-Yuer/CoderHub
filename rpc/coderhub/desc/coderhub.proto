@@ -1400,3 +1400,65 @@ service  SignInService {
   rpc UserSignIn(UserSignInRequest) returns (SignInResponse);
   rpc GetUserSignInMonth(GetUserSignInMonthRequest) returns (SignInResponse);
 }
+
+// 创建代码预览项目
+message CreateSandpackProjectsRequest {
+  string name = 1;
+  string description = 2;
+  string template = 3;
+  int64 userId = 4;
+  int64 articleId = 5;
+  int64 createdAt = 6;
+  int64 updatedAt = 7;
+}
+message CreateSandpackProjectsResponse {
+  int64 id = 1;
+}
+
+// 获取代码预览项目
+message GetSandpackProjectsRequest {
+  int64 userId = 1;
+  int64 articleId = 2;
+}
+
+message SandpackProjects {
+  int64 id = 1;
+  string name = 2;
+  string template = 3;
+  int64 userId = 4;
+  int64 articleId = 5;
+  string description = 6;
+  int64 createdAt = 7;
+  int64 updatedAt = 8;
+}
+
+service SandpackProjectsService {
+  rpc CreateSandpackProjects(CreateSandpackProjectsRequest) returns (CreateSandpackProjectsResponse);
+  rpc GetSandpackProjects(GetSandpackProjectsRequest) returns (SandpackProjects);
+}
+
+// 创建 sandpack 项目文件
+message SandpackProjectFiles {
+  int64 sandpack_projects_id = 1;
+  string file_name = 2;
+  string language = 3;
+  string content = 4;
+}
+
+message CreateSandpackProjectFilesResponse {
+  bool success = 1;
+}
+
+message GetSandpackProjectFilesRequest {
+  int64 sandpack_projects_id = 1;
+}
+
+message SandpackProjectFilesResponse {
+  repeated SandpackProjectFiles sandpack_project_files = 1;
+}
+
+
+service SandpackProjectFilesService {
+  rpc CreateSandpackProjectFiles(SandpackProjectFilesResponse) returns (CreateSandpackProjectFilesResponse);
+  rpc GetSandpackProjectFiles(GetSandpackProjectFilesRequest) returns (SandpackProjectFilesResponse);
+}

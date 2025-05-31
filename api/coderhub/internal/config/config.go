@@ -30,4 +30,6 @@ type Config struct {
 	MessageService              zrpc.RpcClientConf
 	CreatorDashBoardService     zrpc.RpcClientConf
 	SignInService               zrpc.RpcClientConf
+	SandpackProjectService      zrpc.RpcClientConf
+	SandpackFileService         zrpc.RpcClientConf
 }

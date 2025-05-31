@@ -88,6 +88,8 @@ func NewGorm() *gorm.DB {
 			&model.PrivateMessage{},
 			&model.UserSession{},
 			&model.UserSigningLog{},
+			&model.SandpackProjects{},
+			&model.SandpackFiles{},
 		); err != nil {
 			log.Fatalf("数据库迁移失败: %v", err)
 		}

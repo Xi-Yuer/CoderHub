@@ -31,6 +31,8 @@ type ServiceContext struct {
 	MessageService              coderhub.MessageServiceClient
 	CreatorDashBoardService     coderhub.CreatorDashBoardServiceClient
 	SignInService               coderhub.SignInServiceClient
+	SandpackProjectService      coderhub.SandpackProjectsServiceClient
+	SandpackFileService         coderhub.SandpackProjectFilesServiceClient
 	UserSessionRepository       repository.UserSessionRepository
 	PrivateMessageRepository    repository.PrivateMessageRepository
 	UserRepository              repository.UserRepository
@@ -71,6 +73,8 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		MessageService:              coderhub.NewMessageServiceClient(zrpc.MustNewClient(c.MessageService).Conn()),
 		SignInService:               coderhub.NewSignInServiceClient(zrpc.MustNewClient(c.SignInService).Conn()),
 		CreatorDashBoardService:     coderhub.NewCreatorDashBoardServiceClient(zrpc.MustNewClient(c.CreatorDashBoardService).Conn()),
+		SandpackProjectService:      coderhub.NewSandpackProjectsServiceClient(zrpc.MustNewClient(c.SandpackProjectService).Conn()),
+		SandpackFileService:         coderhub.NewSandpackProjectFilesServiceClient(zrpc.MustNewClient(c.SandpackFileService).Conn()),
 		PrivateMessageRepository:    repository.NewPrivateMessageRepository(sql, rdb),
 		UserSessionRepository:       repository.NewUserSessionRepository(sql),
 		UserRepository:              repository.NewUserRepositoryImpl(sql, rdb),

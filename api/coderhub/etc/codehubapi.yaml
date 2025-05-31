@@ -95,4 +95,14 @@ SignInService:
     Hosts:
       - etcd:2379
     Key: coderhub.rpc
+SandpackProjectService:
+  Etcd:
+    Hosts:
+      - etcd:2379
+    Key: coderhub.rpc
+SandpackFileService:
+  Etcd:
+    Hosts:
+      - etcd:2379
+    Key: coderhub.rpc
 DEEPSEEKSEARCHKEY: ${DEEPSEEKSEARCHKEY}
