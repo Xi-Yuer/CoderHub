@@ -86,7 +86,7 @@ services:
     networks:
       - coderhub-network
     environment:
-      DEEPSEEKSEARCHKEY: sk-ae4be1c3925d451ba6a444950263663c
+      DEEPSEEKSEARCHKEY: ${DEEPSEEKSEARCHKEY}
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8888/api/coderhub/health" ] # 修改为实际的健康检查端点
       interval: 10s

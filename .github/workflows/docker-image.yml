@@ -34,6 +34,10 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+
+      - name: 写入 .env 文件
+        run: |
+          echo "DEEPSEEKSEARCHKEY=${{ secrets.DEEPSEEKSEARCHKEY }}" > deploy/.env
       # 构建和推送镜像
       - name: Build and Push Docker image
         # 设置超时时间, 防止长时间等待
