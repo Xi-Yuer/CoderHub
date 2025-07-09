@@ -12,6 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     # 设置超时时间, 防止长时间等待
     timeout-minutes: 30
+    environment: prod
 
     # 使用矩阵策略来构建和推送多个镜像
     strategy:
@@ -46,7 +47,7 @@ jobs:
           # 保存时间戳到变量中,使用时间戳是为了防止镜像标签重复
           TIMESTAMP=$(date +%s)
           # 构建镜像, 并设置镜像标签
-          docker build . --file ${{ matrix.image.dockerfile }} --tag ${{ matrix.image.name }}:${TIMESTAMP}
+          docker build . --file ${{ matrix.image.dockerfile }}  --build-arg DEEPSEEKSEARCHKEY=${{ secrets.DEEPSEEKSEARCHKEY }} --tag ${{ matrix.image.name }}:${TIMESTAMP}
           # 打标签, 将镜像标签设置为最新版本，类似于重命名
           docker tag ${{ matrix.image.name }}:${TIMESTAMP} ${{ secrets.DOCKER_HUB_USERNAME }}/${{ matrix.image.name }}:latest
           # 推送镜像
