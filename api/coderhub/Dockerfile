@@ -20,7 +20,7 @@ RUN ls
 RUN go mod download
 
 # 编译 Go 程序
-RUN go build --build-arg DEEPSEEKSEARCHKEY=${{ secrets.DEEPSEEKSEARCHKEY }} -o /app/bin/cmd ./api/coderhub/codehubapi.go
+RUN go build -o /app/bin/cmd ./api/coderhub/codehubapi.go
 
 # 第 2 阶段：运行阶段（轻量级）
 FROM alpine:3.19
